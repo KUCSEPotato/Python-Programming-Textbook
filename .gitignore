@@ -17,5 +17,5 @@
 *.bbl
 
 # Local folders (if needed)
-templates/
-preamble.tex
+# templates/
+# preamble.tex

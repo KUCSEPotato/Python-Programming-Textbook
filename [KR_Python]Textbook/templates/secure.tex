@@ -1,0 +1,139 @@
+\documentclass[11pt, a4paper]{book}
+
+% --------------------
+% 기본 패키지
+% --------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{kotex}        % 한글 사용 시
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath, amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+% --------------------
+% Python 코드 설정
+% --------------------
+\usepackage{listings}
+
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\definecolor{keywordblue}{rgb}{0.2,0.2,0.7}
+
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{keywordblue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{teal},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    frame=single,
+    breaklines=true,
+    tabsize=4,
+    showstringspaces=false
+}
+
+\lstset{style=pythonstyle}
+
+% --------------------
+% 교재용 박스 정의
+% --------------------
+\newtcolorbox{conceptbox}{
+    colback=blue!5,
+    colframe=blue!50!black,
+    title=Concept,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{examplebox}{
+    colback=green!5,
+    colframe=green!50!black,
+    title=Example,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{notebox}{
+    colback=yellow!10,
+    colframe=yellow!50!black,
+    title=Note,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{exercisebox}{
+    colback=red!5,
+    colframe=red!50!black,
+    title=Exercise,
+    fonttitle=\bfseries
+}
+
+% --------------------
+% 제목 정보
+% --------------------
+\title{\Huge \textbf{Python Programming Textbook}\\
+\vspace{0.5em}
+\Large From Basics to Practice}
+
+\author{Jeongmin Lee}
+\date{\today}
+
+% --------------------
+% 문서 시작
+% --------------------
+\begin{document}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introduction to Python}
+
+\section{What is Python?}
+
+\begin{conceptbox}
+Python is a high-level, interpreted programming language known for its
+readability and simplicity.
+\end{conceptbox}
+
+\section{Your First Python Program}
+
+\begin{examplebox}
+\begin{lstlisting}
+print("Hello, World!")
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+Python uses indentation instead of braces to define code blocks.
+\end{notebox}
+
+\begin{exercisebox}
+Write a Python program that prints your name and major.
+\end{exercisebox}
+
+\chapter{Variables and Data Types}
+
+% 이후 chapter 계속 추가
+
+\backmatter
+\chapter*{Appendix}
+Additional resources and references.
+
+\end{document}
