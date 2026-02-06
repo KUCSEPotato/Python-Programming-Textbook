@@ -1,0 +1,423 @@
+\section{변수와 사용자 입력}
+
+프로그래밍의 핵심은 데이터를 다루는 것입니다.
+데이터를 다루기 위해서는 데이터를 \textbf{저장}하고, \textbf{읽어오고}, \textbf{변경}할 수 있어야 합니다.
+이때 가장 기본이 되는 도구가 바로 \textbf{변수(variable)}입니다.
+또한 프로그램이 외부(사용자)로부터 값을 받아 동작하도록 만들기 위해서는 \textbf{사용자 입력(input)}을 처리할 수 있어야 합니다.
+이번 절에서는 변수의 개념과 사용법, 그리고 \texttt{input()}을 이용한 사용자 입력 처리 방법을 학습합니다.
+
+% ---------------------------------------------------------
+\subsection{변수란?}
+
+\begin{conceptbox}
+변수(variable)는 일반적으로 ``변할 수 있는 값'' 또는
+``값을 저장하는 식별자(identifier)''라고 생각하면 됩니다.
+
+Python에서는 숫자뿐만 아니라 문자열, 리스트, 딕셔너리 등
+\textbf{모든 자료형의 값을 변수에 저장}할 수 있습니다.
+또한 Python에서는 ``변수를 미리 선언''하는 과정이 따로 없으며,
+\textbf{변수에 값을 처음 대입하는 순간 변수가 생성}됩니다.
+\end{conceptbox}
+
+\begin{notebox}
+조금 더 정확히 말하면,
+Python에서 변수 이름은 ``메모리 공간에 있는 값(객체)''을 직접 담는 것이 아니라
+그 값을 \textbf{가리키는 이름표(label)} 역할을 합니다.
+따라서 ``변수가 값을 저장한다''는 표현은 편의상 사용하는 말이고,
+엄밀히는 ``변수가 메모리의 객체를 \textbf{참조(reference)}한다''고 이해할 수 있습니다.
+\end{notebox}
+
+\subsubsection{변수의 역할 정리}
+변수는 다음과 같은 역할을 수행합니다.
+\begin{itemize}
+    \item 값을 저장하기 위한 (메모리)공간의 이름표
+    \item 프로그램 실행 중에 변할 수 있는 값을 담는 도구
+    \item 값에 접근하기 위한 식별자(이름)
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsection{변수 만들고 사용하기}
+
+변수를 활용하는 과정은 크게 다음 세 단계로 설명할 수 있습니다.
+
+\begin{conceptbox}
+변수를 활용하는 방법에는 크게 세 가지가 있습니다.
+\begin{enumerate}
+    \item 변수를 \textbf{선언}하는 방법(= Python에서는 ``처음 대입''하는 순간 생성)
+    \item 변수에 값을 \textbf{할당(assign)}하는 방법
+    \item 변수를 \textbf{참조(reference)}하여 값을 사용하는 방법
+\end{enumerate}
+\end{conceptbox}
+
+\subsubsection{변수 선언과 할당}
+Python에서는 다음과 같은 형태로 변수를 선언하고 값을 할당합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+# define variables (create variables and assign values)
+a = 3
+b = 4
+c = 9
+
+print(a, b, c)
+print(a, b, c, sep="-")
+print(a, b, c, end="/ end print /")
+\end{lstlisting}
+출력 결과:
+\begin{verbatim}
+3 4 9
+3-4-9
+3 4 9/ end print /
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+여기서 \texttt{=}는 수학에서의 ``같다''가 아니라
+\textbf{대입한다(assign)}라는 의미입니다.
+
+즉 \texttt{a = 3}은 ``a와 3이 같다''가 아니라
+``변수 a가 3을 가리키게 하라''라는 의미입니다.
+\end{notebox}
+
+다음과 같이 변수에는 다양한 자료형의 값을 저장할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 3
+b = 4.1239802
+c = "Welcome to Python"
+
+print(a, type(a))
+print(b, type(b))
+print(c, type(c))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+3 <class 'int'>
+4.1239802 <class 'float'>
+Welcome to Python <class 'str'>
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsubsection{복합 대입 연산자(Compound Assignment)}
+변수의 값을 갱신할 때는 다음과 같은 \textbf{복합 대입 연산자}를 자주 사용합니다.
+
+\begin{conceptbox}
+복합 대입 연산자는 ``연산 후 대입''을 한 번에 수행합니다.
+\begin{itemize}
+    \item \texttt{a += 10} : \texttt{a = a + 10}
+    \item \texttt{a -= 5} : \texttt{a = a - 5}
+    \item \texttt{a *= 2} : \texttt{a = a * 2}
+    \item \texttt{a /= 10} : \texttt{a = a / 10}
+    \item \texttt{a //= 10} : \texttt{a = a // 10} \quad (정수 나눗셈)
+    \item \texttt{a \%= 10} : \texttt{a = a \% 10} \quad (나머지)
+    \item \texttt{a **= 2} : \texttt{a = a ** 2} \quad (제곱)
+\end{itemize}
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 0
+a += 10
+a -= 5
+a *= 2
+a //= 3
+print(a)
+
+s = "Hello"
+s += "!"
+s *= 3
+print(s)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+3
+Hello!Hello!Hello!
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{/=}는 나눗셈 결과가 실수(\texttt{float})가 될 수 있습니다.
+반면 \texttt{//=}는 정수 나눗셈이며 결과가 정수(\texttt{int})로 유지됩니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsubsection{Python의 유연성과 주의점}
+\begin{conceptbox}
+C/C++/Java와 같은 언어에서는 변수를 만들 때
+자료형을 먼저 선언해야 하는 경우가 많습니다.
+하지만 Python은 변수에 자료형을 미리 지정하지 않습니다.
+이를 \textbf{동적 타이핑(dynamic typing)}이라고 합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 10
+print(x, type(x))
+
+x = "Python"
+print(x, type(x))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+10 <class 'int'>
+Python <class 'str'>
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+Python의 유연성은 장점이지만, 동시에 실수의 원인이 되기도 합니다.
+예를 들어 변수에 어떤 자료형이 들어있는지 모르고 연산을 수행하면
+실행 중 \texttt{TypeError}가 발생할 수 있습니다.
+따라서 초반 학습 단계에서는
+\textbf{하나의 변수에는 되도록 하나의 자료형을 일관되게 넣는 습관}을 추천합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{출력: \texttt{print()} 함수}
+
+Python에서 출력은 \textbf{\texttt{print()} 함수}로 수행합니다.
+
+\begin{conceptbox}
+\texttt{print()} 함수의 형태는 다음과 같습니다.
+\[
+\texttt{print(출력내용, sep='구분자', end='끝문자')}
+\]
+여기서 \texttt{sep}와 \texttt{end}는 \textbf{선택 인자(optional arguments)}입니다.
+즉, 생략할 수 있으며 기본값(default)이 존재합니다.
+\end{conceptbox}
+
+\subsubsection{\texttt{sep=} : 출력 요소 사이의 구분 문자}
+\begin{examplebox}
+\begin{lstlisting}
+year = 2004
+month = 10
+day = 15
+
+print(year, month, day)          # default sep=" "
+print(year, month, day, sep="/") # custom separator
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+2004 10 15
+2004/10/15
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{\texttt{end=} : 출력의 끝 문자}
+\texttt{print()}는 기본적으로 출력 후 줄바꿈(\texttt{\textbackslash n})을 수행합니다.
+하지만 \texttt{end}를 지정하면 줄바꿈 대신 원하는 문자를 출력할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+str1 = "Long time no see"
+str2 = "Yes, how are you"
+
+print(str1, end="!")
+print(str2, end="?")
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+Long time no see!Yes, how are you?
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+위 예시에서 두 문자열이 같은 줄에 붙어서 출력된 이유는,
+첫 번째 \texttt{print}의 \texttt{end}가 줄바꿈이 아닌 \texttt{"!"}였기 때문입니다.
+줄바꿈을 원한다면 \texttt{end="\textbackslash n"}을 사용하거나
+\texttt{print()}를 한 번 더 호출할 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{사용자로부터 입력 받기: \texttt{input()}}
+
+프로그램이 사용자와 상호작용하기 위해서는
+사용자로부터 입력을 받을 수 있어야 합니다.
+Python에서는 \textbf{\texttt{input()} 함수}를 사용합니다.
+
+\begin{conceptbox}
+\texttt{input()} 함수는 사용자로부터 한 줄을 입력받아
+\textbf{문자열(\texttt{str})로 반환}합니다.
+\end{conceptbox}
+
+\subsubsection{프롬프트(prompt) 문자열}
+\texttt{input()} 괄호 안에 넣는 문자열을 \textbf{프롬프트 문자열(prompt string)}이라고 합니다.
+프롬프트 문자열은 사용자에게 어떤 입력을 원하는지 안내하는 메시지입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+var1 = input("Enter a greeting message: ")
+print(var1, type(var1))
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{input()}을 호출하면 프로그램은 사용자가 입력을 마칠 때까지
+잠시 멈춘 상태가 됩니다.
+이처럼 프로그램이 특정 조건이 충족될 때까지 멈추는 상태를
+\textbf{블록(block)}되었다고 표현하기도 합니다.
+\end{notebox}
+
+\subsubsection{\texttt{input()}의 반환값은 항상 문자열}
+사용자가 숫자를 입력해도, \texttt{input()}은 항상 문자열을 반환합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+var2 = input("Enter any number: ")
+print(var2, type(var2))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+12345 <class 'str'>
+\end{verbatim}
+\end{examplebox}
+
+따라서 입력받은 값을 숫자로 사용하려면
+\textbf{형 변환(type casting)}이 필요합니다.
+
+% ---------------------------------------------------------
+\subsection{강제 형변환(Type Casting)}
+
+\begin{conceptbox}
+\texttt{input()}의 반환값은 항상 문자열이므로,
+숫자 연산에 사용하려면 문자열을 숫자 자료형으로 변환해야 합니다.
+이 과정을 \textbf{캐스팅(casting)} 또는 \textbf{형 변환(type conversion)}이라 합니다.
+\end{conceptbox}
+
+\subsubsection{\texttt{int()}, \texttt{float()}로 변환하기}
+
+\begin{examplebox}
+\begin{lstlisting}
+var1 = int(input("Enter any integer: "))
+print(var1, type(var1))
+
+var2 = float(input("Enter any float: "))
+print(var2, type(var2))
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{int(input())}, \texttt{float(input())} 형태는 매우 자주 쓰입니다.
+사용자 입력을 숫자로 바로 변환하여 변수에 저장하는 가장 일반적인 패턴입니다.
+\end{notebox}
+
+\subsubsection{\texttt{ValueError} 예외}
+변환할 수 없는 문자열을 숫자로 바꾸려고 하면
+\texttt{ValueError}가 발생합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = "Hello"
+int(x)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+ValueError: invalid literal for int() with base 10: 'Hello'
+\end{verbatim}
+\end{examplebox}
+
+또한 소수점이 포함된 문자열은 \texttt{int()}로 바로 변환할 수 없습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = "12.345"
+int(x)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+ValueError: invalid literal for int() with base 10: '12.345'
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{\texttt{str()}로 문자열로 변환하기}
+숫자 자료형을 문자열로 변환할 때는 \texttt{str()}을 사용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 12
+b = 12.345
+print(str(a), type(str(a)))
+print(str(b), type(str(b)))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+12 <class 'str'>
+12.345 <class 'str'>
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsection{여러 입력을 한 줄에서 받기}
+
+코딩 테스트나 알고리즘 문제에서는
+한 줄에 여러 값이 공백으로 주어지는 경우가 매우 많습니다.
+이때는 \texttt{split()}과 \texttt{map()}을 함께 사용합니다.
+
+\begin{conceptbox}
+\texttt{input().split()}은 한 줄 입력을 공백 기준으로 나누어
+문자열 리스트를 반환합니다.
+\texttt{map(int, ...)}를 사용하면 각 원소를 정수로 변환할 수 있습니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+N, M = map(int, input().split())
+print(N, M)
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{map(int, input().split())} 패턴은
+``정수 여러 개를 한 줄에서 입력받는'' 문제에서 매우 자주 등장합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\begin{exercisebox}
+다음 문제를 풀어보며 변수와 입력을 연습해보세요.
+\begin{enumerate}
+    \item 다음 코드를 실행하기 전에 출력 결과를 예측해보세요.
+\begin{verbatim}
+a = 10
+b = a
+b += 5
+print(a, b)
+\end{verbatim}
+    \vspace{1.2cm}
+
+    \item 사용자에게 정수 두 개를 입력받아 합을 출력하는 프로그램을 작성해보세요.
+    (힌트: \texttt{map(int, input().split())})
+    \vspace{1.2cm}
+
+    \item 다음 코드에서 \texttt{sep}와 \texttt{end}의 기본값이 무엇인지 서술해보세요.
+\begin{verbatim}
+print(1, 2, 3)
+print(1, 2, 3, sep="/")
+print(1, 2, 3, end="!")
+\end{verbatim}
+\end{enumerate}
+\end{exercisebox}
+
+\begin{readernotebox}
+이번 절에서 배운 내용을 스스로 정리해보세요.
+\begin{itemize}
+    \item 변수는 무엇이며, Python에서 변수는 어떤 방식으로 만들어지는가?
+    \vspace{1.0cm}
+    \item \texttt{input()}이 반환하는 자료형은 무엇인가?
+    \vspace{1.0cm}
+    \item 문자열을 정수/실수로 바꿀 때 사용하는 함수는 무엇인가?
+    \vspace{1.0cm}
+    \item \texttt{print()}의 \texttt{sep}와 \texttt{end}는 어떤 역할을 하는가?
+\end{itemize}
+\end{readernotebox}
+

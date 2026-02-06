@@ -1,0 +1,259 @@
+% =========================================================
+% \section{튜플(Tuple)}
+% =========================================================
+\section{튜플(Tuple)}
+
+여러 개의 값을 하나의 변수로 묶어
+함께 다루고 싶을 때,
+리스트(list) 외에도
+\textbf{튜플(tuple)}을 사용할 수 있습니다.
+튜플은 리스트와 매우 유사하지만,
+\textbf{한 번 생성하면 내부 값을 바꿀 수 없는 자료형}이라는 점에서
+중요한 차이가 있습니다.
+
+\begin{conceptbox}
+튜플(tuple)은 여러 개의 값을
+하나의 변수에 담아 사용하는 자료형입니다.
+튜플은 소괄호(\texttt{()})를 사용하여 생성하며,
+각 값은 쉼표로 구분합니다.
+
+튜플은 \textbf{불변(immutable)} 자료형이므로
+생성 이후에 요소를 추가하거나 삭제하거나 변경할 수 없습니다.
+\end{conceptbox}
+
+\begin{notebox}
+튜플 역시 리스트처럼 \textbf{순서(order)}가 있는 자료형입니다.
+따라서 인덱스를 사용하여 요소에 접근할 수 있으며,
+슬라이싱(slicing) 또한 지원합니다.
+\end{notebox}
+
+튜플의 기본적인 형태와 사용 예시는 다음과 같습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+# define tuple
+tuple_a = (123, 45, 6, "String", True)
+
+print(tuple_a[0])
+print(tuple_a[1:3])
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+123
+(45, 6)
+\end{verbatim}
+\end{examplebox}
+
+\subsection{튜플 생성하기}
+
+\subsubsection{괄호 생략과 튜플 패킹(packing)}
+파이썬에서는 소괄호를 생략해도
+쉼표(\texttt{,})가 있으면 튜플로 인식합니다.
+이를 \textbf{튜플 패킹(tuple packing)}이라고 합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+t = 1, 2, 3
+print(t)
+print(type(t))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+(1, 2, 3)
+<class 'tuple'>
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{원소가 하나인 튜플 (중요)}
+원소가 하나인 튜플을 만들 때는
+\textbf{반드시 쉼표가 필요}합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+a = (5)
+b = (5,)
+
+print(a, type(a))
+print(b, type(b))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+5 <class 'int'>
+(5,) <class 'tuple'>
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{(5)}는 단순히 괄호로 감싼 정수이며,
+\texttt{(5,)}만이 ``원소가 하나인 튜플''입니다.
+\end{notebox}
+
+\subsection{튜플 활용하기}
+
+\subsubsection{인덱싱과 슬라이싱}
+튜플은 시퀀스이므로 리스트와 동일하게
+인덱싱/슬라이싱이 가능합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+t = (10, 20, 30, 40, 50)
+
+print(t[0])
+print(t[-1])
+print(t[1:4])
+print(t[:3])
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+10
+50
+(20, 30, 40)
+(10, 20, 30)
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{튜플 언패킹(unpacking)}
+튜플은 여러 값을 한 번에 할당하는 데 매우 자주 쓰입니다.
+이를 \textbf{튜플 언패킹(tuple unpacking)}이라 합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+pair = (3, 5)
+x, y = pair
+print(x, y)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+3 5
+\end{verbatim}
+\end{examplebox}
+
+튜플 언패킹은 값 교환(swap)에서도 매우 유용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+a, b = 10, 20
+a, b = b, a
+print(a, b)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+20 10
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{확장 언패킹: \texttt{*} 사용하기}
+\texttt{*}를 사용하면
+여러 개의 값을 한꺼번에 받아올 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+t = (1, 2, 3, 4, 5)
+a, *mid, b = t
+
+print(a)
+print(mid)
+print(b)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+1
+[2, 3, 4]
+5
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{*mid}로 모아진 값들은 \textbf{리스트(list)}로 저장됩니다.
+\end{notebox}
+
+\subsubsection{불변(immutable)한 튜플 자료형}
+튜플은 불변 자료형이므로
+인덱스로 요소를 직접 변경할 수 없습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+t = (1, 2, 3)
+t[0] = 10
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+TypeError: 'tuple' object does not support item assignment
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+튜플은 ``안전하게 변하지 않는 데이터''를 표현할 때 유용합니다.
+또한 좌표 (x, y) 같은 \textbf{쌍(pair)}을 표현할 때 자주 사용됩니다.
+\end{notebox}
+
+\subsection{튜플 자료형 메서드}
+튜플은 불변 자료형이므로
+리스트처럼 많은 메서드를 제공하지 않습니다.
+대표적으로 다음 두 메서드만 자주 사용합니다.
+
+\subsubsection{\texttt{count(x)}}
+\begin{conceptbox}
+\texttt{count(x)}는 튜플에서 값이 \texttt{x}인 요소의 개수를 반환합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+t = (1, 2, 2, 3)
+print(t.count(2))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+2
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{\texttt{index(x)}}
+\begin{conceptbox}
+\texttt{index(x)}는 튜플에서 값이 \texttt{x}인 요소의 첫 번째 인덱스를 반환합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+t = ("a", "b", "c", "b")
+print(t.index("b"))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+1
+\end{verbatim}
+\end{examplebox}
+
+\begin{exercisebox}
+다음 코드의 실행 결과를 예측해보세요.
+\begin{enumerate}
+    \item \begin{verbatim}
+t = (1, 2, 3, 4, 5)
+print(t[1:4])
+print(t[-3:])
+    \end{verbatim}
+    \vspace{1.0cm}
+    \item \begin{verbatim}
+a = (5)
+b = (5,)
+print(type(a))
+print(type(b))
+    \end{verbatim}
+    \vspace{1.0cm}
+    \item 튜플이 리스트보다 유리한 상황을 2가지 이상 서술해보세요.
+\end{enumerate}
+\end{exercisebox}
+
+\begin{readernotebox}
+튜플의 핵심 개념(불변성, 언패킹, 원소 하나 튜플)을 정리해보세요.
+\end{readernotebox}

@@ -1,0 +1,258 @@
+% =========================================================
+% 딕셔너리/집합 심화 섹션 (시간복잡도 + 고급 기능)
+% =========================================================
+\subsection{딕셔너리(Dictionary) 심화}
+
+앞 절에서는 딕셔너리의 기본 문법(키-값, 추가/수정, 순회, 주요 메서드)을 학습했습니다.
+이번 절에서는 딕셔너리가 \textbf{왜 빠른지(시간복잡도)}와
+실전에서 자주 쓰이는 \textbf{고급 기능/패턴}을 정리합니다.
+
+\subsubsection{시간복잡도(Time Complexity)}
+딕셔너리는 내부적으로 \textbf{해시 테이블(hash table)}을 사용합니다.
+따라서 키를 이용한 조회/삽입/삭제가 평균적으로 매우 빠릅니다.
+
+\begin{conceptbox}
+딕셔너리의 주요 연산은 평균적으로 다음 시간복잡도를 가집니다.
+(평균은 해시 충돌이 심하지 않다고 가정한 경우이며, 구현 세부에 따라 달라질 수 있습니다.)
+\end{conceptbox}
+
+\begin{center}
+\begin{tabular}{@{}p{4.0cm}p{5.0cm}p{4.0cm}@{}}
+\toprule
+\textbf{연산} & \textbf{의미} & \textbf{평균 시간복잡도} \\
+\midrule
+\texttt{k in d} & 키 존재 여부 검사 & $O(1)$ \\
+\texttt{d[k]} & 키로 값 조회(존재 시) & $O(1)$ \\
+\texttt{d[k] = v} & 삽입/갱신 & $O(1)$ \\
+\texttt{del d[k]} & 삭제(키 존재 시) & $O(1)$ \\
+\texttt{d.get(k)} & 안전 조회(없으면 None/기본값) & $O(1)$ \\
+\texttt{len(d)} & 항목 개수 & $O(1)$ \\
+딕셔너리 순회 & 모든 키/값/쌍 방문 & $O(n)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{notebox}
+딕셔너리 연산이 평균 $O(1)$이라고 해서 ``항상'' $O(1)$인 것은 아닙니다.
+해시 충돌이 극단적으로 많거나 특정 상황에서는 더 느려질 수 있습니다.
+그러나 일반적인 문제 풀이에서는 평균 $O(1)$로 생각해도 충분합니다.
+\end{notebox}
+
+\subsubsection{고급 기능 1: \texttt{collections.defaultdict}}
+딕셔너리로 ``빈도 세기''나 ``그룹핑''을 할 때,
+키가 처음 등장했는지 확인하는 코드가 반복됩니다.
+\texttt{defaultdict}를 사용하면 이 과정을 간단히 만들 수 있습니다.
+
+\begin{conceptbox}
+\texttt{defaultdict(factory)}는
+존재하지 않는 키에 접근할 때 \texttt{factory}로 기본값을 자동 생성하는 딕셔너리입니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+from collections import defaultdict
+
+count = defaultdict(int)
+data = ["a", "b", "a", "c", "b", "a"]
+
+for x in data:
+    count[x] += 1
+
+print(dict(count))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+{'a': 3, 'b': 2, 'c': 1}
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{defaultdict(int)}의 기본값은 0,
+\texttt{defaultdict(list)}의 기본값은 \texttt{[]} 입니다.
+\end{notebox}
+
+\subsubsection{고급 기능 2: \texttt{setdefault(key, default)}}
+\texttt{setdefault}는 ``키가 없으면 기본값을 넣고 반환''하는 메서드입니다.
+그룹핑 작업에서 종종 사용됩니다.
+
+\begin{conceptbox}
+\texttt{d.setdefault(k, default)}는
+키 \texttt{k}가 있으면 \texttt{d[k]}를 반환하고,
+없으면 \texttt{d[k]=default}를 수행한 뒤 그 값을 반환합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+d = {}
+pairs = [("A", 1), ("B", 2), ("A", 3)]
+
+for k, v in pairs:
+    d.setdefault(k, []).append(v)
+
+print(d)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+{'A': [1, 3], 'B': [2]}
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+그룹핑은 \texttt{defaultdict(list)}로도 자주 해결할 수 있습니다.
+둘 중 무엇이 더 좋은지는 상황에 따라 달라지며, 가독성/팀 스타일에 맞추어 선택하면 됩니다.
+\end{notebox}
+
+\subsubsection{고급 기능 3: \texttt{Counter}로 빈도 세기}
+빈도 세기는 매우 자주 등장하는 패턴입니다.
+파이썬은 이를 위한 \texttt{collections.Counter}를 제공합니다.
+
+\begin{conceptbox}
+\texttt{Counter}는 ``원소의 개수''를 세는 특화 딕셔너리입니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+from collections import Counter
+
+data = ["a", "b", "a", "c", "b", "a"]
+cnt = Counter(data)
+
+print(cnt["a"])
+print(cnt.most_common(2))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+3
+[('a', 3), ('b', 2)]
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{딕셔너리 심화 연습 문제}
+\begin{exercisebox}
+\begin{enumerate}
+    \item 다음 리스트의 원소 빈도를 \texttt{dict}로 계산해보세요.
+    (힌트: \texttt{get} 또는 \texttt{defaultdict}를 사용해보세요.)
+    \begin{verbatim}
+data = [1, 2, 2, 3, 1, 2, 4]
+    \end{verbatim}
+    \vspace{1.0cm}
+    \item 다음 (학생, 점수) 리스트를 학생별 점수 리스트로 그룹핑해보세요.
+    \begin{verbatim}
+pairs = [("Kim", 90), ("Lee", 80), ("Kim", 70)]
+    \end{verbatim}
+\end{enumerate}
+\end{exercisebox}
+
+
+% =========================================================
+\subsection{집합(Set) 심화}
+
+앞 절에서는 집합의 기본 성질(중복 없음, 순서 없음)과
+기본 연산(추가/삭제, 멤버십 검사, 합/교/차집합)을 학습했습니다.
+이번 절에서는 집합의 \textbf{시간복잡도}와 함께,
+실전에서 유용한 \textbf{고급 기능/패턴}을 정리합니다.
+
+\subsubsection{시간복잡도(Time Complexity)}
+집합도 내부적으로 해시 테이블을 사용합니다.
+따라서 ``원소 존재 여부 확인''이 매우 빠릅니다.
+
+\begin{conceptbox}
+집합의 주요 연산은 평균적으로 다음 시간복잡도를 가집니다.
+\end{conceptbox}
+
+\begin{center}
+\begin{tabular}{@{}p{4.0cm}p{5.0cm}p{4.0cm}@{}}
+\toprule
+\textbf{연산} & \textbf{의미} & \textbf{평균 시간복잡도} \\
+\midrule
+\texttt{x in S} & 원소 존재 여부 검사 & $O(1)$ \\
+\texttt{S.add(x)} & 원소 추가 & $O(1)$ \\
+\texttt{S.remove(x)} & 원소 삭제(존재 시) & $O(1)$ \\
+\texttt{S.discard(x)} & 원소 삭제(없어도 안전) & $O(1)$ \\
+\texttt{len(S)} & 원소 개수 & $O(1)$ \\
+집합 순회 & 모든 원소 방문 & $O(n)$ \\
+\texttt{A | B, A \& B, A - B} & 집합 연산 & $O(|A| + |B|)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{고급 기능 1: \texttt{frozenset} (불변 집합)}
+집합은 뮤터블 자료형이므로
+딕셔너리의 키가 될 수 없습니다.
+하지만 \textbf{불변 집합}인 \texttt{frozenset}은 키로 사용할 수 있습니다.
+
+\begin{conceptbox}
+\texttt{frozenset}은 수정이 불가능한 집합입니다.
+따라서 해시 가능(hashable)하며, 딕셔너리의 키로 사용할 수 있습니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+A = frozenset([1, 2, 3])
+d = {A: "group1"}
+print(d[A])
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+group1
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{고급 기능 2: 부분집합/상위집합 검사}
+집합은 포함 관계를 빠르게 검사할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+A = {1, 2}
+B = {1, 2, 3}
+
+print(A <= B)   # subset
+print(A < B)    # proper subset
+print(B >= A)   # superset
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+True
+True
+True
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{고급 기능 3: 방문 체크(visited) 패턴}
+집합은 ``이미 본 값인지''를 체크하는 데 매우 유용합니다.
+그래프 탐색(DFS/BFS), 중복 제거, 상태 탐색(백트래킹)에서 자주 등장합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+visited = set()
+data = [3, 1, 3, 2, 1, 4]
+
+for x in data:
+    if x not in visited:
+        visited.add(x)
+        print("new:", x)
+\end{lstlisting}
+\end{examplebox}
+
+\subsubsection{집합 심화 연습 문제}
+\begin{exercisebox}
+\begin{enumerate}
+    \item 두 리스트 \texttt{A}, \texttt{B}가 주어졌을 때,
+    공통 원소만 출력하는 코드를 작성해보세요.
+    (힌트: 교집합 \texttt{\&}를 사용)
+    \vspace{1.0cm}
+    \item 어떤 원소들의 ``그룹''을 집합으로 표현하고,
+    그 그룹 자체를 딕셔너리의 키로 사용하고 싶습니다.
+    이때 \texttt{set} 대신 어떤 자료형을 사용해야 하는지 설명해보세요.
+\end{enumerate}
+\end{exercisebox}
+
+\begin{readernotebox}
+딕셔너리/집합의 평균 $O(1)$ 연산이 왜 중요한지,
+그리고 어떤 문제에서 큰 차이를 만드는지 정리해보세요.
+\end{readernotebox}

@@ -1,0 +1,368 @@
+% ---------------------------------------------------------
+\section{\texttt{if} 조건문}
+
+\begin{conceptbox}
+\texttt{if} 조건문은 \textbf{조건의 참/거짓}에 따라
+코드 실행 여부를 결정하는 구문입니다.
+이처럼 조건에 따라 실행 흐름이 갈라지는 것을 \textbf{조건 분기}라고 합니다.
+\end{conceptbox}
+
+\subsection{\texttt{if}의 기본 형태}
+
+\begin{examplebox}
+\begin{lstlisting}
+score = 85
+
+if score >= 60:
+    print("Pass")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Pass
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\textbf{콜론(\texttt{:})}은 조건문이 끝났음을 알리는 표시입니다.
+또한 Python은 \textbf{들여쓰기(indentation)}가 문법이므로,
+조건이 참일 때 실행할 문장은 반드시 같은 수준으로 들여쓰기 되어야 합니다.
+\end{notebox}
+
+\subsubsection{들여쓰기와 코드 블록(Code Block)}
+
+\begin{conceptbox}
+Python에서 \textbf{코드 블록(code block)}은 같은 들여쓰기 수준으로 묶인 코드의 집합입니다.
+조건문, 반복문, 함수 등은 코드 블록을 만들며,
+블록 내부는 동일한 들여쓰기 규칙을 지켜야 합니다.
+\end{conceptbox}
+
+\begin{notebox}
+들여쓰기는 보통 \textbf{공백 4칸}을 권장합니다.
+또한 \textbf{탭(tab)과 공백(space)을 섞어 쓰면} 예기치 않은 오류가 발생할 수 있으므로,
+한 방식으로 통일하는 습관이 중요합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{논리 연산자와 조건문: 흔한 실수}
+
+초보자가 자주 하는 실수 중 하나는,
+사람의 언어로는 자연스러워 보이지만 Python 문법으로는 틀린 조건식을 작성하는 것입니다.
+
+\begin{notebox}
+다음과 같은 코드는 \textbf{의도한 대로 동작하지 않습니다}.
+\end{notebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+num = 4
+
+if num == 2 or 4 or 6:
+    print("Matched")
+\end{lstlisting}
+\end{examplebox}
+
+위 조건식은 사람 입장에서는 ``num이 2 또는 4 또는 6이면''처럼 보이지만,
+Python에서는 \texttt{4}와 \texttt{6}이 \textbf{그 자체로 참 같은 값(truthy)}으로 해석되어
+조건이 거의 항상 참이 되어버립니다.
+
+\begin{conceptbox}
+\textbf{올바른 방식}은 각각을 비교한 결과를 논리 연산자로 연결하는 것입니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+num = 4
+
+if num == 2 or num == 4 or num == 6:
+    print("Matched")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Matched
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+더 간단하게는 \texttt{in} 연산자를 사용할 수도 있습니다.
+\end{notebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+num = 4
+
+if num in (2, 4, 6):
+    print("Matched")
+\end{lstlisting}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsection{중첩 if문(Nested if)}
+
+\begin{conceptbox}
+\textbf{중첩 if문}은 if문 안에 또 다른 if문이 들어간 형태입니다.
+논리적으로는 \texttt{and}와 비슷한 의미를 만들 수도 있습니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+num = 50
+
+if num >= 0 and num <= 100:
+    print("In range")
+\end{lstlisting}
+\end{examplebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+num = 50
+
+if num >= 0:
+    if num <= 100:
+        print("In range")
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+두 코드는 비슷한 일을 하지만, 상황에 따라 가독성은 달라질 수 있습니다.
+\textbf{조건이 단순하면 \texttt{and}를}, 조건이 복잡하거나 단계적 처리가 필요하면 \textbf{중첩 if}를 고려할 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{\texttt{if} \texttt{else}와 \texttt{elif}}
+
+\subsection{\texttt{if-else}}
+
+\begin{conceptbox}
+\texttt{else}는 \texttt{if} 조건이 거짓일 때 실행되는 구문입니다.
+서로 반대되는 두 경우를 다룰 때 \texttt{else}를 쓰면
+불필요한 비교를 줄이고 코드 구조가 더 명확해집니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+number = 13
+
+if number % 2 == 0:
+    print("Even")
+else:
+    print("Odd")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Odd
+\end{verbatim}
+\end{examplebox}
+
+\subsection{\texttt{elif}로 여러 조건 처리하기}
+
+\begin{conceptbox}
+\texttt{elif}는 ``else if''의 줄임말로,
+조건이 3개 이상일 때 순차적으로 분기 처리를 할 수 있게 해줍니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = int(input("Please enter an integer: ")) # user enters 42
+
+if x < 0:
+    x = 0
+    print('Negative changed to zero')
+elif x == 0:
+    print('Zero')
+elif x == 1:
+    print('Single')
+else:
+    print('More')
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+More
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{elif}를 사용할 때는
+\textbf{앞 조건이 이미 걸러낸 범위를 다시 검사하고 있지 않은지} 확인해보면 좋습니다.
+예를 들어 위 코드에서 \texttt{score >= 80}은
+이미 \texttt{score < 90}인 상태에서만 검사됩니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{조건식에 불이 아닌 값이 들어오면? (Truthy / Falsy)}
+
+\begin{conceptbox}
+\texttt{if}의 조건식에는 원칙적으로 불 값이 들어가지만,
+Python은 조건식에 다른 자료형이 들어와도 \textbf{참/거짓으로 변환하여} 판단합니다.
+\end{conceptbox}
+
+\begin{notebox}
+다음 값들은 대표적으로 \textbf{False로 평가(falsy)}됩니다.
+\begin{itemize}
+    \item \texttt{None}
+    \item 숫자 \texttt{0}, \texttt{0.0}
+    \item 비어 있는 컨테이너: \texttt{""}, \texttt{[]}, \texttt{()}, \texttt{\{\}}, \texttt{set()}
+\end{itemize}
+위 경우를 제외하면 대부분은 \textbf{True로 평가(truthy)}됩니다.
+\end{notebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(bool(0))
+print(bool(1))
+print(bool(""))
+print(bool("text"))
+print(bool([]))
+print(bool([1, 2]))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+False
+True
+False
+True
+False
+True
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsection{기술: if문에서 들여쓰기가 필수인가요?}
+
+결론부터 말하면,
+\textbf{if문에서 들여쓰기는 거의 항상 필수}입니다.
+다만, \textbf{아주 예외적인 경우}로
+조건과 실행할 문장이 모두 한 줄로 표현될 수 있을 때는
+들여쓰기를 사용하지 않고 작성할 수도 있습니다.
+
+\subsubsection{한 줄 if문 (Single-line if statement)}
+
+if문 뒤에 실행할 문장이 \textbf{하나뿐인 경우},
+다음과 같이 조건과 실행문을 같은 줄에 작성할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 10
+if x > 0: print("Positive")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Positive
+\end{verbatim}
+\end{examplebox}
+
+이와 같은 형태는 문법적으로 올바르며,
+Python 인터프리터도 정상적으로 이를 해석합니다.
+
+\subsubsection{그러나 왜 거의 사용하지 않을까요?}
+
+\begin{notebox}
+한 줄 if문은 문법적으로 가능하지만,
+\textbf{가독성이 크게 떨어지기 때문에}
+일반적인 코드 작성에서는 권장되지 않습니다.
+\end{notebox}
+
+그 이유는 다음과 같습니다.
+
+\begin{itemize}
+    \item 조건과 실행 코드가 한 줄에 섞여 있어 읽기 어렵습니다.
+    \item 실행할 코드가 조금만 길어져도 줄이 과도하게 길어집니다.
+    \item 이후 코드를 수정하거나 확장하기가 매우 불편합니다.
+    \item 여러 조건(\texttt{elif}, \texttt{else})과 함께 사용하기 어렵습니다.
+\end{itemize}
+
+특히 초보자 단계에서는
+한 줄 if문을 사용하면
+\textbf{들여쓰기 기반 코드 구조를 이해하는 데 방해}가 될 수 있습니다.
+
+\subsubsection{권장되는 작성 방식}
+
+따라서 본 교재에서는
+조건문의 구조를 명확히 드러낼 수 있도록
+다음과 같은 형태를 \textbf{표준적인 작성 방식}으로 사용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 10
+
+if x > 0:
+    print("Positive")
+\end{lstlisting}
+\end{examplebox}
+
+\begin{conceptbox}
+Python에서 들여쓰기는 단순한 보기 좋음의 문제가 아니라,
+\textbf{코드의 의미와 실행 범위를 결정하는 문법 요소}입니다.
+조건문, 반복문, 함수, 클래스 모두에서
+들여쓰기는 핵심적인 역할을 합니다.
+\end{conceptbox}
+
+\begin{notebox}
+실무나 협업 환경에서는
+한 줄 if문보다
+\textbf{명확한 들여쓰기를 사용하는 코드가 훨씬 선호}됩니다.
+따라서 초반 학습 단계에서는
+한 줄 if문보다는 들여쓰기 형태에 익숙해지는 것을 권장합니다.
+\end{notebox}
+
+
+% ---------------------------------------------------------
+\subsection{\texttt{pass}와 \texttt{NotImplementedError}}
+
+\begin{conceptbox}
+코드를 작성할 때 전체 구조(조건문/반복문/함수/클래스)를 먼저 잡아두고,
+내용은 나중에 채우는 경우가 많습니다.
+이때 Python에서는 ``빈 블록''을 허용하지 않기 때문에,
+아무 코드라도 한 줄은 들어 있어야 합니다.
+\end{conceptbox}
+
+\subsubsection{\texttt{pass}: 아무것도 하지 않기}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 10
+
+if x > 0:
+    pass
+else:
+    pass
+
+print("Done")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Done
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{pass}는 ``진짜 아무것도 하지 않는다''는 의미입니다.
+``나중에 구현할 예정''임을 표현할 때도 자주 사용합니다.
+\end{notebox}
+
+\subsubsection{\texttt{raise NotImplementedError}: 미구현을 명확히 알리기}
+
+\begin{examplebox}
+\begin{lstlisting}
+def future_feature():
+    raise NotImplementedError("This feature is not implemented yet.")
+
+future_feature()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+NotImplementedError: This feature is not implemented yet.
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{NotImplementedError}는 ``아직 구현되지 않았다''는 뜻을 명확히 드러내므로,
+협업이나 큰 프로젝트에서 특히 유용합니다.
+\end{notebox}

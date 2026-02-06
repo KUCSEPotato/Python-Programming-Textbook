@@ -1,0 +1,611 @@
+% ========================================
+% 2.4
+% ========================================
+\section{숫자 자료형 (Number)}
+
+Python에서 수는 단순한 계산 대상이 아니라,
+프로그램에서 다양한 연산과 처리를 수행하기 위한
+\textbf{기본적인 자료형} 중 하나입니다.
+그러나 수학에서 배운 것처럼,
+숫자는 하나의 종류로만 이루어져 있지 않으며
+여러 기준에 따라 구분할 수 있습니다.
+
+그중에서도 가장 익숙한 구분은
+\textbf{정수(integer)}와 \textbf{실수(floating-point number)}입니다.
+Python 역시 이러한 수학적 개념을 반영하여
+정수형과 실수형을 서로 다른 자료형으로 제공합니다.
+
+그렇다면 이 둘은 어떤 기준으로 구분될까요?
+Python에서는 숫자의 \textbf{표현 방식}, 특히
+\textbf{소수점의 존재 여부}에 따라
+정수형과 실수형을 구분합니다.
+
+소수점이 없는 숫자는 정수형으로,
+소수점이 포함된 숫자는 실수형으로 처리됩니다.
+이때 \texttt{0}은 정수형이고,
+\texttt{0.0}은 실수형이라는 점에 주의해야 합니다.
+두 값은 수학적으로는 같아 보일 수 있지만,
+Python에서는 서로 다른 자료형으로 취급됩니다.
+
+% ========================================
+% 2.4.1
+% ========================================
+\subsection{정수형 (integer)}
+
+\begin{conceptbox}
+정수형(\texttt{int})은 소수점이 없는 수를 표현하는 자료형입니다.
+Python의 정수형은 양의 정수, 음의 정수, 그리고 0을 모두 포함하며,
+자릿수의 크기에 제한이 없는 것이 특징입니다.
+\end{conceptbox}
+
+수학에서 사용하는 정수 개념과 마찬가지로,
+정수형은 주로 개수, 순서, 횟수와 같이
+\textbf{정확한 값이 필요한 상황}에서 사용됩니다.
+
+% ========================================
+% 2.4.1.1
+% ========================================
+\subsubsection{정수형의 기본 예}
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 10
+b = -3
+c = 0
+
+print(a)
+print(b)
+print(c)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+10
+-3
+0
+\end{verbatim}
+\end{examplebox}
+
+% ========================================
+% 2.4.1.2
+% ========================================
+\subsubsection{정수형의 연산}
+
+\begin{conceptbox}
+정수형은 사칙연산과 같은 기본적인 수치 연산을 지원합니다.
+정수형끼리의 연산 결과는
+연산의 종류에 따라 정수 또는 실수가 될 수 있습니다.
+\end{conceptbox}
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l l p{6.5cm}}
+\hline
+\textbf{연산자} & \textbf{의미} & \textbf{설명} \\
+\hline
+\texttt{+} & 덧셈 & 두 정수를 더한 결과를 반환합니다. \\
+
+\texttt{-} & 뺄셈 & 두 정수의 차를 계산합니다. \\
+
+\texttt{*} & 곱셈 & 두 정수를 곱한 결과를 반환합니다. \\
+
+\texttt{/} & 나눗셈 & 나눗셈을 수행하며, 결과는 항상 실수형(\texttt{float})입니다. \\
+
+\texttt{//} & 정수 나눗셈 & 나눗셈의 몫만 계산하며, 결과는 정수형입니다. \\
+
+\texttt{\%} & 나머지 & 나눗셈의 나머지를 계산합니다. \\
+
+\texttt{**} & 거듭제곱 & 왼쪽 값을 오른쪽 값만큼 거듭제곱합니다. \\
+\hline
+\end{tabular}
+\caption{정수형(\texttt{int})에서 사용되는 주요 산술 연산자}
+\end{table}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 7
+y = 2
+
+print(x + y)
+print(x - y)
+print(x * y)
+print(x // y)
+print(x % y)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+9
+5
+14
+3
+1
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+정수 나눗셈에서 \texttt{//} 연산자는
+몫만을 계산하는 연산자이며,
+결과는 항상 정수형입니다.
+\end{notebox}
+
+% ========================================
+% 2.4.2
+% ========================================
+\subsection{실수형 (floating-point number)}
+
+\begin{conceptbox}
+실수형(\texttt{float})은 소수점을 포함하는 수를 표현하는 자료형입니다.
+Python의 실수형은 수학적 실수를 컴퓨터 내부에서 \textbf{근사값}으로 표현합니다.
+또한 실수형에서도 정수형과 동일한 산술 연산자(\texttt{+}, \texttt{-}, \texttt{*}, \texttt{/} 등)를 사용할 수 있으며,
+사용 방법 또한 동일합니다.
+\end{conceptbox}
+
+실수형은 측정값, 비율, 평균과 같이
+\textbf{소수점 단위의 값이 필요한 상황}에서 자주 사용됩니다.
+
+% ========================================
+% 2.4.2.1
+% ========================================
+\subsubsection{실수형의 기본 예}
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 3.14
+b = 0.5
+c = -2.0
+
+print(a)
+print(b)
+print(c)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+3.14
+0.5
+-2.0
+\end{verbatim}
+\end{examplebox}
+
+위 예시와 같이 소수점을 사용하여 실수형을 표현할 수 있으며,
+또한 \textbf{지수 표기법(scientific notation)}을 사용하여
+실수형을 표현할 수도 있습니다.
+이때 \texttt{e}는 10의 거듭제곱을 의미합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 1.23e2
+y = 4.5e-1
+
+print(x)
+print(y)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+123.0
+0.45
+\end{verbatim}
+\end{examplebox}
+
+Python에서 실수형을 지수 표기법(\texttt{e})으로 표현할 수 있도록 한 이유는
+매우 크거나 매우 작은 수를
+\textbf{효율적이고 명확하게 표현하기 위해서}입니다.
+
+과학 계산, 공학 계산, 머신러닝과 같은 분야에서는
+$10^{10}$, $10^{-9}$와 같이
+크기의 차이가 큰 수들이 자주 등장합니다.
+이러한 수를 일반적인 소수점 형태로 표현하면
+자릿수가 길어져 가독성이 떨어지고,
+의미를 한눈에 파악하기 어렵습니다.
+
+지수 표기법을 사용하면
+수의 크기와 비율을 간결하게 표현할 수 있으며,
+실수형의 내부 표현 방식과도 잘 부합합니다.
+실제로 실수형은 메모리에서
+지수와 가수 형태로 저장되므로,
+지수 표기법은 이러한 구조를
+사람이 이해하기 쉽게 표현한 방법이라고 볼 수 있습니다.
+\begin{notebox}
+메모리와 관련하여 더 자세한 내용은 2.4.3을 참고해주세요.
+\end{notebox}
+
+% ========================================
+% 2.4.2.2
+% ========================================
+\subsubsection{정수형과 실수형의 연산}
+
+\begin{conceptbox}
+정수형과 실수형이 함께 연산될 경우,
+Python은 자동으로 정수형을 실수형으로 변환하여
+연산을 수행합니다.
+이를 \textbf{형 변환(type conversion)}이라고 합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 5
+y = 2.0
+
+print(x + y)
+print(x * y)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+7.0
+10.0
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+서로 다른 자료형의 값을
+정의되지 않은 방식으로 연산하려 하면
+\texttt{TypeError} 예외가 발생합니다.
+
+예를 들어,
+문자열과 숫자 자료형을
+\texttt{+} 연산자로 연산하려 할 경우,
+문자열은 \texttt{+}를 문자열 연결 연산자로 해석하고,
+숫자는 덧셈 연산자로 해석하려 하기 때문에
+연산의 의미가 충돌하게 됩니다.
+
+\begin{lstlisting}
+str1 = "Python"
+int1 = 123
+print(str1 + int1)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+TypeError: can only concatenate str (not "int") to str
+\end{verbatim}
+\end{notebox}
+
+위 노트와 형 변환은 구분되는 것임을 기억해주세요.
+
+% ========================================
+% 2.4.2.3
+% ========================================
+\subsubsection{실수형의 주의사항}
+
+\begin{conceptbox}
+실수형은 컴퓨터 내부에서 이진수 기반의 근사값으로 표현되기 때문에,
+일부 실수 연산에서는
+기대와 다른 결과가 나타날 수 있습니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 0.1
+b = 0.2
+
+print(a + b)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+0.30000000000000004
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+이와 같은 현상은 실수형의 표현 방식에 따른 것으로,
+프로그램의 오류가 아닙니다.
+머신러닝이나 수치 계산에서는
+이러한 특성을 고려하여 실수를 다루는 것이 중요합니다.
+\end{notebox}
+
+% ========================================
+% 2.4.3
+% ========================================
+\subsection{심화: 숫자 자료형이 메모리에 저장되는 방식}
+
+컴퓨터의 메모리는 모든 데이터를 비트(bit) 단위로 저장합니다.
+숫자 자료형 역시 예외가 아니며,
+정수형과 실수형 모두 메모리에서는
+0과 1로 이루어진 비트들의 나열로 표현됩니다.
+다만, 같은 숫자라 하더라도
+어떤 자료형으로 해석하느냐에 따라
+메모리에 저장되는 구조와 해석 방식은 달라집니다.
+즉, 숫자 자료형은 값의 종류뿐만 아니라
+\textbf{메모리에 저장되고 해석되는 방식까지 포함하는 개념}이라고 볼 수 있습니다.
+
+특히 실수형의 경우,
+모든 실수를 무한히 정확하게 표현할 수 없기 때문에
+\textbf{한정된 개수의 비트}를 사용하여 값을 저장합니다.
+이로 인해 실수형은 실제 값을 그대로 저장하는 것이 아니라,
+가장 가까운 값으로 근사하여 표현하게 됩니다.
+이러한 제한된 비트 표현 방식 때문에
+일부 실수 연산에서는
+기대와 다른 결과가 나타날 수 있으며,
+이는 컴퓨터가 실수를 저장하는 구조적 특성에서 비롯된 현상입니다.
+
+\begin{notebox}
+해당 내용에 대해 더 깊이 알고 싶은 독자는
+추가적인 자료를 참고하기 바랍니다.
+본 교재에서는 개념적 이해에 필요한 범위까지만 다루며,
+세부적인 내용은 다루지 않습니다.
+\end{notebox}
+
+\begin{readernotebox}
+다음 질문에 답하며 정수형과 실수형을 정리해 보세요.
+
+\begin{itemize}
+    \item 정수형과 실수형의 차이점은 무엇인가?
+    \vspace{1.2cm}
+
+    \item 정수형끼리의 나눗셈에서 \texttt{//} 연산자를 사용하는 이유는 무엇인가?
+    \vspace{1.2cm}
+
+    \item 실수형 연산에서 발생할 수 있는 오차는 왜 생기는가?
+    \vfill
+\end{itemize}
+\end{readernotebox}
+
+% ========================================
+% 2.4.4
+% ========================================
+\subsection{숫자 자료형 메서드}
+
+지금까지 정수형과 실수형의 개념과 연산 방법을 살펴보았습니다.
+문자열과 마찬가지로 숫자 자료형 역시
+값을 처리하기 위한 여러 기능을 제공합니다.
+다만 숫자 자료형의 경우,
+문자열처럼 다양한 전용 메서드를 가지기보다는
+\textbf{내장 함수}의 형태로 기능이 제공되는 경우가 많습니다.
+
+이번 절에서는 숫자 자료형과 함께 자주 사용되는
+대표적인 함수와 메서드들을 살펴봅니다.
+
+\begin{notebox}
+이 절에서는 편의상
+\texttt{abs()}, \texttt{round()}와 같은 기능을
+숫자 자료형의 \textbf{메서드}로 소개하고 있습니다.
+이는 숫자 값을 처리하는 기능이라는 점에서
+문자열 메서드와 역할이 유사하기 때문입니다.
+
+다만 엄밀히 말하면,
+이러한 기능들은
+\texttt{숫자.메서드()} 형태가 아니라
+\texttt{함수(숫자)} 형태로 호출되는
+\textbf{내장 함수}입니다.
+즉, 호출 방식은 함수이지만,
+개념적으로는 숫자 객체를 처리하는 메서드 역할을 한다고
+이해하면 됩니다.
+\end{notebox}
+
+\subsubsection{절댓값 함수 \texttt{abs()}}
+
+\begin{conceptbox}
+\texttt{abs()} 함수는 숫자의 절댓값을 반환합니다.
+정수형과 실수형 모두에 대해 사용할 수 있으며,
+부호를 제거한 크기만을 얻고자 할 때 사용합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(abs(-5))
+print(abs(3.2))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+5
+3.2
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{반올림 함수 \texttt{round()}}
+
+\begin{conceptbox}
+\texttt{round()} 함수는 실수 값을 반올림한 결과를 반환합니다.
+두 번째 인자를 사용하면
+소수점 이하 자릿수를 지정할 수 있습니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(round(3.14159))
+print(round(3.14159, 2))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+3
+3.14
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+실수형은 근사값으로 저장되기 때문에,
+\texttt{round()}의 결과가
+직관과 다르게 나타나는 경우도 있을 수 있습니다.
+\end{notebox}
+
+그렇다면 Python은 왜 은행가 반올림을 채택하고 있을까요?
+
+\begin{notebox}
+은행가 반올림은 통계 계산이나
+대규모 수치 연산에서
+반올림 오차가 누적되는 것을 줄이기 위해 사용됩니다.
+이 때문에 Python은 \texttt{round()} 함수에
+이 방식을 채택하고 있습니다.
+\end{notebox}
+
+\subsubsection{심화: 일반적인 반올림과 \texttt{round()} 함수의 차이}
+
+\begin{conceptbox}
+일반적으로 수학에서 사용하는 반올림은
+소수점 아래 첫 자리가 5 이상이면 올리고,
+4 이하이면 내리는 방식(사사오입)을 의미합니다.
+그러나 Python의 \texttt{round()} 함수는
+이와는 다른 규칙을 사용합니다.
+\end{conceptbox}
+
+Python의 \texttt{round()} 함수는
+\textbf{은행가 반올림(bankers' rounding)} 또는
+\textbf{짝수 반올림(round half to even)} 방식을 따릅니다.
+이 방식에서는 반올림하려는 값이 정확히 0.5인 경우,
+가장 가까운 \textbf{짝수}로 반올림합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+print(round(2.5))
+print(round(3.5))
+print(round(4.5))
+print(round(5.5))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+2
+4
+4
+6
+\end{verbatim}
+\end{examplebox}
+
+위 결과에서 볼 수 있듯이,
+\texttt{round(2.5)}는 3이 아니라 2로,
+\texttt{round(3.5)}는 4로 반올림됩니다.
+이는 반올림 결과가 특정 방향으로 치우치는 것을 방지하기 위한 설계입니다.
+
+\begin{notebox}
+일반적인 사사오입 반올림은 다음으로 배울 메서드를 이용하여 구현할 수 있습니다.
+\end{notebox}
+
+\subsubsection{정수형 변환 메서드 \texttt{int()}}
+
+\begin{conceptbox}
+\texttt{int()} 함수는 숫자나 문자열을
+정수형으로 변환합니다.
+실수형을 정수형으로 변환할 경우,
+소수점 이하 값은 버려집니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(int(3.7))
+print(int(-2.9))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+3
+-2
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{int()} 함수는 반올림을 수행하지 않으며,
+단순히 소수점 이하를 제거합니다.
+\end{notebox}
+
+\begin{exercisebox}
+입력이 \texttt{x}라고 할 때,
+\texttt{int()} 함수를 사용하여
+사사오입 반올림을 구현해 보세요.
+정답은 다음 노트박스에 제시되어 있으니,
+정답을 보기 전에
+먼저 스스로 해결해 보시기 바랍니다.
+\end{exercisebox}
+
+\newpage
+
+\begin{notebox}
+앞의 문제를 스스로 해결해 보셨나요?
+양의 실수에 대해서는,
+반올림하고자 하는 값에 \texttt{0.5}를 더한 뒤
+정수형으로 변환하는 방식으로
+사사오입 반올림을 구현할 수 있습니다.
+
+다음은 그 예시입니다.
+
+\begin{verbatim}
+int(x + 0.5)
+\end{verbatim}
+
+이 식이 왜 사사오입 반올림처럼 동작하는지,
+직접 수치를 대입하여
+계산 과정을 따라가며 이해해 보시기 바랍니다.
+
+단, 이 방식은 음수에 대해서는
+일반적인 반올림과 다르게 동작할 수 있으므로
+주의가 필요합니다.
+\end{notebox}
+
+\begin{readernotebox}
+자유롭게 지금까지의 내용을 정리해보세요.
+
+\end{readernotebox}
+
+\subsubsection{실수형 변환 메서드 \texttt{float()}}
+
+\begin{conceptbox}
+\texttt{float()} 함수는 정수형이나 문자열을
+실수형으로 변환합니다.
+계산 결과를 실수형으로 처리하고자 할 때
+자주 사용됩니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(float(5))
+print(float("3.14"))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+5.0
+3.14
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{정수형의 진법 관련 메서드}
+
+\begin{conceptbox}
+정수형은 서로 다른 진법으로 표현할 수 있으며,
+Python은 이를 위한 함수들을 제공합니다.
+\end{conceptbox}
+
+\begin{itemize}
+    \item \texttt{bin()} : 2진수 문자열로 변환
+    \item \texttt{oct()} : 8진수 문자열로 변환
+    \item \texttt{hex()} : 16진수 문자열로 변환
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(bin(10))
+print(oct(10))
+print(hex(10))
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+0b1010
+0o12
+0xa
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+2진수, 8진수, 16진수는
+컴퓨터 내부에서 숫자를 표현하거나
+메모리 구조를 이해하는 데 자주 사용됩니다.
+특히 2진수는
+컴퓨터가 데이터를 저장하고 처리하는
+기본적인 표현 방식입니다.
+
+또한 Python에서 진법 변환 함수의 출력 결과에는
+각 진법을 나타내는 접두어가 함께 붙습니다.
+\texttt{0b}는 2진수,
+\texttt{0o}는 8진수,
+\texttt{0x}는 16진수를 의미합니다.
+\end{notebox}
+
+
+\newpage

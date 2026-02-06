@@ -1,0 +1,223 @@
+% =========================================================
+% \section{집합(Set)}
+% =========================================================
+\section{집합(Set)}
+
+리스트와 튜플은
+\textbf{중복을 허용}합니다.
+하지만 어떤 상황에서는
+중복이 없는 값들만 모아서 관리하거나,
+값이 존재하는지 빠르게 확인하고 싶을 때가 있습니다.
+이때 사용하는 자료형이 \textbf{집합(set)}입니다.
+
+\begin{conceptbox}
+집합(set)은 \textbf{중복을 허용하지 않는} 자료형입니다.
+또한 집합은 \textbf{순서(order)가 없습니다}.
+따라서 인덱스로 접근할 수 없으며,
+대신 특정 값의 존재 여부를 빠르게 검사할 수 있습니다.
+
+집합은 중괄호(\texttt{\{\}}) 또는 \texttt{set()}을 사용하여 생성합니다.
+\end{conceptbox}
+
+\begin{notebox}
+빈 중괄호 \texttt{\{\}}는 집합이 아니라 \textbf{딕셔너리}입니다.
+따라서 빈 집합을 만들려면 반드시 \texttt{set()}을 사용해야 합니다.
+\end{notebox}
+
+\subsection{집합 생성하기}
+
+\subsubsection{기본 생성}
+\begin{examplebox}
+\begin{lstlisting}
+s = {1, 2, 3, 3, 2}
+print(s)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+{1, 2, 3}
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{\texttt{set()} 생성자}
+\begin{examplebox}
+\begin{lstlisting}
+a = set([1, 1, 2, 3])
+b = set("banana")
+print(a)
+print(b)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+{1, 2, 3}
+{'b', 'a', 'n'}
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{set("banana")}는 문자열 전체를 원소로 넣는 것이 아니라,
+문자 하나하나를 원소로 넣습니다.
+문자열 전체를 원소로 넣고 싶다면 \texttt{\{"banana"\}}처럼 작성해야 합니다.
+\end{notebox}
+
+\subsection{집합 활용하기}
+
+\subsubsection{원소 추가/삭제}
+\begin{conceptbox}
+집합은 \textbf{뮤터블(mutable)} 자료형입니다.
+따라서 원소를 추가하거나 삭제할 수 있습니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+s = set()
+s.add(1)
+s.add(2)
+s.add(2)
+print(s)
+
+s.remove(1)
+print(s)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+{1, 2}
+{2}
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{remove(x)}는 원소가 없으면 \texttt{KeyError}가 발생합니다.
+원소가 없어도 에러 없이 넘어가고 싶다면 \texttt{discard(x)}를 사용합니다.
+\end{notebox}
+
+\subsubsection{존재 여부 확인 (멤버십 테스트)}
+집합은 특정 값이 존재하는지 확인하는 연산이 매우 빠릅니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+s = {1, 2, 3}
+print(2 in s)
+print(5 in s)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+True
+False
+\end{verbatim}
+\end{examplebox}
+
+\subsection{집합 연산(합집합/교집합/차집합)}
+집합은 수학의 집합처럼
+합집합, 교집합, 차집합 등의 연산을 지원합니다.
+
+\begin{conceptbox}
+\begin{itemize}
+    \item 합집합(union): \texttt{A | B} 또는 \texttt{A.union(B)}
+    \item 교집합(intersection): \texttt{A \& B} 또는 \texttt{A.intersection(B)}
+    \item 차집합(difference): \texttt{A - B} 또는 \texttt{A.difference(B)}
+    \item 대칭차집합(symmetric difference): \texttt{A \^ B} 또는 \texttt{A.symmetric\_difference(B)}
+\end{itemize}
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+A = {1, 2, 3}
+B = {3, 4, 5}
+
+print(A | B)
+print(A & B)
+print(A - B)
+print(A ^ B)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+{1, 2, 3, 4, 5}
+{3}
+{1, 2}
+{1, 2, 4, 5}
+\end{verbatim}
+\end{examplebox}
+
+\subsection{집합 자료형 메서드}
+
+\subsubsection{\texttt{add(x)}, \texttt{update(iterable)}}
+\begin{conceptbox}
+\texttt{add(x)}는 원소 하나를 추가하고,
+\texttt{update(iterable)}는 여러 원소를 한 번에 추가합니다.
+\end{conceptbox}
+
+\subsubsection{\texttt{remove(x)}, \texttt{discard(x)}, \texttt{pop()}}
+\begin{conceptbox}
+\texttt{remove(x)}는 원소를 삭제하며, 없으면 에러가 발생합니다.
+\texttt{discard(x)}는 원소가 없어도 에러가 발생하지 않습니다.
+\texttt{pop()}은 임의의 원소 하나를 제거하여 반환합니다.
+\end{conceptbox}
+
+\subsubsection{부분집합/상위집합}
+\begin{conceptbox}
+집합은 포함 관계를 검사할 수 있습니다.
+\begin{itemize}
+    \item \texttt{A <= B}: $A$가 $B$의 부분집합
+    \item \texttt{A < B}: $A$가 $B$의 진부분집합
+\end{itemize}
+\end{conceptbox}
+
+\subsection{집합 원소의 조건: 해시 가능(hashable)}
+\begin{conceptbox}
+집합의 원소도 딕셔너리의 키와 마찬가지로
+\textbf{해시 가능(hashable)}해야 합니다.
+일반적으로 \textbf{불변(immutable)} 자료형만 원소가 될 수 있습니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+s = set()
+s.add((1, 2))   # tuple OK
+print(s)
+\end{lstlisting}
+\end{examplebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+s = set()
+s.add([1, 2])   # list not allowed
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+TypeError: unhashable type: 'list'
+\end{verbatim}
+\end{examplebox}
+
+\subsection{실전에서 집합을 쓰는 대표 상황}
+\begin{itemize}
+    \item \textbf{중복 제거}: \texttt{set(list)}로 중복 제거
+    \item \textbf{빠른 존재 검사}: 방문 체크(visited), 포함 여부 검사
+    \item \textbf{두 데이터의 공통/차이 비교}: 교집합/차집합 연산 활용
+\end{itemize}
+
+\begin{exercisebox}
+\begin{enumerate}
+    \item 빈 집합을 \texttt{\{\}}로 만들 수 없는 이유를 설명해보세요.
+    \vspace{1.0cm}
+    \item 다음 코드의 실행 결과를 예측해보세요.
+\begin{verbatim}
+A = {1, 2, 3, 4}
+B = {3, 4, 5}
+print(A & B)
+print(A - B)
+print(A | B)
+\end{verbatim}
+    \vspace{1.0cm}
+    \item \texttt{remove}와 \texttt{discard}의 차이를 설명해보세요.
+\end{enumerate}
+\end{exercisebox}
+
+\begin{readernotebox}
+집합의 핵심 개념(중복 없음, 순서 없음, 멤버십 검사, 집합 연산)을 정리해보세요.
+\end{readernotebox}

@@ -1,0 +1,65 @@
+\documentclass[11pt, a4paper]{book}
+
+% --------------------
+% 프리앰블 불러오기
+% --------------------
+\input{preamble}
+
+\title{\Huge \textbf{Python Programming Textbook}\\
+\vspace{0.5em}
+\Large From Basics to Practice}
+
+\author{Jeongmin Lee}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+
+% --------------------
+% Chapter 입력
+% --------------------
+
+% chapter1
+\input{chapters/ch01_intro}
+
+% chapter2
+\input{[KR_Python]Textbook/chapters/2/ch02_00_Data Type}
+\input{[KR_Python]Textbook/chapters/2/ch02_01_자료와 기초자료형}
+\input{[KR_Python]Textbook/chapters/2/ch02_02_메서드}
+\input{[KR_Python]Textbook/chapters/2/ch02_03_문자열}
+\input{[KR_Python]Textbook/chapters/2/ch02_04_숫자}
+\input{[KR_Python]Textbook/chapters/2/ch02_05_리스트}
+\input{[KR_Python]Textbook/chapters/2/ch02_06_튜플}
+\input{[KR_Python]Textbook/chapters/2/ch02_07_딕셔너리}
+\input{[KR_Python]Textbook/chapters/2/ch02_08_집합}
+\input{[KR_Python]Textbook/chapters/2/ch02_09_딕셔너리와 집합 심화}
+\input{[KR_Python]Textbook/chapters/2/ch02_10_변수와 사용자입력}
+
+% chapter3
+\input{[KR_Python]Textbook/chapters/3/ch03_00_Conditional statement}
+\input{[KR_Python]Textbook/chapters/3/ch03_01_Boolean 자료형}
+\input{[KR_Python]Textbook/chapters/3/ch03_02_if문}
+
+
+
+
+
+\backmatter
+\chapter*{Appendix}
+
+This appendix provides additional resources and reference materials
+to support the contents of this textbook.
+
+The complete example codes used throughout the book are available
+in the following GitHub repository:
+
+\noindent
+GitHub: \href{https://github.com/KUCSEPotato/Python_TextBook.git}
+{\texttt{https://github.com/KUCSEPotato/Python\_TextBook.git}}
+
+\end{document}

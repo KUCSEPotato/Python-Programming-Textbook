@@ -1,0 +1,175 @@
+% ========================================
+% 2.1
+% ========================================
+\section{자료(Data)와 기초 자료형(Basic Data Type)}
+\begin{conceptbox}
+프로그래밍에서 \textbf{자료(Data)}란 프로그램이 처리하는 모든 값(value)을 의미합니다.
+예를 들어 \texttt{10}, \texttt{"Python"}, \texttt{True}와 같은 값들이 자료에 해당합니다.
+
+이러한 자료는 그 종류에 따라 서로 다른 방식으로 처리되며,
+이때 자료를 구분하는 기준을 \textbf{자료형(Data Type)}이라고 합니다.
+\end{conceptbox}
+위 두 개념을 처음 접할 때, 자료와 자료형의 차이가 크게 와닿지 않을 수 있습니다.
+아래는 대표적인 기초 자료형과 그 예시를 담고 있는 표입니다.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c c}
+\hline
+\textbf{자료형(Data Type)} & \textbf{예시 값(Value)} \\
+\hline
+정수형 (int) & \texttt{1}, \texttt{-3}, \texttt{42} \\
+실수형 (float) & \texttt{3.14}, \texttt{0.01} \\
+문자열형 (str) & \texttt{"AI"}, \texttt{"Python"} \\
+논리형 (bool) & \texttt{True}, \texttt{False} \\
+\hline
+\end{tabular}
+\caption{Python의 기초 자료형과 각 자료형에 속하는 예시 값}
+\end{table}
+
+여기서 주의할 점은, \texttt{int}, \texttt{str}, \texttt{bool}은 자료형이고,
+\texttt{3}, \texttt{"Hello"}, \texttt{True}는 해당 자료형에 속하는 자료(값)라는 점입니다.
+
+\begin{notebox}
+코드를 작성하다 보면 특정 변수(이번 챕터에서 간단히 설명합니다.)의 자료형을 확인해야 하는 경우가 있습니다.
+Python에서는 이러한 상황을 위해 \texttt{type()} 함수를 제공합니다. 
+\texttt{type()} 함수는 변수에 저장된 값이 어떤 자료형에 속하는지를 알려줍니다.
+
+\begin{lstlisting}
+var1 = "Hello!"
+var2 = 20041015
+
+print(type(var1))
+print(type(var2))
+
+# Result
+# <class 'str'>
+# <class 'int'>
+\end{lstlisting}
+결과의 \texttt{str}이란 string을 짧게 표현한 것이고, \texttt{int}는 interger를 짧게 표현한 것입니다.
+\end{notebox}
+
+\begin{notebox}
+\texttt{print()} 함수는 값을 화면에 출력하는 Python의 기본 함수입니다.
+\textbf{함수 원형(Function Signature)은 다음과 같습니다.}
+\begin{lstlisting}
+print(*objects, sep=' ', end='\n')
+\end{lstlisting}
+
+각 인자의 의미는 다음과 같습니다.
+\begin{itemize}
+    \item \texttt{objects} : 출력할 값들 (여러 개 가능)
+    \item \texttt{sep} : 여러 값을 출력할 때 값 사이에 삽입되는 구분자 (기본값은 공백)
+    \item \texttt{end} : 출력이 끝난 뒤 추가되는 문자열 (기본값은 줄 바꿈)
+\end{itemize}
+지금 당장은 이 Note의 내용을 완벽히 이해하지 못해도 괜찮습니다. 
+중요한 것은 괄호 안에 출력하고 싶은 값을 넣으면, 해당 값이 화면에 그대로 출력된다는 것입니다.
+\end{notebox}
+
+
+% ========================================
+% 2.1.1
+% ========================================
+\subsection{더 많은 자료형과 구분 기준}
+
+앞에서 살펴본 정수형, 실수형, 문자열, 불린형 외에도
+Python에는 다양한 자료형들이 존재합니다.
+대표적으로 리스트(list), 튜플(tuple), 집합(set), 딕셔너리(dict)와 같은 자료형들도
+Python에서 기본적으로 제공되는 자료형입니다.
+
+이들 자료형은 모두 Python에서 \textbf{객체(object)}이며,
+언어 차원에서 기본적으로 지원된다는 점에서
+모두 \textbf{기본 자료형}에 포함됩니다.
+다만 각 자료형의 성격과 사용 목적이 다르기 때문에,
+몇 가지 기준에 따라 구분하여 이해하는 것이 좋습니다.
+
+\paragraph{1. 담을 수 있는 값의 개수에 따른 구분}
+\begin{itemize}
+    \item \textbf{단일 값(스칼라) 자료형}: 
+    하나의 값만을 표현하는 자료형으로,
+    \texttt{int}, \texttt{float}, \texttt{bool}, \texttt{str} 등이 이에 해당합니다.
+    \item \textbf{컨테이너 자료형}:
+    여러 개의 값을 하나로 묶어 관리하는 자료형으로,
+    \texttt{list}, \texttt{tuple}, \texttt{set}, \texttt{dict} 등이 이에 해당합니다.
+\end{itemize}
+
+\paragraph{2. 값의 변경 가능 여부에 따른 구분}
+\begin{itemize}
+    \item \textbf{변경 가능한(mutable) 자료형}:
+    생성된 이후에도 내부 상태를 변경할 수 있는 자료형으로,
+    \texttt{list}, \texttt{dict}, \texttt{set} 등이 이에 해당합니다.
+    \item \textbf{변경 불가능한(immutable) 자료형}:
+    생성된 이후에는 값을 직접 변경할 수 없는 자료형으로,
+    \texttt{int}, \texttt{float}, \texttt{bool}, \texttt{str}, \texttt{tuple} 등이 이에 해당합니다.
+\end{itemize}
+\medskip
+이러한 구분은 각 자료형의 동작 방식과 메서드의 특성을 이해하는 데 중요한 기준이 되며,
+앞으로 자료형별 메서드를 살펴볼 때도 계속해서 활용될 것입니다.
+
+\begin{notebox}
+Python에서 우리가 다루는 거의 모든 ``값''은 \textbf{객체(object)}입니다.
+객체는 한 마디로 \textit{\textbf{(1) 데이터(상태) + (2) 동작(기능)}}을 함께 가진 존재입니다.
+\medskip
+\begin{itemize}
+    \item \textbf{상태(state)}: 객체가 ``가지고 있는 데이터'' (예: 리스트 안의 원소들, 문자열의 내용)
+    \item \textbf{동작(behavior)}: 그 객체가 제공하는 기능 (예: 리스트에 원소 추가, 문자열에서 공백 제거)
+\end{itemize}
+\medskip
+예를 들어,
+\medskip
+\begin{itemize}
+    \item \texttt{[1, 2, 3]} 는 \textbf{리스트 객체}이고, 내부 상태로 원소 \texttt{1,2,3}을 가집니다.
+    \item \texttt{" hello "} 는 \textbf{문자열 객체}이고, 내부 상태로 글자들을 가집니다.
+\end{itemize}
+\medskip
+그리고 객체는 자신과 관련된 기능을 \texttt{메서드(method)} 형태로 제공합니다.
+즉, \textbf{메서드는 ``그 객체에 소속된 함수''}이며, 보통 객체의 상태를 읽거나/가공하거나/바꿉니다.
+\end{notebox}
+
+% ========================================
+% 2.1.2
+% ========================================
+\subsection{심화: 자료형과 객체는 같은 말인가요?}
+
+결론부터 말하면, \textbf{자료형(type)과 객체(object)는 같은 말이 아닙니다}.
+다만 Python에서는 이 둘의 관계가 매우 밀접하기 때문에 처음 접할 때 혼동하기 쉽습니다. 
+확실히 집고 넘어가기 위해 아래의 표를 참고해주세요.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l p{5.2cm} p{6.5cm}}
+\hline
+\textbf{구분} & \textbf{설명} & \textbf{구체적 예} \\
+\hline
+자료형 (type)
+& 값의 종류와 동작 방식을 정의하는 기준
+& \texttt{int}, \texttt{float}, \texttt{str}, \texttt{list} \\
+객체 (object)
+& 자료형에 따라 생성된 실제 값
+& \texttt{3} (int 객체), \texttt{"hello"} (str 객체), \texttt{[1, 2, 3]} (list 객체) \\
+\hline
+\end{tabular}
+\caption{자료형과 객체의 차이}
+\end{table}
+
+\paragraph{둘의 관계}
+Python에서는 우리가 다루는 모든 값이 객체이며,
+각 객체는 반드시 하나의 자료형(type)에 속합니다.
+즉, 자료형은 객체의 종류를 나타내고,
+객체는 그 자료형에 따라 사용할 수 있는 메서드와 동작이 결정됩니다.
+
+예를 들어,
+\medskip
+\begin{itemize}
+    \item 숫자 \texttt{3}은 \texttt{int} 자료형에 속한 객체이고,
+    \item 문자열 \texttt{"abc"}는 \texttt{str} 자료형에 속한 객체입니다.
+\end{itemize}
+\medskip
+따라서 Python에서는
+\textit{``자료형이 객체이다''}라고 말하기보다는,
+\textbf{``자료형의 값이 객체이다''}라고 이해하는 것이 가장 정확합니다.
+
+\begin{notebox}
+    Python에서는 변수가 값을 직접 저장하는 것이 아니라, 객체를 가리키는 이름으로 동작합니다.
+\end{notebox}
