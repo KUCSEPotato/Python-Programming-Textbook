@@ -1,0 +1,21 @@
+# Build files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# PDFs
+# *.pdf
+
+# Overleaf
+*.blg
+*.bbl
+
+# Local folders (if needed)
+templates/
+preamble/
