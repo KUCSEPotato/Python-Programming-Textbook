@@ -1,0 +1,457 @@
+\section{for 반복문}
+
+\texttt{for} 반복문은
+\textbf{반복 횟수가 미리 정해져 있는 경우}에 주로 사용됩니다.
+또한 리스트, 튜플, 문자열, 딕셔너리와 같이
+\textbf{여러 개의 요소를 가지는 자료형}을
+하나씩 순서대로 처리할 때 매우 자주 사용됩니다.
+
+즉, \texttt{for} 문은
+``정해진 범위만큼 반복한다''거나
+``자료형 안에 들어 있는 요소들을 하나씩 꺼내어 사용한다''
+라는 목적에 적합한 반복문입니다.
+
+\begin{conceptbox}
+\texttt{for} 문은
+\textbf{순회(iteration)}를 기반으로 동작하는 반복문입니다.
+여기서 순회란,
+여러 개의 값으로 이루어진 자료를
+앞에서부터 하나씩 차례대로 방문하는 것을 의미합니다.
+\end{conceptbox}
+
+\subsection{\texttt{for} 문의 기본 형태}
+
+\texttt{for} 문의 기본 구조는 다음과 같습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for variable in iterable:
+    # code block
+    ...
+\end{lstlisting}
+\end{examplebox}
+
+각 부분의 의미는 다음과 같습니다.
+
+\begin{itemize}
+    \item \texttt{variable} : 반복할 때마다 값을 하나씩 받아 저장할 변수
+    \item \texttt{iterable} : 반복 가능한 대상 (예: \texttt{range()}, 리스트, 문자열 등)
+    \item \texttt{:} 이후의 들여쓰기 된 부분 : 반복 실행될 코드 블록
+\end{itemize}
+
+\begin{notebox}
+\texttt{for} 문 역시 \texttt{if} 문과 마찬가지로
+\textbf{콜론(\texttt{:})과 들여쓰기}가 문법의 일부입니다.
+들여쓰기가 잘못되면 \texttt{IndentationError}가 발생하므로 주의해야 합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{range()}와 \texttt{for} 반복문}
+
+앞에서 \texttt{range()} 함수가
+\textbf{반복 가능한(iterable) 객체}라는 점을 살펴보았습니다.
+이제는 \texttt{for} 문과 함께 사용하면서,
+\textbf{반복 횟수를 제어하는 도구}로서의 사용법에 집중해보겠습니다.
+
+\begin{conceptbox}
+\texttt{range()} 함수는
+\textbf{정수의 범위를 표현하는 이터러블}을 생성하며,
+\texttt{for} 반복문과 함께 사용하면
+\textbf{정해진 횟수만큼 코드를 반복 실행}할 수 있습니다.
+\end{conceptbox}
+
+\subsubsection{\texttt{range(n)} 형태}
+
+가장 단순한 형태는 \texttt{range(n)} 입니다.
+이 경우 \textbf{0부터 n-1까지}의 정수가 순서대로 생성됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(5):
+    print(i)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+0
+1
+2
+3
+4
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{range(n)}은
+\textbf{n번 반복}한다는 의미로 매우 자주 사용됩니다.
+반복 변수 \texttt{i}는
+0부터 시작하여 1씩 증가합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsubsection{\texttt{range(start, end)} 형태}
+
+\texttt{range(start, end)} 형태를 사용하면
+\textbf{시작 값과 끝 값을 직접 지정}할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(3, 7):
+    print(i)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+3
+4
+5
+6
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{range(start, end)}에서
+\textbf{end 값은 포함되지 않습니다}.
+즉, \texttt{start} 이상 \texttt{end} 미만의 값들이 생성됩니다.
+이 규칙은 Python 전반에서 매우 중요하므로 반드시 기억해야 합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsubsection{\texttt{range(start, end, step)} 형태}
+
+세 번째 인자인 \texttt{step}을 사용하면
+\textbf{증가 폭}을 조절할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(0, 10, 2):
+    print(i)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+0
+2
+4
+6
+8
+\end{verbatim}
+\end{examplebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(10, 0, -1):
+    print(i)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{step}은 음수도 사용할 수 있으며,
+이를 통해 \textbf{역순 반복}도 구현할 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsubsection{반복 변수의 이름}
+
+\texttt{for} 문에서 사용하는 반복 변수의 이름은 의미에 맞게 자유롭게 정할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for count in range(3):
+    print("Hello")
+
+for index in range(5):
+    print(index)
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+반복 변수의 이름으로
+\texttt{i}, \texttt{j}, \texttt{k}를 자주 사용하지만,
+\textbf{의미가 드러나는 이름을 사용하는 습관}이
+가독성과 유지보수에 도움이 됩니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsubsection{\texttt{range()}와 반복 횟수의 관계}
+
+\begin{conceptbox}
+\texttt{for} 문에서
+\texttt{range()}의 길이는
+\textbf{반복 횟수}와 정확히 일치합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+for _ in range(5):
+    print("Repeat")
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+Repeat
+Repeat
+Repeat
+Repeat
+Repeat
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+반복 변수의 값을 사용하지 않을 경우,
+관례적으로 \texttt{\_}를 변수 이름으로 사용합니다.
+이는 “이 값은 사용하지 않는다”는 의미를 담고 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{리스트와 문자열 순회}
+
+\texttt{for} 문은
+\textbf{여러 개의 요소를 가진 자료형을 하나씩 꺼내어 처리}하는 데 매우 적합합니다.
+이때 가장 많이 사용되는 자료형이 바로
+\textbf{리스트(list)}와 \textbf{문자열(string)}입니다.
+
+\begin{conceptbox}
+\texttt{for} 문은
+\textbf{인덱스가 아니라 값 자체를 하나씩 꺼내어 반복}합니다.
+즉, 반복 변수에는
+리스트나 문자열 안에 들어 있는 \textbf{요소(element)}가 직접 들어옵니다.
+\end{conceptbox}
+
+\subsubsection{리스트 순회}
+
+\begin{examplebox}
+\begin{lstlisting}
+fruits = ["apple", "banana", "cherry"]
+
+for fruit in fruits:
+    print(fruit)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+apple
+banana
+cherry
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+위 코드에서 \texttt{fruit} 변수에는
+각 반복마다 리스트의 요소가 하나씩 들어갑니다.
+즉, \texttt{fruit}에는
+\texttt{"apple"}, \texttt{"banana"}, \texttt{"cherry"}가
+차례대로 저장됩니다.
+\end{notebox}
+
+\subsubsection{문자열 순회}
+
+문자열 역시 문자들의 순서 있는 집합이므로,
+\texttt{for} 문으로 순회할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+word = "Python"
+
+for ch in word:
+    print(ch)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+P
+y
+t
+h
+o
+n
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+문자열을 순회하면
+\textbf{문자 하나하나가 차례대로 반복 변수에 들어옵니다}.
+이는 문자열의 슬라이싱이나 인덱싱과 함께
+자주 활용되는 패턴입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{range()}를 사용하는 경우}
+
+앞에서 \texttt{range()}는
+\textbf{숫자가 들어 있는 리스트가 아니라 반복 가능한 객체(iterable)}라고 배웠습니다.
+그렇다면 \texttt{for} 문에서는
+언제 \texttt{range()}를 사용해야 할까요?
+
+\begin{conceptbox}
+\texttt{range()}는
+\textbf{반복 횟수}나 \textbf{인덱스(index)}가 필요한 경우에 주로 사용합니다.
+반면, 값 자체만 필요하다면
+굳이 \texttt{range()}를 사용할 필요는 없습니다.
+\end{conceptbox}
+
+\subsubsection{값만 필요한 경우}
+
+\begin{examplebox}
+\begin{lstlisting}
+numbers = [10, 20, 30]
+
+for num in numbers:
+    print(num)
+\end{lstlisting}
+\end{examplebox}
+
+이 경우에는
+\textbf{리스트의 값 자체만 필요}하므로
+\texttt{range()}를 사용할 이유가 없습니다.
+
+\subsubsection{인덱스가 필요한 경우}
+
+\begin{examplebox}
+\begin{lstlisting}
+numbers = [10, 20, 30]
+
+for i in range(len(numbers)):
+    print(i, numbers[i])
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+정리하면 다음과 같습니다.
+\begin{itemize}
+    \item 값만 필요하다면 \texttt{for x in iterable} 형태를 사용
+    \item 인덱스가 필요하다면 \texttt{range()}와 \texttt{len()}을 함께 사용
+\end{itemize}
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{중첩 \texttt{for} 문}
+
+\texttt{for} 문 안에 또 다른 \texttt{for} 문을 넣을 수 있으며,
+이를 \textbf{중첩 for문(nested for loop)}이라고 합니다.
+
+\begin{conceptbox}
+중첩 for문은
+\textbf{바깥 반복이 한 번 실행될 때마다
+안쪽 반복이 처음부터 끝까지 실행}되는 구조를 가집니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(3):
+    for j in range(2):
+        print(i, j)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+0 0
+0 1
+1 0
+1 1
+2 0
+2 1
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+중첩 for문은
+2차원 자료 처리, 표 형태 출력, 좌표 계산, 구구단 출력 등에서
+자주 사용됩니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{break}와 \texttt{continue}}
+
+반복문을 실행하다 보면,
+특정 조건에서 반복을 \textbf{중단}하거나
+\textbf{일부 반복을 건너뛰고 싶을 때}가 있습니다.
+이를 위해 Python은 \texttt{break}와 \texttt{continue} 키워드를 제공합니다.
+
+\subsubsection{\texttt{break}: 반복문 즉시 종료}
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(10):
+    if i == 5:
+        break
+    print(i)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+0
+1
+2
+3
+4
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{break}를 만나면
+반복문은 즉시 종료되며,
+이후의 반복은 실행되지 않습니다.
+\end{notebox}
+
+\subsubsection{\texttt{continue}: 현재 반복만 건너뛰기}
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(6):
+    if i % 2 == 0:
+        continue
+    print(i)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+1
+3
+5
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{continue}는
+현재 반복을 즉시 종료하고
+다음 반복으로 넘어가게 합니다.
+반복문 전체를 종료하지는 않습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+
+\begin{exercisebox}
+다음 문제를 풀어보세요.
+\begin{enumerate}
+    \item 리스트 \texttt{[3, 6, 9, 12]}의 모든 요소를 출력하는 코드를 작성하세요.
+    \item 문자열 \texttt{"Computer"}에서 모음(a, e, i, o, u)만 출력하세요.
+    \item 1부터 100까지의 수 중에서
+    처음으로 7의 배수를 만나면 반복을 종료하도록 코드를 작성하세요.
+\end{enumerate}
+\end{exercisebox}
+
+\begin{readernotebox}
+이번 절에서 배운 내용을 스스로 정리해보세요.
+\begin{itemize}
+    \item \texttt{for} 문은 무엇을 반복하는가?
+    \item \texttt{range()}는 언제 사용하는가?
+    \item 값 순회와 인덱스 순회의 차이는 무엇인가?
+    \item \texttt{break}와 \texttt{continue}의 차이는 무엇인가?
+\end{itemize}
+\end{readernotebox}
+

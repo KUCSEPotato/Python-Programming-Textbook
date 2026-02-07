@@ -1,0 +1,226 @@
+% ---------------------------------------------------------
+\section{이터러블(iterable)}
+
+앞에서 반복문의 필요성에 대해 살펴보았습니다.
+그렇다면 반복문은
+\textbf{무엇을 기준으로 반복을 수행할까요?}
+
+Python의 반복문, 특히 \texttt{for} 반복문은
+아무 값이나 반복할 수 있는 것이 아니라,
+\textbf{이터러블(iterable)}이라는 성질을 가진 대상에 대해서만
+반복을 수행할 수 있습니다.
+
+즉, \texttt{for} 문을 제대로 이해하기 위해서는
+먼저 \textbf{이터러블이 무엇인지}를 이해해야 합니다.
+이번 절에서는
+\texttt{for} 문을 배우기에 앞서,
+이터러블의 개념과 특징을 먼저 살펴봅니다.
+
+\begin{conceptbox}
+이터러블(iterable)이란,
+\textbf{여러 개의 값을 순서대로 가지고 있으며}
+\textbf{한 번에 하나씩 꺼낼 수 있는 객체}를 의미합니다.
+이러한 객체는 \texttt{for} 문을 통해
+앞에서부터 차례대로 반복할 수 있습니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{이터러블의 핵심 개념}
+
+이터러블의 개념은 다음 한 문장으로 요약할 수 있습니다.
+
+\begin{conceptbox}
+이터러블은
+\textbf{``\texttt{for} 문으로 반복할 수 있는 대상''}입니다.
+\end{conceptbox}
+
+Python에서 \texttt{for} 반복문은
+이터러블 안에 들어 있는 요소를
+하나씩 변수에 담아가며
+같은 코드 블록을 반복 실행합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for x in [1, 2, 3]:
+    print(x)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+1
+2
+3
+\end{verbatim}
+\end{examplebox}
+
+위 예시에서
+리스트 \texttt{[1, 2, 3]}은
+여러 개의 값을 순서대로 가지고 있으므로
+대표적인 이터러블입니다.
+
+% ---------------------------------------------------------
+\subsection{대표적인 이터러블 자료형}
+
+Python에서 자주 사용되는 이터러블 자료형은 다음과 같습니다.
+
+\begin{itemize}
+    \item \texttt{list} : 여러 개의 값을 순서대로 저장
+    \item \texttt{tuple} : 변경할 수 없는 리스트
+    \item \texttt{str} : 문자들의 나열
+    \item \texttt{dict} : key들의 집합
+    \item \texttt{range} : 일정 범위의 정수 시퀀스
+\end{itemize}
+
+이 자료형들은 모두
+\texttt{for} 문과 함께 사용할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for ch in "Python":
+    print(ch)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+P
+y
+t
+h
+o
+n
+\end{verbatim}
+\end{examplebox}
+
+문자열은 여러 개의 문자로 이루어져 있기 때문에
+문자 하나하나를 순서대로 꺼낼 수 있으며,
+따라서 이터러블로 취급됩니다.
+
+% ---------------------------------------------------------
+\subsection{이터러블이 아닌 값}
+
+반대로,
+다음과 같은 값들은
+이터러블이 아닙니다.
+
+\begin{itemize}
+    \item 정수(\texttt{int})
+    \item 실수(\texttt{float})
+    \item 불 값(\texttt{bool})
+\end{itemize}
+
+이 값들은
+여러 개의 요소를 담고 있지 않기 때문에
+\texttt{for} 문으로 반복할 수 없습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for x in 10:
+    print(x)
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+이터러블이 아니라는 것은
+``반복해서 하나씩 꺼낼 대상이 없다''는 의미에 가깝습니다.
+따라서 \texttt{for} 문을 적용할 수 없습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{range()}와 이터러블}
+
+\texttt{range()} 함수는
+반복문에서 가장 자주 사용되는
+대표적인 이터러블입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(5):
+    print(i)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+0
+1
+2
+3
+4
+\end{verbatim}
+\end{examplebox}
+
+\texttt{range(5)}는
+숫자 0부터 4까지를
+차례대로 생성하는 이터러블이며,
+반복 횟수가 명확한 경우에 매우 유용합니다.
+
+\begin{notebox}
+\texttt{range()}는
+모든 숫자를 미리 저장하는 것이 아니라,
+필요할 때 하나씩 생성하는 방식으로 동작합니다.
+따라서 메모리 사용 측면에서도 효율적입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{심화: 엄격한 의미에서의 이터러블}
+
+지금까지는
+이터러블을
+``\texttt{for} 문으로 반복할 수 있는 대상''
+이라는 관점에서 설명했습니다.
+이 수준의 이해만으로도
+대부분의 반복문을 사용하는 데에는 전혀 문제가 없습니다.
+
+하지만 Python 내부 관점에서
+이터러블은 보다 \textbf{엄격한 정의}를 가지고 있습니다.
+
+\begin{conceptbox}
+엄격한 의미에서
+\textbf{이터러블(iterable)}이란,
+\textbf{반복자(iterator)를 만들어낼 수 있는 객체}를 의미합니다.
+\end{conceptbox}
+
+즉,
+이터러블 자체가
+``하나씩 값을 꺼내는 역할''을 직접 수행하는 것이 아니라,
+\textbf{반복을 담당하는 객체(iterator)를 제공할 수 있는 대상}입니다.
+
+Python에서 \texttt{for} 문이 실행될 때의 내부 흐름을
+개념적으로 표현하면 다음과 같습니다.
+
+\begin{itemize}
+    \item \texttt{for} 문은 먼저 이터러블 객체를 받는다
+    \item 이터러블로부터 반복자(iterator)를 얻는다
+    \item 반복자를 통해 값을 하나씩 꺼내며 반복을 수행한다
+\end{itemize}
+
+이러한 구조 덕분에
+리스트, 문자열, \texttt{range}와 같이
+겉보기에는 서로 전혀 다른 자료형들도
+같은 \texttt{for} 문으로 반복할 수 있습니다.
+
+\begin{notebox}
+현재 단계에서는
+``이터러블은 \texttt{for} 문으로 반복 가능한 대상''
+이라고 이해해도 충분합니다.
+반복자(iterator)와 내부 동작 방식은
+이후 고급 문법이나 내부 구현을 다룰 때
+자연스럽게 다시 등장하게 됩니다.
+\end{notebox}
+
+정리하면,
+\begin{itemize}
+    \item 이터러블은 반복 가능한 대상이다.
+    \item 엄격하게는, 반복자를 만들어낼 수 있는 객체이다.
+    \item \texttt{for} 문은 이터러블의 내부 구조를 몰라도 사용할 수 있도록 설계되어 있다.
+\end{itemize}
+
+\begin{readernotebox}
+다음 질문에 답하며 이터러블 개념을 정리해 보세요.
+\begin{itemize}
+    \item 이터러블이란 무엇인가?
+    \vspace{1.0cm}
+    \item 문자열이 이터러블인 이유는 무엇인가?
+    \vspace{1.0cm}
+    \item \texttt{range(3)}은 어떤 값들을 차례대로 만들어내는가?
+\end{itemize}
+\end{readernotebox}

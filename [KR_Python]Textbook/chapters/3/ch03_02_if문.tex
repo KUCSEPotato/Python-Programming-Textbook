@@ -62,10 +62,7 @@ Python에서 \textbf{코드 블록(code block)}은 같은 들여쓰기 수준으
 
 초보자가 자주 하는 실수 중 하나는,
 사람의 언어로는 자연스러워 보이지만 Python 문법으로는 틀린 조건식을 작성하는 것입니다.
-
-\begin{notebox}
 다음과 같은 코드는 \textbf{의도한 대로 동작하지 않습니다}.
-\end{notebox}
 
 \begin{examplebox}
 \begin{lstlisting}
@@ -79,10 +76,7 @@ if num == 2 or 4 or 6:
 위 조건식은 사람 입장에서는 ``num이 2 또는 4 또는 6이면''처럼 보이지만,
 Python에서는 \texttt{4}와 \texttt{6}이 \textbf{그 자체로 참 같은 값(truthy)}으로 해석되어
 조건이 거의 항상 참이 되어버립니다.
-
-\begin{conceptbox}
 \textbf{올바른 방식}은 각각을 비교한 결과를 논리 연산자로 연결하는 것입니다.
-\end{conceptbox}
 
 \begin{examplebox}
 \begin{lstlisting}
