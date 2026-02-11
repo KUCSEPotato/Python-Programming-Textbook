@@ -1,0 +1,441 @@
+% 가변 인자 (임의의 인자)
+% 람다 표현식 사용법
+% 함수 도큐멘테이션
+% 함수 어노테이션
+% ---------------------------------------------------------
+% 가변 인자 (임의의 인자)
+% 람다 표현식 사용법
+% 함수 도큐멘테이션
+% 함수 어노테이션
+% ---------------------------------------------------------
+\section{함수 심화}
+
+이제부터는 함수를 ``쓸 줄 아는 수준''을 넘어,
+더 다양한 호출 형태와 문서화 방법, Python다운 표현을 배웁니다.
+
+\subsection{가변 인자(임의의 인자): \texttt{*args}, \texttt{**kwargs}}
+
+일반적인 함수는 인자의 개수가 고정되어 있습니다.
+하지만 실제 프로그램에서는
+\textbf{호출할 때마다 인자의 개수가 달라지는 함수}가 필요할 때도 많습니다.
+
+예를 들어,
+\begin{itemize}
+  \item 여러 숫자를 한 번에 더하는 함수
+  \item 옵션 설정을 자유롭게 넘길 수 있는 함수
+\end{itemize}
+와 같은 경우입니다.
+
+이럴 때 사용하는 문법이
+\texttt{*args}와 \texttt{**kwargs}입니다.
+
+\begin{conceptbox}
+\begin{itemize}
+  \item \texttt{*args}:
+        남는 위치 인자들을 \textbf{튜플(tuple)}로 묶어 받습니다.
+  \item \texttt{**kwargs}:
+        남는 키워드 인자들을 \textbf{딕셔너리(dict)}로 묶어 받습니다.
+\end{itemize}
+\end{conceptbox}
+
+\begin{notebox}
+\texttt{*}와 \texttt{**}는 단순한 기호가 아니라,
+``여러 개를 하나로 모은다''는 의미를 가집니다.
+실제로 함수 내부에서 \texttt{args}와 \texttt{kwargs}의 타입을 출력해 보면
+각각 튜플과 딕셔너리임을 확인할 수 있습니다.
+\end{notebox}
+
+\subsubsection{\texttt{*args} 예시}
+
+\begin{examplebox}
+\begin{lstlisting}
+def add_all(*args):
+    total = 0
+    for x in args:
+        total += x
+    return total
+
+print(add_all(1, 2, 3))
+print(add_all(10, 20))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+6
+30
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{\texttt{**kwargs} 예시}
+
+\begin{examplebox}
+\begin{lstlisting}
+def print_info(**kwargs):
+    for k, v in kwargs.items():
+        print(k, v)
+
+print_info(name="Alice", age=20, major="CS")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+name Alice
+age 20
+major CS
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{*args}와 \texttt{**kwargs}는 관례적인 이름입니다.
+다른 이름을 써도 되지만, 대부분의 코드가 이 이름을 사용하므로
+처음부터 관례를 따르는 것을 권장합니다.
+\end{notebox}
+
+\subsubsection{\texttt{*args}와 \texttt{**kwargs}의 핵심 차이}
+
+\texttt{*args}와 \texttt{**kwargs}는 모두
+``가변 개수의 인자를 받기 위한 문법''이지만,
+\textbf{받는 인자의 형태와 목적은 명확히 다릅니다}.
+
+\begin{conceptbox}
+\begin{itemize}
+  \item \texttt{*args}는
+        \textbf{위치 인자(positional arguments)}를 받기 위해 사용합니다.
+  \item \texttt{**kwargs}는
+        \textbf{키워드 인자(keyword arguments)}를 받기 위해 사용합니다.
+\end{itemize}
+\end{conceptbox}
+
+이를 정리하면 다음과 같습니다.
+
+\begin{center}
+\begin{tabular}{c|c|c}
+구분 & \texttt{*args} & \texttt{**kwargs} \\
+\hline
+받는 인자 종류 & 위치 인자 & 키워드 인자 \\
+묶이는 자료형 & 튜플 (\texttt{tuple}) & 딕셔너리 (\texttt{dict}) \\
+값의 순서 & 순서 유지 & 순서보다 이름이 중요 \\
+주요 용도 & 개수만 중요한 값들 & 의미가 중요한 옵션들
+\end{tabular}
+\end{center}
+
+\subsubsection{언제 어떤 것을 사용해야 할까요?}
+
+\texttt{*args}는
+\textbf{인자의 개수는 중요하지만,
+각 값의 이름이나 의미가 크게 중요하지 않을 때} 적합합니다.
+예를 들어 여러 숫자를 더하거나,
+여러 값을 한꺼번에 처리해야 하는 경우에 자주 사용됩니다.
+
+반면 \texttt{**kwargs}는
+\textbf{각 인자의 의미가 이름으로 구분되어야 할 때} 적합합니다.
+옵션 설정, 속성 전달, 설정값 묶음 등에서 특히 유용합니다.
+
+\begin{notebox}
+실제 Python 표준 라이브러리와 외부 라이브러리의 많은 함수들이
+\texttt{**kwargs}를 사용해
+``필요한 옵션만 선택적으로 전달''할 수 있도록 설계되어 있습니다.
+따라서 \texttt{**kwargs}를 이해하면
+라이브러리 문서를 읽고 활용하는 능력이 크게 향상됩니다.
+\end{notebox}
+
+\subsubsection{함께 사용하는 경우와 순서 규칙}
+
+\texttt{*args}와 \texttt{**kwargs}는
+하나의 함수에서 함께 사용할 수 있습니다.
+다만 \textbf{반드시 정해진 순서}를 따라야 합니다.
+
+\begin{conceptbox}
+함수 정의에서 인자의 순서는 항상 다음과 같습니다.
+\begin{verbatim}
+일반 인자 → *args → **kwargs
+\end{verbatim}
+이 순서를 지키지 않으면 문법 오류가 발생합니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+def func(a, b, *args, **kwargs):
+    print("a, b:", a, b)
+    print("args:", args)
+    print("kwargs:", kwargs)
+
+func(1, 2, 3, 4, x=10, y=20)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+a, b: 1, 2
+args: 3, 4
+kwargs: 10, 20
+\end{verbatim}
+\end{examplebox}
+
+\subsection{람다 표현식(lambda)}
+
+람다(lambda)는
+\textbf{아주 짧은 함수를 한 번만 사용할 때} 등장합니다.
+이름을 붙여서 정의할 필요가 없기 때문에,
+코드를 더 간결하게 만들 수 있습니다.
+
+하지만 람다는
+\textbf{함수를 대체하기 위한 문법이 아니라},
+``잠깐 쓰고 버릴 함수''를 표현하기 위한 도구입니다.
+
+람다 표현식의 형태는 다음과 같습니다.
+\begin{examplebox}
+\begin{lstlisting}
+lambda parameters: expression
+\end{lstlisting}
+\end{examplebox}
+
+람다는 \textbf{한 줄 표현식}만 가능하며,
+복잡한 로직은 \texttt{def} 함수로 작성하는 것이 좋습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+nums = [(1, 3), (2, 2), (3, 1)]
+nums.sort(key=lambda x: x[1])
+print(nums)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+[(3, 1), (2, 2), (1, 3)]
+\end{verbatim}
+\end{examplebox}
+
+\subsection{함수 도큐멘테이션(docstring)}
+
+함수의 이름과 코드만으로는
+``이 함수가 무엇을 하는지''
+``어떤 값을 받아야 하는지''
+완전히 전달하기 어렵습니다.
+
+이 문제를 해결하기 위한 표준적인 방법이
+\textbf{독스트링(docstring)}입니다.
+
+\begin{conceptbox}
+독스트링은 함수 정의 바로 아래에 작성하는
+삼중 따옴표 문자열입니다.
+Python 도구(IDE, 문서 생성기 등)가 이 내용을 읽어
+도움을 제공합니다.
+\end{conceptbox}
+
+독스트링은 다음과 같은 상황에서 특히 중요합니다.
+\begin{itemize}
+  \item 다른 사람이 내 코드를 읽을 때
+  \item 시간이 지난 뒤 내가 다시 코드를 볼 때
+  \item 자동 문서화 도구(Sphinx 등)를 사용할 때
+\end{itemize}
+``코드는 어떻게(How)를 말하고,
+독스트링은 왜(Why)를 설명한다''고 생각하면 좋습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def area_of_circle(r):
+    """
+    Return the area of a circle with radius r.
+
+    Parameters:
+        r (float): radius
+
+    Returns:
+        float: area
+    """
+    pi = 3.141592
+    return pi * r * r
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+독스트링은 ``주석''과 다릅니다.
+주석은 코드에만 남지만,
+독스트링은 런타임에서 접근 가능하며,
+\texttt{help(function)} 같은 도구에서 표시됩니다.
+\end{notebox}
+
+\subsection{함수 어노테이션(type hint)}
+
+
+Python은 실행 중에 자료형이 결정되는
+\textbf{동적 타이핑 언어}입니다.
+하지만 규모가 커질수록
+``이 함수에 어떤 값이 들어와야 하는지''
+알기 어려워집니다.
+
+이 문제를 완화하기 위해 함수에 ``예상 자료형'' 표시를 지원합니다.
+이를 \textbf{어노테이션(annotation)} 또는 \textbf{타입 힌트(type hint)}라고 합니다.
+
+\begin{notebox}
+타입 힌트는
+\textbf{문법적인 강제 규칙이 아닙니다}.
+즉, 잘못된 타입을 넘겨도
+Python이 자동으로 오류를 발생시키지는 않습니다.
+
+하지만 IDE, 정적 분석 도구, 팀 협업 환경에서는
+타입 힌트가 코드 안정성을 크게 높여 줍니다.
+\end{notebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+def repeat_text(text: str, n: int) -> str:
+    return text * n
+
+print(repeat_text("Hi", 3))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+HiHiHi
+\end{verbatim}
+\end{examplebox}
+
+혹은 리스트나 딕셔너리처럼
+여러 값을 담는 역할을 하는 자료형의 경우에는,
+컨테이너 자체의 타입뿐만 아니라
+\textbf{그 안에 들어가는 값들의 타입까지}
+타입 힌트로 명시할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def average(values: list[int]) -> float:
+    return sum(values) / len(values)
+
+print(average([10, 20, 30]))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+20.0
+\end{verbatim}
+\end{examplebox}
+
+위 예제에서
+\texttt{list[int]}는
+정수(\texttt{int}) 값들로 이루어진 리스트를 의미합니다.
+즉,
+이 함수는
+정수들의 리스트를 입력으로 받아
+실수(\texttt{float}) 값을 반환할 것으로
+예상된다는 정보를 코드에 명시한 것입니다.
+
+\begin{readernotebox}
+함수 심화를 복습해보세요.
+\begin{itemize}
+  \item \texttt{*args}와 \texttt{**kwargs}는 각각 어떤 자료형으로 묶이나요?
+  \vspace{0.8cm}
+  \item 람다는 언제 유용하고, 언제 \texttt{def}가 더 좋은가요?
+  \vspace{0.8cm}
+  \item 독스트링과 주석의 역할 차이는 무엇인가요?
+\end{itemize}
+\end{readernotebox}
+
+% ---------------------------------------------------------
+\subsection{함수 호출과 콜 스택(Call Stack)}
+
+함수가 호출되면,
+Python은 그 함수의 실행 정보를
+\textbf{콜 스택(call stack)}이라는 구조에 쌓습니다.
+
+콜 스택은 말 그대로
+\textbf{접시를 쌓아 올리는 것처럼 동작하는 구조}입니다.
+
+콜 스택의 특징은 다음과 같습니다.
+\begin{itemize}
+  \item 함수가 호출되면 스택에 쌓임 (push)
+  \item 함수가 \texttt{return}하면 스택에서 제거됨 (pop)
+  \item 가장 마지막에 호출된 함수가 가장 먼저 종료됨 (LIFO)
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+def a():
+    b()
+
+def b():
+    c()
+
+def c():
+    print("Inside c")
+
+a()
+\end{lstlisting}
+\end{examplebox}
+
+이 코드는 다음 순서로 실행됩니다.
+
+\begin{itemize}
+  \item \texttt{a()} 호출 → 스택에 \texttt{a}
+  \item \texttt{b()} 호출 → 스택에 \texttt{b}
+  \item \texttt{c()} 호출 → 스택에 \texttt{c}
+  \item \texttt{c()} 종료 → 스택에서 제거
+  \item \texttt{b()} 종료 → 스택에서 제거
+  \item \texttt{a()} 종료 → 스택에서 제거
+\end{itemize}
+
+\begin{notebox}
+재귀 함수는
+\textbf{자기 자신을 계속 호출하므로}
+콜 스택이 빠르게 쌓입니다.
+종료 조건이 없거나 너무 깊은 재귀가 발생하면
+\texttt{RecursionError}가 발생하는 이유가 바로 이것입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{함수를 지역 이름에 연결하기}
+
+지금까지는
+함수를 정의한 뒤,
+정의한 이름으로 바로 호출하는 방식만 사용했습니다.
+하지만 파이썬에서는
+이미 정의된 함수를
+\textbf{다른 이름에 연결하여 사용할 수도 있습니다}.
+
+다음 예제를 살펴봅시다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def add(a, b):
+    return a + b
+
+f = add
+print(f(3, 4))
+\end{lstlisting}
+\end{examplebox}
+
+이 코드에서
+\texttt{add}는 함수의 이름이고,
+\texttt{f}는 새로운 변수입니다.
+\texttt{f = add}라는 문장은
+함수를 새로 정의하는 것이 아니라,
+\texttt{add}라는 함수를
+\texttt{f}라는 이름으로 한 번 더 가리키게 만든 것입니다.
+
+따라서
+\texttt{f(3, 4)}는
+\texttt{add(3, 4)}와 완전히 동일하게 동작하며,
+출력 결과는 다음과 같습니다.
+
+\begin{examplebox}
+출력 결과(예시):
+\begin{verbatim}
+7 
+\end{verbatim}
+\end{examplebox}
+
+이처럼
+하나의 함수에 대해
+여러 이름을 붙여 사용할 수 있으며,
+어떤 이름으로 호출하더라도
+동작 자체는 변하지 않습니다.
+
+\begin{notebox}
+이 개념은
+나중에 함수를 인자로 전달하거나,
+다른 파일에서 불러와 사용하는 경우에도
+중요하게 사용됩니다.
+지금은
+``함수도 변수처럼 다른 이름에 연결할 수 있다''
+정도로 이해하면 충분합니다.
+\end{notebox}

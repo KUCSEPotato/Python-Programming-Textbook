@@ -1,0 +1,471 @@
+% ---------------------------------------------------------
+\section{[심화: 선택적 학습] 클로저/스코프/데코레이터}
+
+이번 절은 함수의 \textbf{정말 고급 기능}을 다룹니다.
+처음 Python을 배우는 단계에서는 반드시 필요한 내용은 아니지만,
+\textbf{코드를 더 유연하고 확장 가능하게 만드는 핵심 아이디어}가 들어 있습니다.
+
+이 절의 흐름은 다음과 같습니다.
+
+\begin{itemize}
+  \item \textbf{스코프(scope)}: 변수는 어디까지 유효한가?
+  \item \textbf{클로저(closure)}: 함수가 ``환경(environment)''을 기억하는가?
+  \item \textbf{데코레이터(decorator)}: 함수를 감싸서 기능을 덧붙일 수 있는가?
+\end{itemize}
+
+\begin{notebox}
+이 절의 코드는 이해를 돕기 위해 \texttt{def}를 적극적으로 사용합니다.
+만약 함수 파트가 아직 익숙하지 않다면,
+``이런 기능도 존재한다''는 수준으로 읽고 넘어가도 좋습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{스코프(Scope): 변수의 유효 범위}
+
+함수에서 변수를 다룰 때 가장 중요한 개념 중 하나가 \textbf{스코프(scope)}입니다.
+스코프는 ``이 변수를 어디에서 사용할 수 있는가?''를 결정합니다.
+
+\begin{conceptbox}
+Python에서 스코프는 대표적으로 다음처럼 구분합니다.
+\begin{itemize}
+  \item \textbf{전역 스코프(global scope)}: 함수 밖(파일 전체)에서 정의된 이름
+  \item \textbf{지역 스코프(local scope)}: 함수 안에서 정의된 이름
+\end{itemize}
+\end{conceptbox}
+
+\subsubsection{지역 변수와 전역 변수}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 100  # global
+
+def f():
+    x = 10  # local
+    print("inside:", x)
+
+f()
+print("outside:", x)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+inside: 10
+outside: 100
+\end{verbatim}
+\end{examplebox}
+
+위 코드에서 \texttt{f()} 내부의 \texttt{x}와
+함수 밖의 \texttt{x}는 \textbf{서로 다른 변수}입니다.
+함수 내부에서 같은 이름을 쓰더라도,
+기본적으로는 \textbf{지역 변수가 우선}됩니다.
+
+\subsubsection{\texttt{global}과 \texttt{nonlocal}}
+
+가끔 함수 내부에서 ``바깥 변수''를 수정해야 하는 상황이 있습니다.
+이때 \texttt{global} 또는 \texttt{nonlocal} 키워드를 사용합니다.
+
+\begin{conceptbox}
+\begin{itemize}
+  \item \texttt{global}: \textbf{전역 변수}를 수정하겠다고 선언
+  \item \texttt{nonlocal}: \textbf{바로 바깥 함수의 지역 변수}를 수정하겠다고 선언
+\end{itemize}
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 0
+
+def inc_global():
+    global x
+    x += 1
+
+inc_global()
+inc_global()
+print(x)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+2
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{global}은 편리하지만,
+프로그램이 커질수록 버그의 원인이 되기 쉽습니다.
+가능하면 \textbf{전역 변수 수정은 최소화}하는 것을 권장합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{클로저(Closure): 함수가 환경을 기억하는 구조}
+
+클로저는 ``함수가 자신이 만들어질 때의 환경(변수 상태)을 기억한다''는 개념입니다.
+조금 더 직관적으로 말하면,
+\textbf{함수가 바깥 변수에 접근할 수 있고, 그 상태를 유지할 수 있는 구조}입니다.
+
+\begin{conceptbox}
+클로저(closure)는
+\textbf{바깥 함수의 지역 변수를 참조하는 내부 함수}이며,
+바깥 함수가 끝난 뒤에도 그 변수를 \textbf{기억}할 수 있습니다.
+\end{conceptbox}
+
+여기서 말하는 ``환경(environment)''이란,
+단순히 변수 값 하나가 아니라
+\textbf{함수가 정의될 당시 접근 가능했던 모든 이름의 집합}을 의미합니다.
+
+클로저는
+\begin{itemize}
+    \item 바깥 함수의 지역 변수
+    \item 전역 변수
+    \item 참조 중인 함수 객체
+\end{itemize}
+등을 함께 기억할 수 있습니다.
+
+이 때문에 클로저는
+``함수 + 데이터''가 결합된 구조로 볼 수 있으며,
+이는 객체(object)와 매우 유사한 개념입니다.
+
+\subsubsection{클로저의 기본 예시: ``함수 생성기''}
+
+\begin{examplebox}
+\begin{lstlisting}
+def make_adder(k):
+    def adder(x):
+        return x + k
+    return adder
+
+add10 = make_adder(10)
+add3 = make_adder(3)
+
+print(add10(5))
+print(add3(5))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+15
+8
+\end{verbatim}
+\end{examplebox}
+
+위 코드에서 \texttt{make\_adder}는 함수를 만들어 반환합니다.
+핵심은 내부 함수 \texttt{adder}가
+바깥 변수 \texttt{k}를 계속 기억한다는 점입니다.
+따라서 \texttt{add10}과 \texttt{add3}는
+\textbf{서로 다른 환경}을 가진 함수가 됩니다.
+
+\subsubsection{\texttt{nonlocal}과 상태(state) 유지}
+
+클로저를 사용하면 간단한 ``상태를 가진 함수''도 만들 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def make_counter():
+    count = 0
+    def inc():
+        nonlocal count
+        count += 1
+        return count
+    return inc
+
+counter = make_counter()
+print(counter())
+print(counter())
+print(counter())
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+1
+2
+3
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+이 예시는 ``클래스 없이도 상태를 유지할 수 있다''는 점을 보여줍니다.
+다만 복잡한 상태 관리가 필요하다면
+클래스를 사용하는 편이 더 명확할 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{데코레이터(Decorator): 함수를 감싸 기능을 추가하기}
+
+데코레이터는 ``함수에 기능을 덧붙이는 문법''입니다.
+가장 핵심 아이디어는 다음 한 문장으로 요약할 수 있습니다.
+
+\begin{conceptbox}
+\textbf{Python에서 함수는 값(value)처럼 다룰 수 있습니다.}
+즉, 함수를 \textbf{인자로 받거나}, \textbf{반환}할 수도 있습니다.
+데코레이터는 이 성질을 이용해
+함수를 감싸서 기능을 추가합니다.
+\end{conceptbox}
+
+데코레이터를 이해할 때 가장 중요한 관점은 다음 한 가지입니다.
+
+\textbf{데코레이터는 새로운 함수를 ``만드는'' 것이 아니라,
+기존 함수를 ``다른 함수로 치환(replace)''합니다.}
+
+즉,
+\begin{itemize}
+    \item 원래 함수는 그대로 존재하지만
+    \item 이름은 wrapper 함수로 다시 연결되고
+    \item 호출 흐름이 가로채어집니다
+\end{itemize}
+
+이 때문에 데코레이터는
+로그 출력, 실행 시간 측정, 권한 검사와 같은
+\textbf{횡단 관심사(cross-cutting concern)}를 처리하는 데 매우 적합합니다.
+
+\subsubsection{데코레이터의 원리: 감싸는 함수}
+
+\begin{examplebox}
+\begin{lstlisting}
+def my_decorator(func):
+    def wrapper():
+        print("Before")
+        func()
+        print("After")
+    return wrapper
+
+def hello():
+    print("Hello")
+
+decorated = my_decorator(hello)
+decorated()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Before
+Hello
+After
+\end{verbatim}
+\end{examplebox}
+
+위 구조에서 \texttt{wrapper}는 \texttt{func}를 기억해야 하므로,
+사실상 \textbf{클로저}를 사용하고 있습니다.
+즉, 데코레이터는 클로저와 매우 밀접한 관계가 있습니다.
+
+\subsubsection{\texttt{@} 문법으로 더 간단히 쓰기}
+
+Python은 데코레이터를 쉽게 적용할 수 있도록
+\texttt{@decorator\_name} 문법을 제공합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def my_decorator(func):
+    def wrapper():
+        print("Before")
+        func()
+        print("After")
+    return wrapper
+
+@my_decorator
+def hello():
+    print("Hello")
+
+hello()
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{@my\_decorator}는 다음과 거의 같은 의미입니다.
+\begin{verbatim}
+hello = my_decorator(hello)
+\end{verbatim}
+\end{notebox}
+
+\subsubsection{인자를 받는 함수에 데코레이터 적용하기}
+
+실제 함수는 보통 인자를 받습니다.
+따라서 데코레이터도 인자를 처리할 수 있어야 합니다.
+이때 \texttt{*args}, \texttt{**kwargs}를 함께 사용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def trace(func):
+    def wrapper(*args, **kwargs):
+        print("Calling:", func.__name__)
+        result = func(*args, **kwargs)
+        print("Returned:", result)
+        return result
+    return wrapper
+
+@trace
+def add(a, b):
+    return a + b
+
+add(3, 4)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Calling: add
+Returned: 7
+\end{verbatim}
+\end{examplebox}
+
+
+\begin{notebox}
+이 예시에서 \texttt{wrapper}는 \texttt{func}를 기억해야 하므로
+클로저 구조가 다시 등장합니다.
+즉, \textbf{데코레이터는 클로저의 대표적인 활용 예}입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{표준 라이브러리 데코레이터 맛보기}
+
+앞에서 만든 데코레이터는 구조를 이해하기 위한 예시였습니다.
+실제 Python 표준 라이브러리에는
+이미 자주 사용되는 데코레이터들이 준비되어 있습니다.
+
+이 절에서는
+``아, 이런 용도로 쓰이는구나''
+정도를 느끼는 것을 목표로 합니다.
+구현 원리를 완전히 이해하지 못해도 괜찮습니다.
+
+\subsubsection{\texttt{@staticmethod}와 \texttt{@classmethod}}
+
+클래스를 다룰 때,
+메서드의 성격에 따라
+서로 다른 데코레이터를 붙일 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class MathUtils:
+    @staticmethod
+    def add(a, b):
+        return a + b
+
+    @classmethod
+    def description(cls):
+        return "Utility class for math operations"
+
+print(MathUtils.add(3, 4))
+print(MathUtils.description())
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+7
+Utility class for math operations
+\end{verbatim}
+\end{examplebox}
+
+\texttt{@staticmethod}는
+\textbf{인스턴스나 클래스 정보에 의존하지 않는 함수}를 만들 때 사용합니다.
+반면 \texttt{@classmethod}는
+\textbf{클래스 자체(cls)}를 인자로 받아,
+클래스 수준의 동작을 정의할 때 사용합니다.
+
+\begin{notebox}
+이 두 데코레이터는
+``이 메서드는 어떤 성격의 함수인가?''
+를 명확히 드러내는 역할도 합니다.
+즉, 기능뿐 아니라 \textbf{의미 전달}의 역할도 수행합니다.
+\end{notebox}
+
+\subsubsection{\texttt{@property}: 메서드를 변수처럼 보이게 하기}
+
+\texttt{@property}는
+\textbf{메서드를 마치 속성(attribute)처럼 접근}할 수 있게 해주는 데코레이터입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Person:
+    def __init__(self, name):
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+p = Person("Alice")
+print(p.name)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Alice
+\end{verbatim}
+\end{examplebox}
+
+여기서 중요한 점은,
+\texttt{p.name}이 변수처럼 보이지만
+실제로는 \textbf{함수 호출}이라는 사실입니다.
+
+\begin{notebox}
+\texttt{@property}는
+\begin{itemize}
+    \item 내부 구현을 숨기고
+    \item 외부 인터페이스를 깔끔하게 유지하며
+    \item 나중에 로직을 바꿔도 사용 코드를 수정하지 않게 해줍니다
+\end{itemize}
+이 때문에 객체 지향 프로그래밍에서 매우 중요한 도구입니다.
+\end{notebox}
+
+\subsection*{콜스택(Call Stack) 관점에서 이해하기}
+
+앞에서 살펴본 스코프, 클로저, 데코레이터는
+모두 \textbf{콜스택(call stack)}과 깊은 관련이 있습니다.
+
+프로그램에서 함수가 호출되면,
+그 함수의 실행 정보(지역 변수, 매개변수 등)는
+\textbf{콜스택}에 쌓입니다.
+함수가 종료되면,
+해당 스택 프레임은 사라지고
+이전 함수로 실행 흐름이 돌아갑니다.
+
+일반적으로는
+함수가 끝나면 그 안에서 사용하던 지역 변수들도
+함께 사라진다고 생각합니다.
+실제로 대부분의 경우는 그렇습니다.
+
+하지만 \textbf{클로저}는 예외적인 동작을 보입니다.
+
+클로저가 만들어질 때,
+내부 함수는
+\textbf{바깥 함수의 지역 변수에 대한 참조(reference)}를 함께 저장합니다.
+이 때문에 바깥 함수의 호출이 이미 끝났고
+콜스택에서 사라졌더라도,
+그 변수는 \textbf{완전히 소멸되지 않고 유지}됩니다.
+
+즉,
+\begin{itemize}
+    \item 콜스택에서는 함수 호출이 끝났지만
+    \item 클로저 내부에서는 필요한 변수에 대한 참조가 남아 있어
+    \item 그 값이 계속 사용될 수 있는 것
+\end{itemize}
+입니다.
+
+데코레이터 역시 같은 원리를 사용합니다.
+데코레이터 내부의 \texttt{wrapper} 함수는
+원래의 함수(\texttt{func})를 참조하는 클로저이며,
+이 덕분에
+\textbf{함수를 감싸면서도 원래 함수의 동작을 유지}할 수 있습니다.
+
+정리하면 다음과 같습니다.
+
+\begin{itemize}
+    \item 콜스택은 ``지금 실행 중인 함수들''을 관리합니다.
+    \item 클로저는 ``이미 끝난 함수의 변수''를 기억할 수 있습니다.
+    \item 데코레이터는 이 클로저 구조를 이용해
+          함수에 새로운 동작을 덧붙입니다.
+\end{itemize}
+
+이 관점을 이해하면,
+왜 Python에서 함수가 단순한 코드 묶음이 아니라
+\textbf{강력한 객체(object)}로 취급되는지 자연스럽게 이해할 수 있습니다.
+
+% ---------------------------------------------------------
+\begin{readernotebox}
+다음 질문에 답하며 클로저/스코프/데코레이터를 정리해보세요.
+\begin{itemize}
+  \item 지역 변수와 전역 변수의 차이는 무엇인가요?
+  \vspace{0.8cm}
+  \item 클로저는 ``무엇을 기억''하며, 왜 그런가요?
+  \vspace{0.8cm}
+  \item 데코레이터가 사실상 \texttt{hello = decorator(hello)} 형태라는 말은 어떤 의미인가요?
+\end{itemize}
+\end{readernotebox}

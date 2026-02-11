@@ -1,0 +1,203 @@
+% ---------------------------------------------------------
+\section{스택(Stack)}
+
+스택(Stack)은
+\textbf{자료가 쌓이는 방식}에 초점을 둔
+가장 기본적인 자료 구조 중 하나입니다.
+
+스택의 핵심 특징은
+\textbf{마지막에 들어온 데이터가 가장 먼저 나간다}는 점입니다.
+이를 보통
+\textbf{LIFO (Last In, First Out)} 구조라고 부릅니다.
+
+\begin{conceptbox}
+스택(Stack)은
+\textbf{후입선출(LIFO)} 방식으로 동작하는 자료 구조입니다.
+즉,
+\begin{itemize}
+    \item 가장 마지막에 넣은 데이터가
+    \item 가장 먼저 꺼내집니다.
+\end{itemize}
+\end{conceptbox}
+
+현실 세계의 예로는 다음과 같은 것들이 있습니다.
+
+\begin{itemize}
+    \item 접시를 차곡차곡 쌓아 올린 더미
+    \item 웹 브라우저의 뒤로 가기 기능
+    \item 실행 취소(Undo) 기능
+\end{itemize}
+
+이처럼 스택은
+\textbf{되돌아가기}, \textbf{이전 상태로 복귀하기}와 같은
+상황에서 자주 사용됩니다.
+
+% ---------------------------------------------------------
+\subsection{스택의 기본 연산}
+
+스택은 다음과 같은 기본 연산을 가집니다.
+
+\begin{conceptbox}
+\begin{itemize}
+    \item \textbf{push}: 스택의 맨 위에 데이터를 추가
+    \item \textbf{pop}: 스택의 맨 위 데이터를 제거하고 반환
+    \item \textbf{peek (top)}: 스택의 맨 위 데이터를 제거하지 않고 확인
+    \item \textbf{isEmpty}: 스택이 비어 있는지 확인
+\end{itemize}
+\end{conceptbox}
+
+이 연산들은 모두
+\textbf{스택의 한쪽 끝(맨 위)}에서만 이루어진다는 점이 중요합니다.
+
+% ---------------------------------------------------------
+\subsection{리스트로 스택 구현하기}
+
+Python에는 스택 전용 자료형이 따로 존재하지 않지만,
+\textbf{리스트(list)}를 사용해
+스택을 매우 쉽게 구현할 수 있습니다.
+
+\subsubsection{push 연산: \texttt{append()}}
+
+\begin{examplebox}
+\begin{lstlisting}
+stack = []
+
+stack.append(10)
+stack.append(20)
+stack.append(30)
+
+print(stack)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+[10, 20, 30]
+\end{verbatim}
+\end{examplebox}
+
+\texttt{append()}는
+리스트의 \textbf{맨 뒤}에 요소를 추가합니다.
+이를 스택의 \textbf{push} 연산으로 사용합니다.
+
+\subsubsection{pop 연산: \texttt{pop()}}
+
+\begin{examplebox}
+\begin{lstlisting}
+stack = [10, 20, 30]
+
+top = stack.pop()
+print(top)
+print(stack)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+30
+[10, 20]
+\end{verbatim}
+\end{examplebox}
+
+\texttt{pop()}은
+리스트의 \textbf{맨 뒤 요소를 제거하고 반환}합니다.
+이는 스택의 \textbf{pop} 연산과 정확히 일치합니다.
+
+\begin{notebox}
+리스트의 맨 뒤에서 수행되는
+\texttt{append()}와 \texttt{pop()}은
+모두 \textbf{시간복잡도 $O(1)$}로 매우 효율적입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{스택이 비어 있을 때의 주의점}
+
+스택이 비어 있을 때
+\texttt{pop()}을 호출하면 오류가 발생합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+stack = []
+stack.pop()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+IndexError: pop from empty list
+\end{verbatim}
+\end{examplebox}
+
+따라서 실제 코드에서는
+스택이 비어 있는지 먼저 확인하는 습관이 중요합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+if stack:
+    stack.pop()
+\end{lstlisting}
+\end{examplebox}
+
+위 코드는 stack이 비어있다면 조건문이 false가 되어 \texttt{pop()}을 수행하지 않고 넘어갑니다.
+
+\begin{notebox}
+빈 리스트는 조건문에서
+\textbf{False로 평가(falsy)}됩니다.
+이 성질은 스택이 비어 있는지 확인할 때 매우 유용합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{스택과 시간복잡도}
+
+스택의 주요 연산과 시간복잡도는 다음과 같습니다.
+
+\begin{center}
+\begin{tabular}{c c}
+\textbf{연산} & \textbf{시간복잡도} \\
+\hline
+push (append) & $O(1)$ \\
+pop           & $O(1)$ \\
+peek          & $O(1)$ \\
+\end{tabular}
+\end{center}
+
+스택은 구조가 단순하지만,
+\textbf{매우 빠른 성능}을 가지기 때문에
+다양한 알고리즘과 시스템 내부에서 핵심적으로 사용됩니다.
+
+% ---------------------------------------------------------
+\subsection{스택의 활용 예}
+
+스택은 다음과 같은 상황에서 자주 등장합니다.
+
+\begin{itemize}
+    \item 실행 취소(Undo) / 되돌리기 기능
+    \item 함수 호출 관리 (콜스택)
+    \item 괄호 검사 문제
+    \item 깊이 우선 탐색(DFS)
+\end{itemize}
+
+특히 Python에서 함수 호출이 어떻게 관리되는지는
+\textbf{콜스택(call stack)} 개념과 직접적으로 연결됩니다.
+함수가 호출될 때마다
+지역 변수와 실행 정보가 스택에 쌓이고,
+함수가 종료되면 해당 정보가 제거되는 방식으로
+프로그램의 실행 흐름이 관리됩니다.
+
+콜스택에 대한 자세한 내용은
+이미 \textbf{함수 장}에서 다루었으므로
+이 절에서는 자세한 설명을 생략합니다.
+필요하다면
+\textbf{Chapter 5의 함수 심화} 부분을 참고하시기 바랍니다.
+
+% ---------------------------------------------------------
+\begin{exercisebox}
+다음 문제를 해결해 보세요.
+
+\begin{itemize}
+    \item 빈 리스트를 스택으로 사용하여
+          문자열 \texttt{"Python"}을 한 글자씩 push한 뒤,
+          다시 pop하여 역순 문자열을 출력하세요.
+    \vspace{0.6cm}
+    \item 숫자들이 차례로 주어질 때,
+          스택을 사용하여
+          가장 마지막에 입력된 값부터 출력하는 프로그램을 작성해 보세요.
+\end{itemize}
+\end{exercisebox}

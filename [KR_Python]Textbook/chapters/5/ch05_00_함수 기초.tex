@@ -1,0 +1,370 @@
+% 함수 기초
+% def 사용법
+% 위치-키워드(Positional-or-Keyword) 인자
+% 재귀 함수
+% 등등등
+% =========================================================
+% Chapter: Functions
+% =========================================================
+\chapter{함수(Function)}
+
+프로그램이 길어질수록 같은 코드가 여러 곳에서 반복되고,
+한 번 작성한 로직을 다른 곳에서도 재사용하고 싶어집니다.
+이때 가장 강력한 도구가 \textbf{함수(function)}입니다.
+
+함수는 크게 두 가지 일을 합니다.
+첫째, 코드를 \textbf{묶어서 이름을 붙여} 재사용할 수 있게 해줍니다.
+둘째, 프로그램을 \textbf{의미 있는 단위}로 분해하여
+코드를 읽고 고치기 쉽게 만들어 줍니다.
+
+\begin{conceptbox}
+\textbf{함수(function)}는
+``입력을 받아서 처리한 뒤 결과를 돌려주는 코드 묶음''입니다.
+함수는 반복되는 코드를 줄이고, 코드의 구조를 더 명확하게 만듭니다.
+\end{conceptbox}
+
+이 장에서는 함수를 ``처음 쓰는 방법''부터 시작해,
+점점 더 Python다운 기능과 스타일로 확장해 나갑니다.
+구성은 다음과 같습니다.
+
+\begin{itemize}
+  \item \textbf{함수 기초}: \texttt{def} 사용법, 인자 전달 방식, 재귀 함수 등
+  \item \textbf{함수 심화}: 가변 인자, 람다, 도큐멘테이션, 어노테이션 등
+  \item \textbf{코딩 스타일}: PEP 8 기반의 읽기 좋은 함수 코드 작성법
+\end{itemize}
+
+% ---------------------------------------------------------
+\section{함수 기초}
+
+\subsection{함수를 왜 사용할까요?}
+
+같은 계산이나 같은 출력 로직을 여러 번 작성하는 것은 비효율적입니다.
+또한 한 파일 안에 코드가 길게 늘어지면,
+코드를 이해하기도, 수정하기도 어려워집니다.
+
+\begin{conceptbox}
+함수를 사용하면
+\begin{itemize}
+  \item \textbf{중복 코드 제거} (DRY: Don't Repeat Yourself)
+  \item \textbf{기능별 분리} (문제를 작은 단위로 쪼개기)
+  \item \textbf{테스트와 수정이 쉬움} (한 기능만 고쳐도 전체에 반영)
+  \item \textbf{재사용성 향상} (다른 파일/프로젝트에서도 사용 가능)
+\end{itemize}
+\end{conceptbox}
+
+\subsection{\texttt{def}로 함수 만들기}
+
+Python에서 함수는 \texttt{def} 키워드를 사용해 정의합니다.
+함수 정의는 \textbf{“이런 이름의 기능을 앞으로 사용할 것이다”}라고
+Python에게 알려주는 과정이라고 생각하면 됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def function_name(parameters):
+    # code block
+    return value
+\end{lstlisting}
+\end{examplebox}
+
+각 구성 요소의 의미는 다음과 같습니다.
+\begin{itemize}
+    \item \texttt{function\_name} : 함수를 호출할 때 사용할 함수의 이름
+    \item \texttt{parameters} : 함수가 외부로부터 전달받는 입력값(매개변수)
+    \item \texttt{:} : 함수 정의의 시작을 알리는 기호
+    \item 들여쓰기 된 코드 블록 : 함수가 호출되었을 때 실행되는 코드
+    \item \texttt{return value} : 함수의 실행 결과로 호출한 위치에 돌려줄 값
+\end{itemize}
+
+함수는 \texttt{function\_name(parameters)} 형태로 호출되며,
+이때 전달된 인자가 \texttt{parameters}에 대응되어
+함수 내부 코드가 실행된 뒤 \texttt{return} 값이 호출한 자리로 전달됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def add(a, b):
+    return a + b
+
+result = add(3, 4)
+print(result)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+7
+\end{verbatim}
+\end{examplebox}
+
+이 예제에서 \texttt{add} 함수는
+두 값을 더하는 하나의 기능 단위로 묶여 있습니다.
+이제 이 로직은 필요할 때마다
+\texttt{add(값1, 값2)} 형태로 언제든 재사용할 수 있습니다.
+
+이처럼 함수는
+\textbf{“계산 방법 자체를 이름으로 저장해두는 것”}이라고 이해하면 좋습니다.
+
+\begin{notebox}
+\texttt{return}은 함수의 실행을 끝내고,
+그 값을 ``함수 호출 결과''로 돌려줍니다.
+\texttt{return}이 없으면 자동으로 \texttt{None}이 반환됩니다.
+\end{notebox}
+
+\subsubsection{\texttt{return}이 없는 함수}
+
+이 부분은 초보자가 가장 많이 헷갈리는 지점입니다.
+
+\textbf{함수의 반환값(return value)}은
+함수를 호출한 자리로 “되돌아가는 값”이고,
+\textbf{출력(print)}은 단순히 화면에 글자를 보여주는 동작일 뿐입니다.
+
+즉, 화면에 무엇이 보였는지와
+함수 호출 결과가 무엇인지는
+전혀 다른 문제일 수 있습니다.
+
+이 차이를 이해하지 못하면,
+나중에 함수의 결과를 다른 계산에 사용하려 할 때
+예상과 다른 동작을 경험하게 됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def greet(name):
+    print("Hello,", name)
+
+x = greet("Alice")
+print(x)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Hello, Alice
+None
+\end{verbatim}
+\end{examplebox}
+
+이 예시는 중요한 메시지를 담고 있습니다.
+함수가 ``출력''을 했다고 해서 ``반환''을 한 것은 아닙니다.
+\textbf{출력(print)}과 \textbf{반환(return)}은 완전히 다른 개념입니다.
+
+\subsection{인자(parameters)와 매개변수(arguments)}
+
+프로그래밍 입문 단계에서는
+매개변수와 인자를 엄격히 구분하지 않고
+모두 “인자”라고 부르는 경우도 많습니다.
+
+하지만 함수의 동작을 정확히 이해하려면
+이 차이를 한 번은 짚고 넘어가는 것이 좋습니다.
+
+엄밀히 구분하면 다음과 같습니다.
+
+\begin{conceptbox}
+\begin{itemize}
+  \item \textbf{매개변수(parameter)}: 함수 정의에서 받는 변수 이름
+  \item \textbf{인자(argument)}: 함수를 호출할 때 실제로 넘기는 값
+\end{itemize}
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+def multiply(x, y):   # x, y are parameters
+    return x * y
+
+print(multiply(3, 5)) # 3, 5 are arguments
+\end{lstlisting}
+\end{examplebox}
+
+함수 정의 시에는
+“어떤 값을 받을지”를 이름으로 정해두고,
+함수 호출 시에는
+“실제 어떤 값을 넘길지”를 결정합니다.
+
+이 둘을 구분해서 생각하면
+함수 호출 구조가 훨씬 명확해집니다.
+
+\subsection{위치-키워드(Positional-or-Keyword) 인자}
+
+Python의 일반적인 함수 인자는
+\textbf{위치(positional)}로도 전달할 수 있고,
+\textbf{키워드(keyword)}로도 전달할 수 있습니다.
+이런 인자를 Python 문서에서는
+\textbf{positional-or-keyword 인자}라고 부릅니다.
+
+위치 인자는
+\textbf{“순서로 의미를 전달하는 방식”}이고,
+키워드 인자는
+\textbf{“이름으로 의미를 전달하는 방식”}이라고 볼 수 있습니다.
+
+특히 키워드 인자는
+\begin{itemize}
+  \item 함수 인자의 의미가 명확해지고
+  \item 순서를 외우지 않아도 되며
+  \item 코드의 가독성이 좋아진다는 장점이 있습니다.
+\end{itemize}
+
+실제 프로젝트 코드에서는
+키워드 인자가 매우 자주 사용됩니다.
+
+\subsubsection{위치 인자(positional arguments)}
+
+\begin{examplebox}
+\begin{lstlisting}
+def power(base, exp):
+    return base ** exp
+
+print(power(2, 3))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+8
+\end{verbatim}
+\end{examplebox}
+
+위치 인자는 \textbf{순서가 의미}를 갖습니다.
+따라서 순서를 바꾸면 결과도 달라질 수 있습니다.
+
+\subsubsection{키워드 인자(keyword arguments)}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(power(base=2, exp=3))
+print(power(exp=3, base=2))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+8
+8
+\end{verbatim}
+\end{examplebox}
+
+키워드 인자는 \textbf{이름을 명시}하므로,
+순서를 바꿔도 같은 의미를 유지합니다.
+
+\begin{notebox}
+키워드 인자를 사용하면
+함수 호출의 의도가 더 명확해질 수 있습니다.
+특히 인자가 3개 이상이거나 의미가 헷갈릴 때 효과적입니다.
+\end{notebox}
+
+\subsubsection{기본값(default value)}
+
+함수는 인자의 기본값을 가질 수 있습니다.
+기본값 인자는
+“이 값이 들어오지 않으면, 이 값을 대신 사용하겠다”
+라는 의미를 갖습니다.
+
+이를 통해 함수 호출을 더 간단하게 만들 수 있습니다.
+기본값이 있는 인자는 호출 시 생략할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def greet(name, msg="Hello"):
+    print(msg, name)
+
+greet("Alice")
+greet("Bob", "Welcome")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Hello Alice
+Welcome Bob
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+기본값은 함수가 정의될 때 결정됩니다.
+기본값으로 리스트 같은 ``뮤터블 객체''를 쓰면
+예상치 못한 문제가 생길 수 있으므로
+뒤의 심화 파트에서 따로 다룹니다.
+\end{notebox}
+
+\subsection{함수의 범위(Scope)와 지역 변수}
+
+변수의 범위(scope)는
+\textbf{“이 변수를 어디에서 접근할 수 있는가”}를 의미합니다.
+
+함수는 독립된 실행 공간을 가지며,
+함수 안에서 만들어진 변수는
+기본적으로 함수 밖에서는 보이지 않습니다.
+
+다시 말해, 함수 안에서 만든 변수는
+기본적으로 함수 밖에서 접근할 수 없습니다.
+
+\begin{conceptbox}
+\textbf{지역 변수(local variable)}는 함수 내부에서만 유효합니다.
+함수 밖에서 정의된 변수는 \textbf{전역 변수(global variable)}라고 부릅니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+def f():
+    x = 10
+    print(x)
+
+f()
+# print(x)  # NameError
+\end{lstlisting}
+\end{examplebox}
+
+이 규칙 덕분에
+서로 다른 함수들이 같은 이름의 변수를 사용하더라도
+서로 영향을 주지 않고 안전하게 동작할 수 있습니다.
+
+\subsection{재귀 함수(Recursion)}
+
+재귀 함수는 \textbf{함수가 자기 자신을 호출하는 형태}입니다.
+문제를 더 작은 문제로 나누어 해결할 때 유용합니다.
+
+재귀 함수에서는 항상 다음 두 가지를 확인해야 합니다.
+\begin{itemize}
+  \item 언제 멈출 것인가? (종료 조건)
+  \item 문제가 정말 더 작은 형태로 줄어드는가?
+\end{itemize}
+
+이 두 가지 중 하나라도 빠지면
+재귀는 실패합니다.
+
+\begin{conceptbox}
+재귀(recursion)는 강력하지만,
+\textbf{반드시 종료 조건(base case)}이 있어야 합니다.
+종료 조건이 없으면 무한 호출로 오류가 발생합니다.
+\end{conceptbox}
+
+\subsubsection{팩토리얼 예시}
+
+\begin{examplebox}
+\begin{lstlisting}
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+
+print(factorial(5))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+120
+\end{verbatim}
+\end{examplebox}
+
+재귀는 반복문으로도 대부분 대체할 수 있지만,
+문제의 구조를 자연스럽게 표현할 수 있다는 점에서
+여전히 중요한 도구입니다.
+
+\begin{notebox}
+재귀는 함수 호출이 반복되므로
+호출 스택(call stack)이 쌓입니다.
+따라서 너무 깊은 재귀는 \texttt{RecursionError}를 유발할 수 있습니다.
+\end{notebox}
+
+\begin{readernotebox}
+함수 기초를 복습해보세요.
+\begin{itemize}
+  \item \texttt{return}과 \texttt{print}의 차이는 무엇인가요?
+  \vspace{0.8cm}
+  \item 위치 인자와 키워드 인자는 어떤 차이가 있나요?
+  \vspace{0.8cm}
+  \item 재귀 함수에서 종료 조건이 없으면 어떤 문제가 생기나요?
+\end{itemize}
+\end{readernotebox}

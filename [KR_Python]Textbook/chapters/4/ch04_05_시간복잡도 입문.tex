@@ -1,0 +1,180 @@
+% ---------------------------------------------------------
+\section{시간복잡도(Time Complexity)}
+
+지금까지 반복문을 사용하여
+코드를 여러 번 실행하는 방법을 배웠습니다.
+그렇다면 다음과 같은 질문이 자연스럽게 떠오릅니다.
+
+\begin{quote}
+``이 코드는 얼마나 빠를까?''
+``입력의 크기가 커지면 실행 시간은 어떻게 변할까?''
+\end{quote}
+
+이 질문에 답하기 위해 사용하는 개념이 바로
+\textbf{시간복잡도(Time Complexity)}입니다.
+
+% ---------------------------------------------------------
+\subsection{시간복잡도란 무엇인가요?}
+
+\begin{conceptbox}
+시간복잡도는
+\textbf{입력의 크기에 따라 프로그램이 수행해야 하는 연산 횟수가
+어떻게 증가하는지를 나타내는 척도}입니다.
+\end{conceptbox}
+
+중요한 점은,
+시간복잡도는 \textbf{실제 실행 시간(초, ms)}을 재는 것이 아니라,
+\textbf{연산이 몇 번 반복되는지}에 초점을 둔다는 점입니다.
+
+\begin{notebox}
+같은 코드라도
+컴퓨터 성능이나 실행 환경에 따라 실제 시간은 달라질 수 있습니다.
+하지만 연산 횟수의 증가 경향은 변하지 않습니다.
+그래서 시간복잡도를 사용합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{반복문과 시간복잡도}
+
+시간복잡도를 이해하는 가장 쉬운 방법은
+\textbf{반복문이 몇 번 도는지 세어보는 것}입니다.
+
+\subsubsection{한 번 도는 반복문}
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(n):
+    print(i)
+\end{lstlisting}
+\end{examplebox}
+
+이 코드는 \texttt{n}번 반복됩니다.
+입력이 커질수록 실행 횟수는 \texttt{n}에 비례합니다.
+
+\begin{conceptbox}
+이와 같은 경우의 시간복잡도를
+\[
+\mathcal{O}(n)
+\]
+이라고 표현합니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsubsection{두 번 중첩된 반복문}
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(n):
+    for j in range(n):
+        print(i, j)
+\end{lstlisting}
+\end{examplebox}
+
+바깥 반복문이 \texttt{n}번,
+안쪽 반복문도 매번 \texttt{n}번 실행되므로,
+전체 실행 횟수는 \texttt{n × n = n²}입니다.
+
+\begin{conceptbox}
+이 경우의 시간복잡도는
+\[
+\mathcal{O}(n^2)
+\]
+입니다.
+\end{conceptbox}
+
+\begin{notebox}
+중첩 반복문이 등장하면
+시간복잡도가 급격히 증가할 수 있으므로
+특히 주의해야 합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{입력 크기란 무엇인가요?}
+
+시간복잡도에서 말하는 \textbf{입력 크기}란,
+코드가 처리해야 하는 데이터의 양을 의미합니다.
+
+\begin{itemize}
+    \item 숫자 하나를 처리한다면 입력 크기는 매우 작습니다
+    \item 리스트를 처리한다면 입력 크기는 리스트의 길이입니다
+    \item 문자열을 처리한다면 입력 크기는 문자열의 길이입니다
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+numbers = [1, 2, 3, 4, 5]
+
+for x in numbers:
+    print(x)
+\end{lstlisting}
+\end{examplebox}
+
+위 코드에서 입력 크기는
+리스트 \texttt{numbers}의 길이입니다.
+
+% ---------------------------------------------------------
+\subsection{시간복잡도 표기: Big-O 표기법}
+
+시간복잡도는 보통
+\textbf{Big-O 표기법}으로 나타냅니다.
+
+\begin{conceptbox}
+Big-O 표기법은
+\textbf{입력이 매우 커질 때 가장 큰 영향을 미치는 항만 남겨}
+시간복잡도를 표현하는 방법입니다.
+\end{conceptbox}
+
+\subsubsection{자주 등장하는 시간복잡도}
+
+\begin{itemize}
+    \item \(\mathcal{O}(1)\) : 입력 크기와 무관 (상수 시간)
+    \item \(\mathcal{O}(n)\) : 입력 크기에 비례
+    \item \(\mathcal{O}(n^2)\) : 중첩 반복문
+\end{itemize}
+
+\begin{notebox}
+입문 단계에서는
+\(\mathcal{O}(n)\)과 \(\mathcal{O}(n^2)\)의 차이만
+명확히 구분할 수 있어도 충분합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{왜 시간복잡도가 중요한가요?}
+
+\begin{conceptbox}
+입력이 작을 때는 어떤 코드든 빠르게 실행됩니다.
+하지만 입력이 커지면
+\textbf{비효율적인 코드는 실행 자체가 불가능해질 수 있습니다.}
+\end{conceptbox}
+
+예를 들어,
+\begin{itemize}
+    \item \(\mathcal{O}(n)\) 코드는 입력이 10배 늘면 실행 시간도 10배
+    \item \(\mathcal{O}(n^2)\) 코드는 입력이 10배 늘면 실행 시간은 100배
+\end{itemize}
+
+이 차이는
+데이터가 많아질수록 압도적으로 커집니다.
+
+% ---------------------------------------------------------
+\subsection{입문 단계에서의 핵심 정리}
+
+지금 단계에서 반드시 기억해야 할 점은 다음 세 가지입니다.
+
+\begin{itemize}
+    \item 반복문이 많아질수록 실행 시간은 늘어난다
+    \item 중첩 반복문은 특히 비용이 크다
+    \item ``돌아가기만 하는 코드''보다
+          ``효율적인 코드''가 더 중요해질 수 있다
+\end{itemize}
+
+\begin{readernotebox}
+다음 질문에 답하며 정리해보세요.
+\begin{itemize}
+    \item 반복문이 한 번 도는 코드의 시간복잡도는 무엇인가?
+    \vspace{0.8cm}
+    \item 중첩 반복문이 시간에 미치는 영향은 무엇인가?
+    \vspace{0.8cm}
+    \item 입력 크기란 무엇을 의미하는가?
+\end{itemize}
+\end{readernotebox}

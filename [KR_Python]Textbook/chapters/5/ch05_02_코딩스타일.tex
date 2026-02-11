@@ -1,0 +1,85 @@
+% ---------------------------------------------------------
+\section{코딩 스타일(PEP 8 기반)}
+
+이제 여러분은 더 길고, 더 복잡한 코드를 작성하게 됩니다.
+이 시점에서 \textbf{코딩 스타일}을 정리해두는 것은 매우 중요합니다.
+
+코드는 ``컴퓨터가 실행할 수 있는 것''이기도 하지만,
+동시에 ``사람이 읽고 유지보수할 문서''이기도 합니다.
+읽기 쉬운 코드는 협업과 디버깅을 훨씬 수월하게 만들어 줍니다.
+
+\begin{conceptbox}
+Python에서 가장 널리 사용되는 스타일 가이드는 \textbf{PEP 8}입니다.
+PEP 8은 읽기 쉽고 일관성 있는 코드를 작성하기 위한 규칙을 제안합니다.
+\end{conceptbox}
+
+\subsection{들여쓰기: 공백 4칸}
+
+\begin{itemize}
+  \item 들여쓰기는 \textbf{공백 4칸}을 사용합니다.
+  \item 탭(tab)은 혼란을 일으키므로 사용하지 않는 것이 좋습니다.
+\end{itemize}
+
+\subsection{줄 길이: 79자 권장}
+
+\begin{itemize}
+  \item 한 줄이 너무 길면 작은 화면에서 읽기 어렵습니다.
+  \item 여러 파일을 나란히 열어 비교할 때도 불편합니다.
+\end{itemize}
+
+\subsection{빈 줄로 논리 단위 분리하기}
+
+\begin{itemize}
+  \item 함수와 함수 사이에는 빈 줄을 넣어 구분합니다.
+  \item 함수 내부에서도 큰 논리 블록 사이에는 빈 줄을 넣어 가독성을 높입니다.
+\end{itemize}
+
+\subsection{주석과 독스트링}
+
+\begin{itemize}
+  \item 가능한 한 주석은 \textbf{별도의 줄}에 작성합니다.
+  \item 함수 설명은 주석보다 \textbf{독스트링}을 우선 고려합니다.
+\end{itemize}
+
+\subsection{공백 규칙}
+
+\begin{itemize}
+  \item 연산자 주변, 콤마 뒤에는 공백을 넣습니다.
+  \item 괄호 바로 안쪽에는 공백을 넣지 않습니다.
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+a = f(1, 2) + g(3, 4)
+\end{lstlisting}
+\end{examplebox}
+
+\subsection{이름 규칙(네이밍 컨벤션)}
+
+\begin{itemize}
+  \item 클래스: \texttt{UpperCamelCase}
+  \item 함수/변수: \texttt{lowercase\_with\_underscores}
+  \item 메서드의 첫 인자 이름은 관례적으로 \texttt{self}
+\end{itemize}
+
+\subsection{국제 환경을 고려한 문자 사용}
+
+\begin{itemize}
+  \item 가능한 한 UTF-8을 기본으로 사용합니다.
+  \item 협업 가능성이 있다면 식별자(변수/함수 이름)에는
+        \textbf{ASCII 문자}를 사용하는 것이 안전합니다.
+\end{itemize}
+
+더 많은 내용을 알아보고 싶으신 분들께서는 다음 사이트를 참고해주세요.
+\hyperlink{PEP8}{https://peps.python.org/pep-0008/}
+
+\begin{readernotebox}
+PEP 8 스타일을 복습해보세요.
+\begin{itemize}
+  \item 들여쓰기에서 공백 4칸을 권장하는 이유는 무엇인가요?
+  \vspace{0.8cm}
+  \item 독스트링을 사용하면 어떤 점이 좋아지나요?
+  \vspace{0.8cm}
+  \item 함수/변수 이름에 일관된 규칙을 적용해야 하는 이유는 무엇인가요?
+\end{itemize}
+\end{readernotebox}

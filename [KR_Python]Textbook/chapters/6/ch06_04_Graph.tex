@@ -1,0 +1,197 @@
+% =========================================================
+\section{그래프(Graph)}
+
+그래프(Graph)는
+\textbf{객체 간의 관계}를 표현하는
+가장 일반적이고 강력한 자료 구조입니다.
+
+트리가
+``부모–자식으로 이어지는 계층 구조''를 표현한다면,
+그래프는
+\textbf{제약 없는 연결 관계}를 표현할 수 있습니다.
+
+즉,
+\begin{itemize}
+    \item 트리 : 위에서 아래로 내려오는 구조
+    \item 그래프 : 어디에서 어디로든 연결 가능한 구조
+\end{itemize}
+입니다.
+
+\begin{conceptbox}
+그래프(Graph)는
+\textbf{정점(Vertex)}과
+정점 사이를 잇는 \textbf{간선(Edge)}으로 이루어진
+\textbf{비선형(non-linear) 자료 구조}입니다.
+\end{conceptbox}
+
+그래프에서는
+\begin{itemize}
+    \item 하나의 정점이 여러 정점과 연결될 수 있고
+    \item 순환(cycle)이 존재할 수도 있으며
+    \item 시작점과 끝점이 명확하지 않을 수도 있습니다.
+\end{itemize}
+
+이러한 특징 덕분에
+현실 세계의 복잡한 관계를 표현하는 데 매우 적합합니다.
+
+% ---------------------------------------------------------
+\subsection{그래프의 기본 용어}
+
+그래프를 이해하기 위해
+자주 사용되는 기본 용어를 먼저 살펴봅니다.
+
+\begin{itemize}
+    \item \textbf{정점(Vertex)} : 그래프를 구성하는 각각의 객체(노드)
+
+    \item \textbf{간선(Edge)} : 두 정점을 연결하는 관계
+
+    \item \textbf{차수(Degree)} : 한 정점에 연결된 간선의 개수  
+    (방향 그래프에서는 진입 차수 / 진출 차수로 구분)
+
+    \item \textbf{경로(Path)} : 한 정점에서 다른 정점으로 가는 연결 순서
+
+    \item \textbf{사이클(Cycle)} : 시작 정점으로 다시 돌아오는 경로
+\end{itemize}
+
+\begin{notebox}
+트리는 \textbf{사이클이 없는 그래프}의 특수한 형태입니다.
+즉, 모든 트리는 그래프이지만,
+모든 그래프가 트리는 아닙니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{그래프의 종류}
+
+그래프는
+간선의 특성에 따라 여러 종류로 나뉩니다.
+
+\begin{itemize}
+    \item \textbf{무방향 그래프(Undirected Graph)} :  
+    간선에 방향이 없으며, 양방향 이동이 가능
+
+    \item \textbf{방향 그래프(Directed Graph)} :  
+    간선에 방향이 있으며, 한쪽 방향으로만 이동 가능
+
+    \item \textbf{가중치 그래프(Weighted Graph)} :  
+    간선마다 비용, 거리, 시간 등의 값이 부여됨
+\end{itemize}
+
+\begin{notebox}
+현실 문제에서는
+\begin{itemize}
+    \item SNS 관계 → 무방향 그래프
+    \item 웹 링크 구조 → 방향 그래프
+    \item 지도/길찾기 → 가중치 그래프
+\end{itemize}
+형태로 자주 등장합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{그래프 표현 방식}
+
+그래프를 코드로 표현하는 방식은 여러 가지가 있지만,
+가장 대표적인 방법은 다음 두 가지입니다.
+
+% ---------------------------------------------------------
+\subsubsection{인접 리스트(Adjacency List)}
+
+각 정점에 대해
+\textbf{연결된 정점들의 목록}을 저장하는 방식입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+graph = {
+    1: [2, 3],
+    2: [1, 4],
+    3: [1],
+    4: [2]
+}
+\end{lstlisting}
+\end{examplebox}
+
+이 표현은
+\begin{itemize}
+    \item 정점 1은 2, 3과 연결되어 있고
+    \item 정점 2는 1, 4와 연결되어 있음
+\end{itemize}
+을 의미합니다.
+
+\subsubsection{인접 행렬(Adjacency Matrix)}
+
+정점 간의 연결 여부를
+\textbf{2차원 배열}로 표현하는 방식입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+graph = [
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+    [1, 0, 0, 0],
+    [0, 1, 0, 0]
+]
+\end{lstlisting}
+\end{examplebox}
+
+행과 열의 인덱스는 정점을 의미하며,
+값이 1이면 연결,
+0이면 비연결을 뜻합니다.
+
+\begin{notebox}
+두 방식의 특징은 다음과 같습니다.
+\begin{itemize}
+    \item \textbf{인접 리스트} :  
+    메모리 사용이 효율적이며, 실제 문제에서 가장 많이 사용
+
+    \item \textbf{인접 행렬} :  
+    두 정점의 연결 여부를 즉시 확인 가능
+\end{itemize}
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{그래프의 활용 예}
+
+그래프는
+현대 컴퓨터 과학 전반에 걸쳐 매우 널리 사용됩니다.
+
+\begin{itemize}
+    \item \textbf{SNS 관계} :  
+    사용자 간 친구 관계, 팔로우 관계
+
+    \item \textbf{지도 및 길찾기} :  
+    도시와 도로를 정점과 간선으로 표현
+
+    \item \textbf{네트워크 구조} :  
+    컴퓨터, 서버, 라우터 간 연결 관계
+
+    \item \textbf{추천 시스템} :  
+    사용자–아이템 간 관계 분석
+\end{itemize}
+
+\begin{notebox}
+그래프를 이해하면
+DFS, BFS, 최단 경로, 네트워크 분석 등
+수많은 핵심 알고리즘을 자연스럽게 배울 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\begin{exercisebox}
+다음 문제를 생각해 보세요.
+
+\begin{itemize}
+    \item 스택과 큐의 차이를 한 문장으로 정리해 보세요.
+    \vspace{0.6cm}
+    \item 트리와 그래프의 가장 큰 구조적 차이는 무엇인가요?
+    \vspace{0.6cm}
+    \item 어떤 상황에서 인접 리스트가 인접 행렬보다 유리할까요?
+\end{itemize}
+\end{exercisebox}
+
+\begin{readernotebox}
+자료 구조를 복습해보세요.
+\begin{itemize}
+    \item \textbf{스택} : 후입선출(LIFO)
+    \item \textbf{큐} : 선입선출(FIFO)
+    \item \textbf{트리} : 계층 구조
+    \item \textbf{그래프} : 관계 구조
+\end{itemize}
+\end{readernotebox}

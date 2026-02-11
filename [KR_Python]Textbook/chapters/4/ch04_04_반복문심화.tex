@@ -1,2 +1,716 @@
-% for문에 enumrate 함수 등등
-% for과 while의 else절
+% ---------------------------------------------------------
+\section{반복문을 이용한 Python 심화}
+
+앞 절에서는 \texttt{for} 문과 \texttt{while} 문의 기본적인 사용법을 배웠습니다.
+이번 절에서는 반복문을 조금 더 \textbf{Python답게} 사용하는 방법들을 살펴봅니다.
+
+이 절의 목표는 다음과 같습니다.
+
+\begin{itemize}
+    \item 반복 중에 \textbf{인덱스와 값}을 함께 다루는 방법을 이해한다
+    \item \texttt{for} / \texttt{while} 문의 \textbf{\texttt{else} 절}의 의미를 이해한다
+    \item 반복문을 간결하게 표현하는 \textbf{컴프리헨션(comprehension)} 문법을 익힌다
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsection{\texttt{enumerate()} 함수}
+
+리스트나 문자열을 \texttt{for} 문으로 순회하다 보면,
+\textbf{값뿐만 아니라 인덱스도 함께 필요}한 경우가 자주 발생합니다.
+이때 사용할 수 있는 함수는 \texttt{enumerate()} 함수입니다.
+
+\begin{conceptbox}
+\texttt{enumerate()} 함수는
+\textbf{반복 대상의 인덱스와 값을 함께 반환}해주는 함수입니다.
+\end{conceptbox}
+
+\subsubsection{기본 사용법}
+\begin{conceptbox}
+\texttt{enumerate()}는 내부적으로
+``\textbf{(index, value) 형태의 튜플}''을 하나씩 만들어 반환합니다.
+따라서 \texttt{for i, fruit in ...} 구문은
+\textbf{튜플 언패킹(unpacking)}을 이용한 표현입니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+fruits = ["apple", "banana", "cherry"]
+
+for i, fruit in enumerate(fruits):
+    print(i, fruit)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+0 apple
+1 banana
+2 cherry
+\end{verbatim}
+\end{examplebox}
+
+위 예시 코드에서 확인할 수 있듯이,
+\texttt{enumerate()} 함수는
+\textbf{이터러블 객체의 각 요소에 대해}
+\begin{itemize}
+    \item \texttt{i}에는 해당 요소의 \textbf{인덱스(index)}를,
+    \item \texttt{fruit}에는 해당 요소의 \textbf{값(value)}을
+\end{itemize}
+차례대로 반환합니다.
+
+즉, \texttt{enumerate()}는
+\textbf{인덱스와 값을 동시에 순회하고 싶을 때}
+사용하는 함수입니다.
+
+\begin{notebox}
+\texttt{enumerate()}를 사용하면
+\texttt{range(len(...))}를 사용하는 것보다
+\textbf{코드의 의도가 훨씬 명확해지고},
+인덱스 계산 실수도 줄일 수 있습니다.
+\end{notebox}
+
+\texttt{enumerate()}를 사용하지 않고
+인덱스와 값을 함께 다루려면
+다음과 같은 형태의 코드를 작성하게 됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for i in range(len(fruits)):
+    print(i, fruits[i])
+\end{lstlisting}
+\end{examplebox}
+
+이 방식은 문법적으로는 문제가 없지만,
+코드를 읽는 사람 입장에서는
+\texttt{i}가 무엇을 의미하는지,
+\texttt{fruits[i]}가 왜 등장하는지를
+한 번 더 해석해야 합니다.
+
+반면 \texttt{enumerate()}를 사용하면
+\textbf{“인덱스와 값을 함께 순회한다”는 의도가 코드 자체에 드러나기 때문에}
+가독성이 훨씬 좋아집니다.
+
+특히 반복 대상이 리스트인지, 문자열인지,
+혹은 다른 이터러블 객체인지에 관계없이
+동일한 방식으로 사용할 수 있다는 점에서
+\texttt{enumerate()}는 Python에서 매우 권장되는 반복 패턴 중 하나입니다.
+
+\subsubsection{시작 인덱스 지정하기}
+
+\texttt{enumerate()}는 시작 인덱스를 직접 지정할 수도 있습니다.
+시작 인덱스를 지정하기 위해서는 \texttt{start} 인자를 사용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+for idx, ch in enumerate("Python", start=1):
+    print(idx, ch)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+1 P
+2 y
+3 t
+4 h
+5 o
+6 n
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+% ---------------------------------------------------------
+\subsection{\texttt{zip()} 함수}
+
+리스트나 튜플처럼 여러 개의 이터러블을 함께 다루다 보면,
+\textbf{같은 위치의 요소끼리 묶어서} 처리하고 싶은 경우가 자주 발생합니다.
+예를 들어 학생 이름 리스트와 점수 리스트가 따로 있을 때,
+각 학생의 이름과 점수를 짝지어 출력하거나,
+두 벡터의 같은 위치 원소끼리 연산을 수행하는 상황이 대표적입니다.
+
+이때 사용할 수 있는 함수가 바로 \texttt{zip()} 함수입니다.
+
+\begin{conceptbox}
+\texttt{zip()} 함수는
+\textbf{여러 이터러블(iterable)을 같은 인덱스끼리 묶어서}
+\textbf{튜플(tuple) 형태로 차례대로 반환}하는 함수입니다.
+즉, ``병렬 순회(parallel iteration)''를 간단하게 만들어 줍니다.
+\end{conceptbox}
+
+\subsubsection{기본 사용법}
+
+\texttt{zip(a, b)}는
+\texttt{(a[0], b[0])}, \texttt{(a[1], b[1])}처럼
+같은 위치의 값들을 하나의 튜플로 묶어 반환합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+names = ["Alice", "Bob", "Charlie"]
+scores = [90, 85, 92]
+
+for name, score in zip(names, scores):
+    print(name, score)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Alice 90
+Bob 85
+Charlie 92
+\end{verbatim}
+\end{examplebox}
+
+위 코드는
+\textbf{두 리스트를 동시에 순회하며}
+각 위치의 값을 \texttt{(name, score)}로 묶어 처리합니다.
+이때 \texttt{for name, score in ...} 구문은
+\textbf{튜플 언패킹(unpacking)}을 사용한 표현입니다.
+
+\subsubsection{\texttt{zip()}의 반환값은 무엇인가요?}
+
+\texttt{zip()}은 결과를 ``리스트''로 만들어서 바로 주지 않습니다.
+대신 \textbf{zip 객체(zip object)}를 반환합니다.
+이것은 \textbf{이터러블}이며,
+필요할 때 하나씩 값을 만들어 내는 방식으로 동작합니다.
+
+따라서 \texttt{zip()}의 결과를 한 번에 확인하고 싶다면
+\texttt{list()}로 감싸서 리스트로 변환할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+a = [1, 2, 3]
+b = [10, 20, 30]
+
+z = zip(a, b)
+print(list(z))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+[(1, 10), (2, 20), (3, 30)]
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{zip()}이 반환하는 \textbf{zip 객체}는
+반복문에서 한 번 순회하면 ``소진''될 수 있습니다.
+즉, 같은 \texttt{zip} 결과를 여러 번 사용하려면
+처음부터 다시 \texttt{zip(...)}을 만들어야 합니다.
+\end{notebox}
+
+\subsubsection{세 개 이상의 이터러블도 묶을 수 있습니다}
+
+\texttt{zip()}은 인자로 이터러블을 여러 개 받을 수 있습니다.
+예를 들어 이름, 국어 점수, 수학 점수를 함께 묶어 처리할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+names = ["Alice", "Bob", "Charlie"]
+korean = [90, 80, 100]
+math = [85, 95, 88]
+
+for name, k, m in zip(names, korean, math):
+    print(name, k, m)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Alice 90 85
+Bob 80 95
+Charlie 100 88
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{길이가 다르면 어떻게 될까요?}
+
+\texttt{zip()}은 기본적으로
+\textbf{가장 짧은 이터러블의 길이에 맞춰서} 결과를 생성합니다.
+즉, 하나라도 끝나면 반복이 종료됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+a = [1, 2, 3, 4]
+b = [10, 20]
+
+print(list(zip(a, b)))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+[(1, 10), (2, 20)]
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{zip()}은 ``안전하게'' 묶기 위해
+자동으로 짧은 쪽에 맞춥니다.
+만약 길이가 반드시 같아야 한다면,
+반복 전에 길이를 확인하거나,
+추가적인 방법을 사용해야 합니다.
+\end{notebox}
+
+\subsubsection{묶인 값을 다시 분리하기: unzip 패턴}
+
+\texttt{zip()}으로 묶은 데이터를
+다시 원래의 형태로 분리하고 싶을 때가 있습니다.
+이때는 \texttt{*} (전개 연산자)를 이용한
+\textbf{unzip 패턴}을 사용할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+pairs = [("Alice", 90), ("Bob", 85), ("Charlie", 92)]
+
+names, scores = zip(*pairs)
+print(names)
+print(scores)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+('Alice', 'Bob', 'Charlie')
+(90, 85, 92)
+\end{verbatim}
+\end{examplebox}
+
+위 코드에서 \texttt{zip(*pairs)}는
+\texttt{("Alice", 90), ("Bob", 85), ("Charlie", 92)}를
+\texttt{"Alice", "Bob", "Charlie"}와
+\texttt{90, 85, 92}처럼 ``열(column) 기준''으로 다시 묶어 줍니다.
+
+\begin{notebox}
+\texttt{zip(*...)} 패턴은
+데이터를 ``행(row)''과 ``열(column)'' 관점으로 바꾸는 느낌으로 이해하면 쉽습니다.
+\end{notebox}
+
+\subsubsection{\texttt{zip()}은 언제 유용할까요?}
+
+\begin{itemize}
+    \item 서로 관련된 여러 리스트를 \textbf{동시에 순회}할 때
+    \item 인덱스를 직접 쓰지 않고도 \textbf{같은 위치끼리 묶어 처리}하고 싶을 때
+    \item \textbf{표 형태 데이터}를 다루거나, 데이터를 묶고/풀어야 할 때
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsection{\texttt{for} 문과 \texttt{while} 문의 \texttt{else} 절}
+
+Python의 반복문에는
+다른 언어에서는 잘 볼 수 없는
+\textbf{\texttt{else} 절}이 존재합니다.
+
+\begin{conceptbox}
+반복문의 \texttt{else} 절은
+\textbf{반복문이 정상적으로 끝났을 때만 실행}됩니다.
+즉, \texttt{break}로 중간에 종료되면
+\texttt{else} 절은 실행되지 않습니다.
+\end{conceptbox}
+
+처음 보면 반복문의 \texttt{else} 절은
+조건문(\texttt{if})의 \texttt{else}와 비슷해 보일 수 있습니다.
+하지만 두 개의 의미는 전혀 다릅니다.
+
+반복문의 \texttt{else} 절은
+\textbf{반복문이 중간에 끊기지 않고 끝까지 정상적으로 수행되었을 때만}
+실행됩니다.
+즉, 반복 도중 \texttt{break} 문이 실행되면
+\texttt{else} 절은 건너뛰어집니다.
+
+이 구조는 특히
+어떤 조건을 만족하는 값을
+\textbf{찾는 반복문}에서 유용합니다.
+조건을 만족하는 값을 발견하면 \texttt{break}로 반복을 종료하고,
+끝까지 찾지 못한 경우에만
+\texttt{else} 절에서 처리하도록 코드를 구성할 수 있기 때문입니다.
+
+이러한 패턴을 사용하면
+“찾았는지 / 끝까지 못 찾았는지”를
+별도의 변수 없이도
+명확하게 표현할 수 있습니다.
+
+\subsubsection{\texttt{for-else} 예제}
+
+\begin{examplebox}
+\begin{lstlisting}
+numbers = [2, 4, 6, 8]
+
+for n in numbers:
+    if n % 2 != 0:
+        print("Odd number found")
+        break
+else:
+    print("All numbers are even")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+All numbers are even
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{\texttt{while-else} 예제}
+
+\begin{examplebox}
+\begin{lstlisting}
+count = 0
+
+while count < 3:
+    if count == 5:
+        break
+    count += 1
+else:
+    print("Loop ended normally")
+\end{lstlisting}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsection{컴프리헨션(Comprehension)}
+
+반복문과 조건문을 사용해
+리스트를 만드는 코드는 매우 자주 등장합니다.
+
+\begin{conceptbox}
+\textbf{컴프리헨션(comprehension)}은
+반복문을 사용한 자료 생성 코드를
+\textbf{한 줄로 간결하게 표현}하는 문법입니다.
+\end{conceptbox}
+
+컴프리헨션은
+단순히 코드를 짧게 쓰기 위한 문법이 아닙니다.
+반복문을 통해
+“어떤 자료를 어떻게 만들어낼 것인가”라는
+\textbf{생성 규칙을 코드로 표현하는 방법}이라고 이해하는 것이 좋습니다.
+
+특히 Python에서는
+리스트를 새로 생성하는 작업이 매우 자주 등장하기 때문에,
+컴프리헨션은 반복문 다음으로
+가장 많이 사용되는 문법 중 하나입니다.
+
+\subsubsection{리스트 컴프리헨션(List Comprehension)}
+
+\begin{examplebox}
+\begin{lstlisting}
+# using for loop
+squares = []
+for i in range(5):
+    squares.append(i * i)
+
+print(squares)
+\end{lstlisting}
+\end{examplebox}
+
+위 코드는 다음과 같이 바꿀 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+squares = [i * i for i in range(5)]
+print(squares)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+[0, 1, 4, 9, 16]
+\end{verbatim}
+\end{examplebox}
+
+위의 두 코드는
+\textbf{동일한 결과를 생성}하지만,
+코드가 표현하는 방식에는 차이가 있습니다.
+
+첫 번째 방식은
+반복 과정과 결과 저장 과정을
+단계별로 명확히 보여주는 반면,
+두 번째 방식(컴프리헨션)은
+\textbf{“무엇을 만들고 싶은지”에 집중한 표현}입니다.
+
+컴프리헨션을 읽을 때는
+다음과 같이 해석하면 이해하기 쉽습니다.
+
+\begin{itemize}
+    \item \texttt{for i in range(5)} : 반복의 대상
+    \item \texttt{i * i} : 각 반복에서 만들어질 값
+\end{itemize}
+
+즉,
+“\texttt{range(5)}를 순회하면서
+각 값의 제곱으로 이루어진 리스트를 만든다”
+라는 의미를 한 줄로 표현한 것입니다.
+
+\subsubsection{조건이 있는 컴프리헨션}
+컴프리헨션에는
+\textbf{조건문(\texttt{if})을 함께 사용할 수도 있습니다}.
+이때의 \texttt{if}는
+반복 과정 중에서
+\textbf{특정 조건을 만족하는 값만 선택하기 위한 필터 역할}을 합니다.
+
+조건이 있는 컴프리헨션은
+“모든 값을 처리하되,
+그중 일부만 결과에 포함하고 싶을 때”
+특히 유용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+even_numbers = [x for x in range(10) if x % 2 == 0]
+print(even_numbers)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+[0, 2, 4, 6, 8]
+\end{verbatim}
+\end{examplebox}
+
+위 예제는
+\texttt{range(10)} 중에서
+\textbf{짝수만 골라 새로운 리스트를 생성}하는 코드입니다.
+
+\begin{notebox}
+컴프리헨션은 매우 강력하지만,
+조건이 복잡해지면 가독성이 급격히 떨어질 수 있습니다.
+\textbf{읽기 어려운 한 줄 코드보다,
+명확한 여러 줄 코드가 더 좋은 코드일 수 있습니다.}
+\end{notebox}
+
+\subsubsection{중첩된 리스트 컴프리헨션}
+
+리스트 컴프리헨션의 첫 번째 표현식에는
+단순한 연산뿐만 아니라
+\textbf{또 다른 리스트 컴프리헨션}이 올 수도 있습니다.
+이러한 형태를 \textbf{중첩된 리스트 컴프리헨션(nested list comprehension)}이라고 합니다.
+
+중첩된 리스트 컴프리헨션은
+2차원 리스트(행렬)와 같이
+\textbf{중첩된 구조의 데이터를 변형하거나 재구성할 때}
+자주 사용됩니다.
+
+\subsubsection*{예제: 행렬 전치(Transpose)}
+
+다음은
+길이가 4인 리스트 3개로 이루어진
+\textbf{3×4 행렬}입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+matrix = [
+    [1,  2,  3,  4],
+    [5,  6,  7,  8],
+    [9, 10, 11, 12],
+]
+\end{lstlisting}
+\end{examplebox}
+
+이 행렬을 \textbf{전치(transpose)}하면,
+행과 열이 서로 바뀐 구조가 됩니다.
+
+다음은 이를 수행하는
+\textbf{중첩된 리스트 컴프리헨션}입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+transposed = [[row[i] for row in matrix] for i in range(4)]
+print(transposed)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+[[1, 5, 9],
+ [2, 6, 10],
+ [3, 7, 11],
+ [4, 8, 12]]
+\end{verbatim}
+\end{examplebox}
+
+이 코드에서
+\begin{itemize}
+    \item \texttt{for i in range(4)}는 \textbf{열 인덱스}를 순회하고
+    \item 내부의 \texttt{[row[i] for row in matrix]}는
+          각 행에서 해당 열의 값을 하나씩 모아
+          \textbf{새로운 리스트}를 만듭니다.
+\end{itemize}
+
+즉,
+\textbf{바깥 for는 열을 기준으로},
+\textbf{안쪽 for는 행을 기준으로}
+동작합니다.
+
+\subsubsection*{for문으로 풀어쓴 형태}
+
+앞 절에서 보았듯이,
+리스트 컴프리헨션은
+일반적인 \texttt{for} 문으로 풀어 쓸 수 있습니다.
+위의 코드는 다음과 동일합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+transposed = []
+for i in range(4):
+    transposed.append([row[i] for row in matrix])
+
+print(transposed)
+\end{lstlisting}
+\end{examplebox}
+
+이를 다시 완전히 풀어 쓰면,
+다음과 같은 \textbf{이중 반복문 구조}가 됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+transposed = []
+
+for i in range(4):
+    transposed_row = []
+    for row in matrix:
+        transposed_row.append(row[i])
+    transposed.append(transposed_row)
+
+print(transposed)
+\end{lstlisting}
+\end{examplebox}
+
+이 과정을 통해
+중첩된 리스트 컴프리헨션이
+\textbf{중첩된 반복문을 한 줄로 압축한 표현}임을 확인할 수 있습니다.
+
+중첩된 리스트 컴프리헨션은 매우 강력하지만,
+구조가 복잡해질수록
+\textbf{가독성이 급격히 떨어질 수 있습니다.}
+
+이러한 경우에는
+이미 잘 구현된 \textbf{내장 함수}를 사용하는 편이
+더 명확하고 안전할 수 있습니다.
+
+같은 행렬 전치는
+\texttt{zip()} 함수를 사용하면
+다음과 같이 간단히 표현할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+transposed = list(zip(*matrix))
+print(transposed)
+\end{lstlisting}
+
+출력 결과:
+\begin{verbatim}
+[(1, 5, 9),
+ (2, 6, 10),
+ (3, 7, 11),
+ (4, 8, 12)]
+\end{verbatim}
+\end{examplebox}
+
+\subsubsection{집합 컴프리헨션(Set Comprehension)}
+
+리스트 컴프리헨션과 매우 유사한 방식으로,
+\textbf{집합(set)}을 생성하는 컴프리헨션도 사용할 수 있습니다.
+
+\begin{conceptbox}
+\textbf{집합 컴프리헨션(set comprehension)}은
+중괄호(\texttt{\{\}})를 사용하여
+반복문을 통해 집합을 생성하는 문법입니다.
+집합의 특성상,
+\textbf{중복된 값은 자동으로 제거}됩니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+numbers = [1, 2, 2, 3, 4, 4, 5]
+
+unique_numbers = {x for x in numbers}
+print(unique_numbers)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+{1, 2, 3, 4, 5}
+\end{verbatim}
+\end{examplebox}
+
+위 예제에서 볼 수 있듯이,
+집합 컴프리헨션은
+\textbf{중복을 제거한 결과를 얻고 싶을 때}
+매우 유용합니다.
+
+\subsubsection{조건이 있는 집합 컴프리헨션}
+
+리스트 컴프리헨션과 마찬가지로,
+조건을 함께 사용할 수도 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+even_set = {x for x in range(10) if x % 2 == 0}
+print(even_set)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+{0, 2, 4, 6, 8}
+\end{verbatim}
+\end{examplebox}
+
+집합 컴프리헨션은
+\textbf{순서가 중요하지 않고},
+\textbf{존재 여부만 중요할 때}
+적합한 선택입니다.
+
+\subsubsection{딕셔너리 컴프리헨션(Dictionary Comprehension)}
+
+컴프리헨션을 사용하여
+\textbf{딕셔너리(dictionary)}를 생성할 수도 있습니다.
+
+\begin{conceptbox}
+\textbf{딕셔너리 컴프리헨션(dictionary comprehension)}은
+\texttt{key : value} 형태의 쌍을
+반복문을 통해 생성하는 문법입니다.
+\end{conceptbox}
+
+딕셔너리 컴프리헨션의 기본 형태는 다음과 같습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+{key_expression : value_expression for element in iterable}
+\end{lstlisting}
+\end{examplebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+numbers = [1, 2, 3, 4]
+
+square_dict = {x: x * x for x in numbers}
+print(square_dict)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+{1: 1, 2: 4, 3: 9, 4: 16}
+\end{verbatim}
+\end{examplebox}
+
+위 예제는
+리스트의 각 값을
+\textbf{key로 사용하고},
+그 제곱을 \textbf{value로 가지는 딕셔너리}를 생성합니다.
+
+지금까지 살펴본 것처럼,
+Python에서는 다음과 같은 컴프리헨션 문법을 제공합니다.
+
+\begin{itemize}
+    \item 리스트 컴프리헨션 : \texttt{[ ]}
+    \item 집합 컴프리헨션 : \texttt{\{ \}}
+    \item 딕셔너리 컴프리헨션 : \texttt{\{ key : value \}}
+\end{itemize}
+
+모든 컴프리헨션은
+\textbf{반복을 통해 새로운 자료를 생성한다}는
+공통된 목적을 가집니다.
+
+다만 자료형마다
+\textbf{중복 허용 여부, 순서 보장 여부, key-value 구조}가 다르므로,
+상황에 맞는 컴프리헨션을 선택하는 것이 중요합니다.
+
+% ---------------------------------------------------------
+\begin{readernotebox}
+다음 질문에 답하며 내용을 정리해보세요.
+\begin{itemize}
+    \item \texttt{enumerate()}는 언제 사용하는가?
+    \vspace{0.8cm}
+    \item 반복문의 \texttt{else} 절은 언제 실행되지 않는가?
+    \vspace{0.8cm}
+    \item 컴프리헨션을 사용할 때 주의해야 할 점은 무엇인가?
+\end{itemize}
+\end{readernotebox}

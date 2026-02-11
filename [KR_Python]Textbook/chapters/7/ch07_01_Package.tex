@@ -1,0 +1,228 @@
+% ---------------------------------------------------------
+\section{패키지(Package)}
+
+프로그램의 규모가 커지면,
+하나의 파일이나 몇 개의 모듈만으로는
+코드를 체계적으로 관리하기 어려워집니다.
+이때 사용하는 구조가
+\textbf{패키지(package)}입니다.
+
+\begin{conceptbox}
+\textbf{패키지(package)}는
+\textbf{여러 모듈을 디렉터리 단위로 묶어}
+이름 공간(namespace)을 계층적으로 구성하는 방법입니다.
+패키지와 모듈은
+\textbf{점(\texttt{.})으로 구분된 이름}으로 접근합니다.
+\end{conceptbox}
+
+예를 들어,
+\texttt{A.B}라는 이름은
+\texttt{A}라는 패키지 안에 있는
+\texttt{B}라는 모듈(또는 서브 패키지)을 의미합니다.
+
+이러한 구조 덕분에,
+여러 개발자가 만든 모듈들이
+서로의 이름 충돌을 걱정하지 않고
+하나의 프로젝트 안에서 공존할 수 있습니다.
+실제로 \texttt{NumPy}, \texttt{Pillow}와 같은 대형 라이브러리들은
+모두 패키지 구조로 구성되어 있습니다.
+
+% ---------------------------------------------------------
+\subsection{패키지의 디렉터리 구조}
+
+패키지는
+파일 시스템 상에서
+\textbf{디렉터리 구조}로 표현됩니다.
+다음은 음향 파일을 처리하는 패키지를
+예시로 한 구조입니다.
+
+\begin{examplebox}
+\begin{verbatim}
+sound/
+    __init__.py
+    formats/
+        __init__.py
+        wavread.py
+        wavwrite.py
+        aiffread.py
+        aiffwrite.py
+    effects/
+        __init__.py
+        echo.py
+        surround.py
+        reverse.py
+    filters/
+        __init__.py
+        equalizer.py
+        vocoder.py
+        karaoke.py
+\end{verbatim}
+\end{examplebox}
+
+이 구조에서:
+
+\begin{itemize}
+  \item \texttt{sound}는 최상위 패키지
+  \item \texttt{formats}, \texttt{effects}, \texttt{filters}는 서브 패키지
+  \item 각 \texttt{.py} 파일은 하나의 모듈
+\end{itemize}
+
+입니다.
+
+% ---------------------------------------------------------
+\subsection{\texttt{\_\_init\_\_.py}의 역할}
+
+파이썬이
+어떤 디렉터리를
+\textbf{패키지로 인식하도록 만들기 위해}
+전통적으로 사용되는 파일이
+\texttt{\_\_init\_\_.py}입니다.
+
+\begin{conceptbox}
+\texttt{\_\_init\_\_.py} 파일이 존재하면,
+해당 디렉터리는
+파이썬에 의해 패키지로 취급됩니다.
+\end{conceptbox}
+
+가장 단순한 경우,
+\texttt{\_\_init\_\_.py}는
+빈 파일이어도 무방합니다.
+하지만 이 파일 안에서:
+
+\begin{itemize}
+  \item 패키지 초기화 코드 실행
+  \item 패키지에서 공개할 이름 제어
+\end{itemize}
+
+와 같은 작업을 수행할 수도 있습니다.
+
+% ---------------------------------------------------------
+\subsection{패키지 임포트 방법}
+
+패키지에 포함된 모듈은
+여러 가지 방식으로 import할 수 있습니다.
+
+\subsubsection{전체 경로를 사용하는 방식}
+
+\begin{examplebox}
+\begin{lstlisting}
+import sound.effects.echo
+
+sound.effects.echo.echofilter(input, output)
+\end{lstlisting}
+\end{examplebox}
+
+이 방식은
+모듈의 전체 경로를 명시하므로
+출처가 가장 분명합니다.
+
+\subsubsection{서브 모듈만 가져오는 방식}
+
+\begin{examplebox}
+\begin{lstlisting}
+from sound.effects import echo
+
+echo.echofilter(input, output)
+\end{lstlisting}
+\end{examplebox}
+
+이 경우,
+\texttt{echo} 모듈만 현재 이름 공간으로 가져옵니다.
+
+\subsubsection{특정 이름만 가져오는 방식}
+
+\begin{examplebox}
+\begin{lstlisting}
+from sound.effects.echo import echofilter
+
+echofilter(input, output)
+\end{lstlisting}
+\end{examplebox}
+
+이 방식은
+함수나 변수 하나만 직접 사용할 수 있어
+가장 간결하지만,
+출처가 코드에서 드러나지 않을 수 있습니다.
+
+\begin{notebox}
+\texttt{from package import item}에서
+\texttt{item}은
+서브 모듈, 서브 패키지,
+또는 패키지 내부에서 정의된 다른 이름일 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{from package import *}와 \texttt{\_\_all\_\_}}
+
+패키지에서도
+\texttt{from package import *} 문법을 사용할 수 있습니다.
+하지만 이 동작은
+\texttt{\_\_init\_\_.py}에 정의된
+\texttt{\_\_all\_\_} 변수에 의해 제어됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+# sound/effects/__init__.py
+__all__ = ["echo", "surround", "reverse"]
+\end{lstlisting}
+\end{examplebox}
+
+이렇게 정의되어 있으면,
+
+\begin{examplebox}
+\begin{lstlisting}
+from sound.effects import *
+\end{lstlisting}
+\end{examplebox}
+
+는
+\texttt{echo}, \texttt{surround}, \texttt{reverse} 모듈만을
+import하게 됩니다.
+
+\begin{notebox}
+\texttt{\_\_all\_\_}이 정의되어 있지 않다면,
+\texttt{import *}는
+패키지에 포함된 모든 서브 모듈을 자동으로 불러오지 않습니다.
+일반적으로 이 방식은
+가독성과 안정성 측면에서 권장되지 않습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{패키지 내부 간의 임포트}
+
+패키지 내부의 모듈들은
+서로를 import할 수 있습니다.
+이때 두 가지 방식이 존재합니다.
+
+\subsubsection{절대 임포트(Absolute Import)}
+
+\begin{examplebox}
+\begin{lstlisting}
+from sound.effects import echo
+\end{lstlisting}
+\end{examplebox}
+
+절대 임포트는
+항상 패키지의 최상위 이름부터 시작하며,
+가장 명확하고 권장되는 방식입니다.
+
+\subsubsection{상대 임포트(Relative Import)}
+
+\begin{examplebox}
+\begin{lstlisting}
+from . import echo
+from ..filters import equalizer
+\end{lstlisting}
+\end{examplebox}
+
+상대 임포트는
+현재 모듈을 기준으로
+점(\texttt{.})을 사용해
+패키지 내부 위치를 나타냅니다.
+
+\begin{notebox}
+상대 임포트는
+모듈이 패키지의 일부로 import될 때만 동작합니다.
+따라서 프로그램의 진입점이 되는 모듈에서는
+절대 임포트를 사용하는 것이 안전합니다.
+\end{notebox}

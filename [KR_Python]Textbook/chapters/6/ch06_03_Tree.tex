@@ -1,0 +1,152 @@
+% =========================================================
+\section{트리(Tree)}
+
+트리(Tree)는
+\textbf{계층적 구조(hierarchical structure)}를 표현하기 위한
+대표적인 자료 구조입니다.
+
+지금까지 배운
+리스트, 스택, 큐는
+데이터가 \textbf{일렬(linear)}로 나열된 구조였습니다.
+즉, 각 데이터는
+앞이나 뒤에 있는 데이터와만 직접적인 관계를 가집니다.
+
+반면 트리는
+데이터가
+\textbf{부모-자식 관계(parent-child relationship)}로 연결되며,
+전체 구조가
+``가지가 뻗어 나가는 형태''를 가집니다.
+
+\begin{conceptbox}
+트리는 \textbf{노드(node)}와 노드 사이를 연결하는 \textbf{간선(edge)}으로 이루어진
+\textbf{비선형(non-linear) 자료 구조}입니다.
+하나의 노드는 여러 개의 자식을 가질 수 있으며, 이를 통해 계층 구조를 표현할 수 있습니다.
+\end{conceptbox}
+
+트리는
+``상위 개념 아래에 하위 개념이 여러 개 존재하는 구조''
+를 표현할 때 매우 자연스럽습니다.
+
+% ---------------------------------------------------------
+\subsection{트리의 기본 용어}
+
+트리를 이해하기 위해서는
+몇 가지 기본 용어를 먼저 익혀야 합니다.
+
+\begin{itemize}
+    \item \textbf{노드(node)} : 트리를 구성하는 각각의 데이터 단위
+
+    \item \textbf{루트(root)} : 트리의 가장 위에 있는 시작 노드  
+    하나의 트리에는 루트가 반드시 하나 존재합니다.
+
+    \item \textbf{부모(parent)} / \textbf{자식(child)} :  
+    직접 연결된 상위 노드를 부모, 하위 노드를 자식이라고 부릅니다.
+
+    \item \textbf{형제(sibling)} : 같은 부모를 가지는 노드들
+
+    \item \textbf{리프(leaf)} : 자식이 하나도 없는 노드  
+    트리의 가장 끝에 위치합니다.
+
+    \item \textbf{서브트리(subtree)} : 어떤 노드를 루트로 하는 작은 트리
+\end{itemize}
+
+\begin{notebox}
+트리에서
+\textbf{모든 노드는 루트로부터 정확히 하나의 경로만}을 가집니다.
+이 점이 그래프와 트리를 구분하는 중요한 특징입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{이진 트리(Binary Tree)}
+
+이진 트리는
+트리 구조 중에서도
+가장 기본적이고 중요한 형태입니다.
+
+\begin{conceptbox}
+\textbf{이진 트리(Binary Tree)}는
+각 노드가
+\textbf{최대 두 개의 자식 노드}만을 가질 수 있는 트리입니다.
+이때 자식은
+\textbf{왼쪽 자식(left child)}과
+\textbf{오른쪽 자식(right child)}으로 구분됩니다.
+\end{conceptbox}
+
+중요한 점은,
+\textbf{자식이 반드시 두 개일 필요는 없다}는 것입니다.
+
+\begin{itemize}
+    \item \textbf{자식 0개} : 리프 노드(leaf node)
+    \item \textbf{자식 1개} : 한쪽으로만 연결된 노드
+    \item \textbf{자식 2개} : 왼쪽과 오른쪽 자식을 모두 가진 노드
+\end{itemize}
+
+이진 트리는
+다음과 같은 다양한 구조의 기반이 됩니다.
+
+\begin{itemize}
+    \item \textbf{이진 탐색 트리(Binary Search Tree, BST)} :  
+    정렬된 데이터의 빠른 검색을 위해 사용
+
+    \item \textbf{힙(Heap)} :  
+    우선순위 큐(priority queue) 구현에 사용
+
+    \item \textbf{표현식 트리(Expression Tree)} :  
+    수식 계산 과정을 트리 형태로 표현
+\end{itemize}
+
+\begin{notebox}
+이 장에서는
+이진 트리의 \textbf{개념적 구조}까지만 다룹니다.
+실제 구현과 탐색 알고리즘은
+이후 장에서 자세히 설명합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{트리와 리스트의 차이}
+
+트리는 리스트와 달리
+\textbf{데이터의 위치가 인덱스로 정해지지 않습니다.}
+
+\begin{itemize}
+    \item \textbf{리스트} :  
+    인덱스로 접근 (\texttt{list[0]}, \texttt{list[1]} 등)
+
+    \item \textbf{트리} :  
+    부모-자식 관계를 따라 구조적으로 이동
+\end{itemize}
+
+이 때문에 트리는
+단순한 반복문보다는
+\textbf{재귀(recursion)}나
+\textbf{탐색 알고리즘}과 함께 자주 사용됩니다.
+
+% ---------------------------------------------------------
+\subsection{트리의 활용 예}
+
+트리는 실제 시스템과 매우 밀접한 자료 구조입니다.
+
+\begin{itemize}
+    \item \textbf{파일 시스템} :  
+    디렉터리와 파일의 계층 구조
+
+    \item \textbf{HTML / XML 문서} :  
+    태그가 중첩된 문서 구조
+
+    \item \textbf{데이터베이스 인덱스} :  
+    빠른 검색을 위한 트리 기반 구조 (B-Tree 등)
+
+    \item \textbf{프로그래밍 언어 내부 구조} :  
+    구문 분석 트리(AST, Abstract Syntax Tree)
+\end{itemize}
+
+\begin{notebox}
+트리는
+``정렬된 데이터 관리''와
+``계층 구조 표현''
+이라는 두 가지 관점에서
+매우 중요한 역할을 합니다.
+\end{notebox}
+
+트리의 실제 구현과 순회 방법(전위/중위/후위 탐색)은  
+클래스를 학습한 이후에 다시 다루겠습니다.

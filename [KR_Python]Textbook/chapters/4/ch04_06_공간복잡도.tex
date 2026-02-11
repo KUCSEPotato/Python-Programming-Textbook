@@ -1,0 +1,162 @@
+% ---------------------------------------------------------
+\section{공간복잡도(Space Complexity)}
+
+앞에서 반복문과 시간복잡도에 대해 살펴보았습니다.
+이번에는 알고리즘을 평가할 때 또 하나의 중요한 기준인
+\textbf{공간복잡도(space complexity)}에 대해 알아봅니다.
+
+공간복잡도는
+``이 프로그램이 실행되는 동안
+\textbf{얼마나 많은 메모리 공간을 사용하는가}''
+를 나타내는 개념입니다.
+
+\subsection{공간복잡도란 무엇인가요?}
+
+\begin{conceptbox}
+\textbf{공간복잡도}란
+입력의 크기에 따라
+\textbf{프로그램이 추가로 사용하는 메모리 공간의 양}을
+점근적으로 나타낸 것입니다.
+보통 \textbf{Big-O 표기법}으로 표현합니다.
+\end{conceptbox}
+
+여기서 중요한 점은
+\textbf{프로그램이 이미 가지고 있는 입력 데이터 자체의 크기}가 아니라,
+\textbf{알고리즘을 수행하면서 새로 사용하는 공간}에 초점을 둔다는 점입니다.
+
+예를 들어,
+\begin{itemize}
+    \item 변수 몇 개를 추가로 사용하는 경우
+    \item 리스트, 딕셔너리와 같은 자료구조를 새로 만드는 경우
+    \item 재귀 호출로 인해 스택 메모리가 쌓이는 경우
+\end{itemize}
+등이 모두 공간복잡도에 영향을 미칩니다.
+
+\subsection{공간복잡도의 간단한 예시}
+
+\subsubsection{상수 공간: \(O(1)\)}
+
+\begin{examplebox}
+\begin{lstlisting}
+def sum_two_numbers(a, b):
+    result = a + b
+    return result
+\end{lstlisting}
+\end{examplebox}
+
+위 함수는 입력 크기와 관계없이
+\texttt{a}, \texttt{b}, \texttt{result}와 같은
+\textbf{고정된 개수의 변수만} 사용합니다.
+
+\begin{notebox}
+이처럼 입력 크기와 무관하게
+항상 일정한 양의 메모리만 사용하는 경우,
+공간복잡도는 \(\mathbf{O(1)}\) 입니다.
+\end{notebox}
+
+\subsubsection{선형 공간: \(O(n)\)}
+
+\begin{examplebox}
+\begin{lstlisting}
+def make_list(n):
+    result = []
+    for i in range(n):
+        result.append(i)
+    return result
+\end{lstlisting}
+\end{examplebox}
+
+이 함수는
+입력 \texttt{n}의 크기에 비례하는 길이의 리스트를 생성합니다.
+즉, \texttt{n}이 커질수록
+사용하는 메모리 공간도 함께 증가합니다.
+
+\begin{notebox}
+입력 크기 \(n\)에 비례하여
+추가 공간을 사용하는 경우,
+공간복잡도는 \(\mathbf{O(n)}\) 입니다.
+\end{notebox}
+
+\subsection{반복문과 공간복잡도}
+
+많은 초보자들이
+``반복문을 사용하면 공간복잡도가 커진다''
+라고 오해하곤 합니다.
+하지만 \textbf{반복문 자체는 공간복잡도를 증가시키지 않습니다}.
+
+\begin{examplebox}
+\begin{lstlisting}
+total = 0
+for i in range(1000000):
+    total += i
+\end{lstlisting}
+\end{examplebox}
+
+위 코드는 매우 많은 반복을 수행하지만,
+추가로 사용하는 변수는 \texttt{total}과 \texttt{i}뿐입니다.
+따라서 공간복잡도는 여전히 \(O(1)\)입니다.
+
+\begin{conceptbox}
+\textbf{공간복잡도는 ``반복 횟수''가 아니라
+``추가로 생성되는 자료의 크기''에 의해 결정됩니다.}
+\end{conceptbox}
+
+\subsection{컴프리헨션과 공간복잡도}
+
+리스트 컴프리헨션은 코드가 짧고 간결하지만,
+\textbf{새로운 리스트를 생성한다는 점}을 반드시 기억해야 합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+squares = [i * i for i in range(1000)]
+\end{lstlisting}
+\end{examplebox}
+
+위 코드는 길이 1000짜리 리스트를 새로 만들므로,
+공간복잡도는 \(O(n)\)입니다.
+
+\begin{notebox}
+만약 결과를 저장할 필요 없이
+한 번씩 처리만 하면 된다면,
+리스트 대신 반복문이나
+나중에 배울 제너레이터(generator)를 사용하는 것이
+공간 측면에서 더 효율적일 수 있습니다.
+\end{notebox}
+
+\subsection{시간복잡도와 공간복잡도의 관계}
+
+시간복잡도와 공간복잡도는
+종종 \textbf{트레이드오프(trade-off)} 관계에 있습니다.
+
+\begin{itemize}
+    \item 더 많은 메모리를 사용해서 시간을 줄이거나
+    \item 더 많은 시간을 사용해서 메모리를 아끼는
+\end{itemize}
+
+선택을 해야 하는 경우가 많습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+# store after precomputing (space up, time down)
+values = [i * i for i in range(1000)]
+\end{lstlisting}
+\end{examplebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+# compute when i need (space down, time up)
+for i in range(1000):
+    print(i * i)
+\end{lstlisting}
+\end{examplebox}
+
+\begin{readernotebox}
+다음 질문에 답해보세요.
+\begin{itemize}
+    \item 반복문을 사용해도 공간복잡도가 \(O(1)\)일 수 있는 이유는 무엇인가요?
+    \vspace{0.8cm}
+    \item 리스트 컴프리헨션은 왜 공간복잡도가 \(O(n)\)인가요?
+    \vspace{0.8cm}
+    \item 시간과 공간 중 무엇을 더 우선해야 할지는 언제 달라질까요?
+\end{itemize}
+\end{readernotebox}
