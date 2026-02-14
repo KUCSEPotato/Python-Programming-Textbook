@@ -1,0 +1,498 @@
+% ---------------------------------------------------------
+\begin{notebox}
+지금부터 다룰 내용은 비교적 고급 기능에 해당합니다.  
+초보자의 입장에서는 반드시 알아야 하는 내용은 아니지만,  
+예외 처리에 대해 더 깊이 이해하고 싶다면 차근차근 따라와 보시기 바랍니다.
+부담스럽게 느껴진다면, 이 부분은 이후에 다시 읽어도 충분합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{예외 연쇄 (Exception Chaining)}
+
+예외는 보통 ``발생 $\rightarrow$ 처리'' 흐름으로 끝나지만,
+실제 프로그램에서는 예외를 처리하는 과정에서
+\textbf{새로운 예외를 다시 발생}시키는 일이 자주 일어납니다.
+예를 들어,
+
+\begin{itemize}
+  \item 하위 레벨(I/O, 네트워크, 파싱 등)에서 발생한 예외를
+        상위 레벨의 의미 있는 예외로 \textbf{변환}하고 싶거나
+  \item 예외를 기록(logging)한 뒤
+        호출자에게 그대로 \textbf{전파}하고 싶거나
+  \item 사용자에게는 간결한 메시지만 보여주고,
+        내부 구현 세부사항은 \textbf{숨기고} 싶을 때
+\end{itemize}
+
+파이썬은 이러한 상황을 지원하기 위해
+\textbf{예외 연쇄(exception chaining)}라는 메커니즘을 제공합니다.
+
+\begin{conceptbox}
+\textbf{예외 연쇄(Exception Chaining)}란,
+``원래 발생한 예외''와
+``그 예외를 처리하는 과정에서 새로 발생한 예외''를
+\textbf{서로 연결하여(traceback에 함께 표시하여)} 보여주는 기능입니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{자동 예외 연쇄}
+
+\texttt{except} 블록 안에서
+새로운 예외를 발생시키면,
+파이썬은 이전 예외를 \textbf{자동으로 연결}합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+try:
+    open("database.sqlite")
+except OSError:
+    raise RuntimeError("Unable to handle error")
+\end{lstlisting}
+\end{examplebox}
+
+위 코드는 다음 상황을 의도합니다.
+
+\begin{itemize}
+  \item 파일 열기 과정에서 \texttt{OSError} 계열 예외가 발생할 수 있고
+  \item 이를 잡아 ``DB 처리를 할 수 없다''는 의미의 예외로 바꾸어 알리고 싶다
+\end{itemize}
+
+이때 traceback에는 보통 다음과 같은 문장이 포함됩니다.
+
+\begin{verbatim}
+During handling of the above exception, another exception occurred:
+\end{verbatim}
+
+이는 다음을 의미합니다.
+
+\begin{itemize}
+  \item 처음 예외(\texttt{OSError} 또는 그 하위 예외)가 발생했고
+  \item 그 예외를 처리하는 도중(handling) 새로운 예외(\texttt{RuntimeError})가 발생했다
+\end{itemize}
+
+\begin{notebox}
+자동 예외 연쇄는 ``원인 예외를 잃어버리지 않도록'' 도와줍니다.
+즉, 상위 예외만 봐도 되지만,
+필요하다면 하위 예외(traceback 상단)를 통해
+\textbf{진짜 원인(root cause)}도 추적할 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{명시적 예외 연쇄: \texttt{raise ... from ...}}
+
+자동 연쇄는 ``연결이 되긴 하지만'' 관계가 애매하게 보일 수 있습니다.
+특히 예외를 ``변환''할 때는
+\textbf{새 예외가 이전 예외의 직접 원인임을} 명시하는 편이 더 좋습니다.
+
+이를 위해 \texttt{raise ... from ...} 문법을 사용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def func():
+    raise ConnectionError("Connection failed")
+
+try:
+    func()
+except ConnectionError as exc:
+    raise RuntimeError("Failed to open database") from exc
+\end{lstlisting}
+\end{examplebox}
+
+\texttt{from exc}를 사용하면 traceback에는 보통 다음 문장이 나타납니다.
+
+\begin{verbatim}
+The above exception was the direct cause of the following exception:
+\end{verbatim}
+
+즉, ``이 예외는 방금 예외의 직접적인 결과''임을 더 분명하게 표현합니다.
+
+\begin{itemize}
+  \item \texttt{ConnectionError}: 실제 원인이 된 하위 예외
+  \item \texttt{RuntimeError}: 호출자에게 전달하고 싶은 상위 의미의 예외
+\end{itemize}
+
+\begin{notebox}
+\texttt{raise ... from exc}는 라이브러리/프레임워크 설계에서 특히 중요합니다.
+사용자에게는 더 이해하기 쉬운 예외 타입과 메시지를 제공하면서도,
+개발자는 원래 예외를 통해 디버깅 정보를 유지할 수 있기 때문입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{예외 연쇄 끄기: \texttt{from None}}
+
+반대로, 이전 예외 정보를 traceback에서 숨기고 싶을 때도 있습니다.
+예를 들어, 내부 구현(파일 위치, 라이브러리 세부사항)을 사용자에게 노출하고 싶지 않거나,
+이미 충분히 설명 가능한 상위 예외만 제공하고 싶은 경우입니다.
+
+이때 \texttt{from None}을 사용하면
+자동 예외 연쇄를 \textbf{비활성화}할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+try:
+    open("database.sqlite")
+except OSError:
+    raise RuntimeError("Operation failed") from None
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{from None}은 ``원인을 완전히 삭제''하는 효과가 있으므로 신중히 사용해야 합니다.
+디버깅 관점에서는 원인 예외가 사라지면 문제 해결이 어려워질 수 있습니다.
+사용자 경험(UX)과 디버깅 편의 사이에서 균형을 잡는 것이 핵심입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{언제 어떤 방식을 선택해야 할까?}
+
+\begin{itemize}
+  \item 하위 예외를 상위 의미로 \textbf{변환}하고 원인을 유지하고 싶다
+        $\rightarrow$ \texttt{raise NewError(...) from exc}
+  \item 사용자에게 내부 세부사항을 \textbf{숨기고} 싶다
+        $\rightarrow$ \texttt{raise NewError(...) from None}
+  \item 단순히 \texttt{except} 안에서 다른 예외를 발생시킨다
+        $\rightarrow$ 자동 연쇄(기본 동작)
+\end{itemize}
+
+% ---------------------------------------------------------
+\begin{notebox}
+예외 연쇄는 단순 문법이 아니라 \textbf{예외 설계의 문제}입니다.
+좋은 예외 설계는
+\begin{itemize}
+  \item 디버깅을 위한 원인 정보를 보존하면서도
+  \item 사용자에게는 이해하기 쉬운 예외 타입과 메시지를 제공하는 것
+\end{itemize}
+을 목표로 합니다.
+\end{notebox}
+
+
+% ---------------------------------------------------------
+\section{여러 예외를 동시에 다루기: \texttt{ExceptionGroup} (Python 3.11+)}
+
+일반적인 프로그램은
+예외가 한 번 발생하면 즉시 중단됩니다.
+하지만 다음과 같은 경우에는
+\textbf{여러 실패를 모아서 한 번에 보고}하는 편이 더 유용합니다.
+
+\begin{itemize}
+  \item 병렬/동시 작업에서 여러 작업이 \textbf{동시에 실패}한 경우
+  \item 여러 테스트를 실행한 뒤 \textbf{모든 실패를 요약}하고 싶은 경우
+\end{itemize}
+
+Python 3.11부터는 이런 상황을 위해
+\textbf{\texttt{ExceptionGroup}}이 도입되었습니다.
+
+\begin{conceptbox}
+\texttt{ExceptionGroup}은
+여러 예외 객체(exception instances)를 하나로 묶어
+\textbf{한 번에 발생(raise)}시킬 수 있는 예외 클래스입니다.
+\end{conceptbox}
+
+\subsection{기본 사용 예시}
+
+\begin{examplebox}
+\begin{lstlisting}
+def f():
+    excs = [OSError("error 1"), SystemError("error 2")]
+    raise ExceptionGroup("Multiple errors occurred", excs)
+
+f()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
++ Exception Group Traceback (most recent call last):
+|   File "<stdin>", line 1, in <module>
+|   File "<stdin>", line 3, in f
+| ExceptionGroup: there were problems
++-+---------------- 1 ----------------
+  | OSError: error 1
+  +---------------- 2 ----------------
+  | SystemError: error 2
+  +------------------------------------
+\end{verbatim}
+\end{examplebox}
+
+여기서 핵심은 다음 두 가지입니다.
+
+\begin{itemize}
+  \item \texttt{excs}는 \textbf{예외 타입(type)}이 아니라
+        \textbf{예외 객체(instance)}들의 리스트여야 합니다.
+  \item 그룹 자체도 예외이므로
+        기존처럼 \texttt{try-except}로 잡을 수 있습니다.
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+try:
+    f()
+except Exception as e:
+    print(type(e))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+<class 'ExceptionGroup'>
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{ExceptionGroup}은 ``여러 예외를 한 번에 보여주기 위한 컨테이너''입니다.
+따라서 traceback 출력이 일반 예외보다 길고,
+각 예외가 번호가 매겨진 형태로 표시됩니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{except*}를 이용한 선택적 처리}
+
+\texttt{ExceptionGroup}은 내부에 여러 타입의 예외가 섞일 수 있습니다.
+이때 \texttt{except}로 잡으면 그룹 전체를 한 번에 처리하게 되므로,
+타입별로 일부만 처리하기 어렵습니다.
+
+Python 3.11은 이를 위해 \texttt{except*} 문법을 제공합니다.
+
+\begin{conceptbox}
+\texttt{except*}는
+\texttt{ExceptionGroup} 내부에서
+특정 타입에 해당하는 예외들만 \textbf{추출하여 처리}합니다.
+나머지 예외들은 다른 \texttt{except*}로 전달되거나,
+끝까지 처리되지 않으면 다시 예외로 재발생(reraise)됩니다.
+\end{conceptbox}
+
+\begin{examplebox}
+\begin{lstlisting}
+def f():
+    raise ExceptionGroup(
+        "group",
+        [OSError(1), SystemError(2)]
+    )
+
+try:
+    f()
+except* OSError:
+    print("Handled OSError")
+except* SystemError:
+    print("Handled SystemError")
+\end{lstlisting}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{except*}는 일반 \texttt{except}와 목적이 다릅니다.
+\texttt{except*}는 ``그룹 내부 예외의 부분집합 처리''를 위해 만들어졌습니다.
+따라서 \texttt{ExceptionGroup}이 아닌 일반 예외에는 사용할 이유가 거의 없습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{실제 사용 패턴: 예외 수집 후 한 번에 보고}
+
+현실적인 코드는 다음과 같은 패턴을 자주 사용합니다.
+
+\begin{itemize}
+  \item 여러 작업을 시도하며 예외를 수집
+  \item 모든 작업이 끝난 뒤 예외가 있었다면 한 번에 보고
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+excs = []
+
+for i in range(3):
+    try:
+        1 / 0
+    except Exception as e:
+        excs.append(e)
+
+if excs:
+    raise ExceptionGroup("Collected errors", excs)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
++ Exception Group Traceback (most recent call last):
+  |   File "/Users/potato/.../test.py", line 10, in <module>
+  |     raise ExceptionGroup("Collected errors", excs)
+  | ExceptionGroup: Collected errors (3 sub-exceptions)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/potato/.../test.py", line 5, in <module>
+    |     1 / 0
+    |     ~~^~~
+    | ZeroDivisionError: division by zero
+    +---------------- 2 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/potato/.../test.py", line 5, in <module>
+    |     1 / 0
+    |     ~~^~~
+    | ZeroDivisionError: division by zero
+    +---------------- 3 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/potato/.../test.py", line 5, in <module>
+    |     1 / 0
+    |     ~~^~~
+    | ZeroDivisionError: division by zero
+    +------------------------------------
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+이 패턴은 테스트 러너(test runner), 배치 처리(batch job),
+여러 입력을 한 번에 검증하는 데이터 파이프라인에서 자주 등장합니다.
+``첫 오류에서 멈추지 말고, 가능한 한 많은 오류를 모아 보여준다''는 목적입니다.
+\end{notebox}
+
+
+% ---------------------------------------------------------
+\section{예외에 정보 추가하기: \texttt{add\_note()} (Python 3.11+)}
+
+예외는 보통 생성 시점에 메시지를 담지만,
+예외를 잡은 뒤 ``추가 맥락 정보''를 덧붙이고 싶은 경우가 있습니다.
+예를 들어,
+
+\begin{itemize}
+  \item 어떤 입력 데이터에서 실패했는지
+  \item 몇 번째 반복(iteration)에서 실패했는지
+  \item 어떤 설정값(config)으로 실행했는지
+\end{itemize}
+
+Python 3.11부터는 이를 위해 \texttt{add\_note()}를 제공합니다.
+
+\begin{conceptbox}
+\texttt{add\_note(note)}는
+예외 객체에 문자열 메모를 추가합니다.
+Traceback 출력 시 이 메모가 예외 메시지 아래에 함께 표시됩니다.
+\end{conceptbox}
+
+\subsection{기본 사용 예시}
+
+\begin{examplebox}
+\begin{lstlisting}
+try:
+    raise TypeError("Bad type")
+except Exception as e:
+    e.add_note("Additional context information")
+    raise
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Traceback (most recent call last):
+  File "/Users/potato/.../test.py", line 2, in <module>
+    raise TypeError("Bad type")
+TypeError: Bad type
+Additional context information
+\end{verbatim}
+\end{examplebox}
+
+위 코드의 의도는 다음과 같습니다.
+
+\begin{itemize}
+  \item 예외를 한 번 잡아서 상황을 파악한 뒤
+  \item 더 많은 설명(맥락)을 메모로 추가하고
+  \item 예외를 다시 발생시켜(traceback 유지)
+        상위 레벨로 전달한다
+\end{itemize}
+
+\begin{notebox}
+\texttt{add\_note()}는 ``원래 예외 타입과 traceback을 그대로 유지''하면서
+설명만 덧붙일 수 있다는 점이 강점입니다.
+즉, 예외를 변환(\texttt{raise ... from ...})하지 않아도
+디버깅/보고 품질을 높일 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{ExceptionGroup과 함께 사용하기: 예외별 맥락 부여}
+
+\texttt{ExceptionGroup}과 \texttt{add\_note()}는 궁합이 좋습니다.
+여러 예외를 모을 때,
+각 예외가 ``어떤 작업에서'' 발생했는지를 메모로 남기면
+나중에 traceback만 보고도 원인을 빠르게 추적할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def f():
+    raise OSError("Operation failed")
+
+excs = []
+
+for i in range(3):
+    try:
+        f()
+    except Exception as e:
+        e.add_note(f"Happened in iteration {i+1}")
+        excs.append(e)
+
+raise ExceptionGroup("Multiple failures", excs)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/potato/.../test.py", line 13, in <module>
+  |     raise ExceptionGroup("Multiple failures", excs)
+  | ExceptionGroup: Multiple failures (3 sub-exceptions)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/potato/.../test.py", line 8, in <module>
+    |     f()
+    |     ~^^
+    |   File "/Users/potato/.../test.py", line 2, in f
+    |     raise OSError("Operation failed")
+    | OSError: Operation failed
+    | Happened in iteration 1
+    +---------------- 2 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/potato/.../test.py", line 8, in <module>
+    |     f()
+    |     ~^^
+    |   File "/Users/potato/.../test.py", line 2, in f
+    |     raise OSError("Operation failed")
+    | OSError: Operation failed
+    | Happened in iteration 2
+    +---------------- 3 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/potato/.../test.py", line 8, in <module>
+    |     f()
+    |     ~^^
+    |   File "/Users/potato/.../test.py", line 2, in f
+    |     raise OSError("Operation failed")
+    | OSError: Operation failed
+    | Happened in iteration 3
+    +------------------------------------
+\end{verbatim}
+\end{examplebox}
+
+위 코드에서 중요한 포인트는 다음과 같습니다.
+
+\begin{itemize}
+  \item 실패한 예외들을 \texttt{excs}에 모으기 전에
+        각 예외에 \textbf{개별 메모(note)}를 추가한다.
+  \item 마지막에 \texttt{ExceptionGroup}으로 묶어 한 번에 보고한다.
+\end{itemize}
+
+\begin{notebox}
+\texttt{add\_note()}는 로그 시스템(logging)을 대체하는 기능은 아닙니다.
+하지만 ``traceback만으로도 충분한 추가 정보''를 제공할 수 있어
+디버깅 편의성을 크게 높여 줍니다.
+\end{notebox}
+
+\begin{readernotebox}
+이번 장에서 다룬 예외 처리의 고급 기능들을  
+자신의 말로 자유롭게 정리해 보세요.
+특히 다음 내용을 중심으로 생각해 보시기 바랍니다.
+
+\begin{itemize}
+  \item 예외 연쇄(Exception Chaining)의 의미와 활용
+  \item \texttt{ExceptionGroup}의 도입 배경과 필요성
+  \item \texttt{raise}, \texttt{re-raise}, \texttt{from}의 차이
+  \item 고급 예외 기능이 실제 프로그램 설계에 주는 장점
+\end{itemize}
+
+정답은 없습니다.  
+중요한 것은 "기능을 외우는 것"이 아니라 "왜 이런 기능이 필요했는지 이해하는 것"입니다.
+
+또한, 완벽하게 이해하지 못하더라도 괜찮습니다.
+차분히 이후 필요할 때 찾아서 사용해봅시다.
+
+더 자세한 내용을 원하신다면 다음의 링크를 참고해보세요.
+
+Python Docs: \hyperlink{Python}{https://docs.python.org/ko/3.12/tutorial/errors.html}
+\end{readernotebox}

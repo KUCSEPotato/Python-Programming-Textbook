@@ -123,12 +123,23 @@
 % --------------------
 \usepackage{listings}
 
+% \usepackage[utf8]{inputenc}
+
 \definecolor{codegray}{rgb}{0.95,0.95,0.95}
 \definecolor{keywordblue}{rgb}{0.2,0.2,0.7}
 
 \lstset{
     inputencoding=utf8,
     extendedchars=true
+}
+
+\lstset{
+    literate=
+        {é}{{\'e}}1
+        {á}{{\'a}}1
+        {í}{{\'i}}1
+        {ó}{{\'o}}1
+        {ú}{{\'u}}1
 }
 
 \lstdefinestyle{pythonstyle}{
@@ -149,3 +160,5 @@
 }
 
 \lstset{style=pythonstyle}
+
+

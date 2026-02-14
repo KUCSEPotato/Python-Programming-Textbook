@@ -1,0 +1,104 @@
+% ---------------------------------------------------------
+\section{에러(Error)}
+
+프로그램은 사람이 작성합니다.
+따라서 실수가 발생하는 것은 자연스러운 일입니다.
+
+파이썬에서 프로그램 실행이 정상적으로 이루어지지 않을 때,
+이를 통틀어 \textbf{에러(Error)}라고 부릅니다.
+
+에러는 크게 두 가지로 나눌 수 있습니다.
+
+\begin{itemize}
+  \item \textbf{문법 오류(Syntax Error)}
+  \item \textbf{실행 중 오류(Runtime Error)}
+\end{itemize}
+
+이 두 가지는 발생 시점과 성격이 다릅니다.
+
+% ---------------------------------------------------------
+\subsection{문법 오류 (Syntax Error)}
+
+문법 오류는
+파이썬 문법 규칙에 어긋난 코드를 작성했을 때 발생합니다.
+
+이 경우,
+코드는 실행되기도 전에 인터프리터에 의해 중단됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+if True
+    print("Hello")
+\end{lstlisting}
+\end{examplebox}
+
+위 코드는 콜론(:)이 빠졌기 때문에
+다음과 같은 에러가 발생합니다.
+
+\begin{examplebox}
+출력 결과(예시):
+\begin{verbatim}
+Traceback (most recent call last):
+  File "/Users/potato/.../Python-Programming-Textbook/test.py", line 1
+    if True
+           ^
+SyntaxError: expected ':'
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+문법 오류는 프로그램이 시작조차 되지 않기 때문에
+\textbf{예외 처리로 잡을 수 없습니다.}
+코드를 수정해야만 해결됩니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{실행 중 오류 (Runtime Error)}
+
+문법은 올바르지만
+프로그램 실행 도중 문제가 발생하는 경우를
+\textbf{실행 중 오류(Runtime Error)}라고 합니다.
+
+이때 발생하는 오류를
+파이썬에서는 \textbf{예외(Exception)}라고 부릅니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+print(10 / 0)
+\end{lstlisting}
+
+출력 결과(예시):
+
+\begin{verbatim}
+Traceback (most recent call last):
+  File "/Users/potato/.../test.py", line 1, in <module>
+    print(10 / 0)
+          ~~~^~~
+ZeroDivisionError: division by zero
+\end{verbatim}
+\end{examplebox}
+
+이 코드는 문법적으로는 올바르지만,
+수학적으로 허용되지 않는 연산을 수행했기 때문에
+실행 도중 오류가 발생합니다.
+
+% ---------------------------------------------------------
+\subsection{Traceback 읽기}
+
+실행 중 오류가 발생하면,
+파이썬은 오류가 발생한 위치를 함께 출력합니다.
+이를 \textbf{Traceback}이라고 합니다.
+
+Traceback은
+\begin{itemize}
+  \item 어느 파일에서
+  \item 몇 번째 줄에서
+  \item 어떤 오류가 발생했는지
+\end{itemize}
+를 알려주는 정보입니다.
+
+\begin{notebox}
+에러 메시지를 두려워하지 마십시오.
+Traceback은 문제를 해결하기 위한
+\textbf{가장 중요한 단서}입니다.
+\end{notebox}
