@@ -1,0 +1,319 @@
+% ---------------------------------------------------------
+\section{이름과 객체: aliasing이 중요한 이유}
+
+파이썬에서 변수는 ``값을 저장하는 상자''라기보다,
+\textbf{객체를 가리키는 이름(label)}에 가깝습니다.
+즉, 변수는 값을 담고 있는 것이 아니라,
+어떤 객체를 ``참조(reference)''하고 있습니다.
+따라서 하나의 객체를 여러 이름이 동시에 가리킬 수 있습니다.
+이 현상을 \textbf{aliasing}이라고 합니다.
+
+\begin{conceptbox}
+파이썬에서 대입(assignment)은 \textbf{복사(copy)}가 아니라
+\textbf{연결(binding)}입니다.
+
+즉, 이름이 객체를 가리키도록 연결될 뿐,
+객체 자체가 자동으로 복사되지는 않습니다.
+\end{conceptbox}
+
+이 개념은 클래스 설계와 객체 지향 프로그래밍에서
+매우 중요한 역할을 합니다.
+
+% ---------------------------------------------------------
+\subsection{객체의 정체성(identity)}
+
+각 객체는 메모리 상에서 고유한 정체성(identity)을 가집니다.
+이를 확인할 때 \texttt{id()} 함수를 사용할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = [1, 2, 3]
+y = x
+
+print(id(x))
+print(id(y))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+4332796032
+4332796032 
+\end{verbatim}
+\end{examplebox}
+
+두 값은 동일하게 출력됩니다.
+이는 \texttt{x}와 \texttt{y}가
+같은 객체를 가리키고 있음을 의미합니다.
+출력되는 숫자 자체는 실행할 때마다 달라질 수 있습니다.
+그러나 중요한 것은 \texttt{id(x)}와 \texttt{id(y)}가 동일한 값을 가진다는 점입니다.
+
+\begin{notebox}
+파이썬에서 객체를 비교하는 방법에는 두 가지가 있습니다.
+
+\begin{itemize}
+  \item \texttt{==} : 두 객체의 \textbf{값(value)}이 같은지를 비교합니다.
+  \item \texttt{is} : 두 변수가 \textbf{같은 객체(identity)}를 가리키는지를 비교합니다.
+\end{itemize}
+
+예를 들어,
+
+\begin{examplebox}
+\begin{lstlisting}
+a = [1, 2, 3]
+b = [1, 2, 3]
+
+print(a == b)
+print(a is b)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+True
+False
+\end{verbatim}
+\end{examplebox}
+
+\begin{itemize}
+  \item \texttt{a == b}는 리스트의 내용이 같기 때문에 \texttt{True}입니다.
+  \item \texttt{a is b}는 서로 다른 객체이므로 \texttt{False}입니다.
+\end{itemize}
+
+따라서 일반적인 값 비교에는 \texttt{==}를 사용하고,
+객체가 동일한지 확인할 때만 \texttt{is}를 사용해야 합니다.
+
+특히 \texttt{None}과 비교할 때는 다음과 같이 작성하는 것이 권장됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+if x is None:
+    ...
+\end{lstlisting}
+\end{examplebox}
+
+\texttt{None}은 단 하나의 객체만 존재하기 때문에
+정체성 비교(\texttt{is})가 가장 안전한 방법입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{불변 객체에서는 aliasing이 덜 드러난다}
+
+정수, 문자열, 튜플과 같은 불변(immutable) 객체에서는
+객체 자체가 수정되지 않기 때문에
+aliasing의 영향이 비교적 적게 나타납니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 10
+b = a
+a = 20
+
+print(a)
+print(b)
+\end{lstlisting}
+
+출력 결과(예시):
+
+\begin{verbatim}
+20
+10
+\end{verbatim}
+\end{examplebox}
+
+여기서 \texttt{a = 20}은 기존 객체를 수정한 것이 아니라,
+\texttt{a}가 \textbf{새로운 정수 객체}를 가리키도록 다시 연결된 것입니다.
+즉, 불변 객체에서는 수정이 아니라 재바인딩이 일어납니다.
+
+\begin{notebox}
+\textbf{재바인딩(rebinding)}이란
+이름이 가리키는 객체를 다른 객체로
+\textbf{다시 연결하는 것}을 의미합니다.
+예를 들어,
+
+\begin{examplebox}
+\begin{lstlisting}
+a = 10
+a = 20
+\end{lstlisting}
+\end{examplebox}
+
+위 코드에서 두 번째 \texttt{a = 20}은
+정수 10을 수정한 것이 아니라,
+\texttt{a}라는 이름이
+새로운 정수 객체 20을 가리키도록
+다시 연결한 것입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{가변 객체에서는 aliasing이 의미를 바꾼다}
+
+리스트, 딕셔너리, 집합과 같은 가변(mutable) 객체는
+객체 자체가 수정될 수 있습니다.
+따라서 aliasing이 프로그램의 의미를 크게 바꿀 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = [1, 2, 3]
+y = x
+
+y.append(4)
+
+print(x)
+print(y)
+\end{lstlisting}
+
+출력 결과(예시):
+
+\begin{verbatim}
+[1, 2, 3, 4]
+[1, 2, 3, 4]
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{y = x}는 리스트를 복사하지 않습니다.
+\texttt{x}와 \texttt{y}는 동일한 객체를 가리킵니다.
+
+따라서 한 쪽에서 객체를 수정하면
+다른 이름에서도 동일한 변화가 보입니다.
+\end{notebox}
+
+이 특성은 클래스 내부에 리스트나 딕셔너리를 멤버로 둘 때 특히 중요한 문제가 됩니다.
+예를 들어, 클래스 변수로 가변 객체를 두면 모든 인스턴스가 동일한 객체를 공유하게 되어
+의도하지 않은 부작용(side effect)이 발생할 수 있습니다.
+따라서 가변 객체를 다룰 때는 \textbf{이름을 복사한 것인지, 객체를 공유한 것인지}
+항상 의식하는 습관이 중요합니다.
+
+% ---------------------------------------------------------
+\subsection{함수 인자 전달과 aliasing}
+
+파이썬에서 함수에 객체를 전달할 때,
+객체 자체가 복사되는 것이 아니라
+\textbf{객체에 대한 참조(reference)}가 전달됩니다.
+즉, 함수의 매개변수는
+전달된 객체를 가리키는 새로운 이름이 됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def add_item(lst, item):
+    lst.append(item)
+
+a = []
+add_item(a, 7)
+
+print(a)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+[7]
+\end{verbatim}
+\end{examplebox}
+
+위 코드의 실행 흐름을 살펴보면 다음과 같습니다.
+
+\begin{itemize}
+  \item \texttt{a = []} 에서 새로운 리스트 객체가 생성됩니다.
+  \item \texttt{add}\_\texttt{item(a, 7)} 호출 시,
+        \texttt{lst}는 \texttt{a}와 동일한 리스트 객체를 가리킵니다.
+  \item 함수 내부에서 \texttt{lst.append(7)}가 실행되면
+        실제 리스트 객체가 수정됩니다.
+  \item 따라서 함수가 끝난 뒤에도 \texttt{a}는 변경된 상태를 유지합니다.
+\end{itemize}
+
+이처럼 파이썬은
+\textbf{객체 참조를 전달(pass-by-object-reference)}하는 방식을 사용합니다.
+
+이 방식은 메모리 효율이 높고, 성능상 이점이 있으며, 큰 객체를 복사하지 않아도 되므로 실용적입니다.
+하지만 동시에 \textbf{의도하지 않은 부작용(side effect)}을 만들 수 있습니다.
+특히 가변 객체를 다룰 때 주의가 필요합니다.
+
+% ---------------------------------------------------------
+\subsection{복사가 필요할 때}
+
+aliasing을 피하고 싶다면
+객체를 명시적으로 복사해야 합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+x = [1, 2, 3]
+y = x.copy()
+
+y.append(4)
+
+print(x)
+print(y)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+[1, 2, 3]
+[1, 2, 3, 4]
+\end{verbatim}
+\end{examplebox}
+
+이 경우
+
+\begin{itemize}
+  \item \texttt{x.copy()}는 새로운 리스트 객체를 만듭니다.
+  \item \texttt{x}와 \texttt{y}는 서로 다른 객체가 됩니다.
+  \item 따라서 한 쪽을 수정해도 다른 쪽에는 영향을 주지 않습니다.
+\end{itemize}
+
+
+\subsubsection{함수 인자 전달과 복사 정리}
+
+파이썬은 객체를 함수에 전달할 때
+객체를 복사하지 않고 \textbf{참조(reference)}를 전달합니다.
+따라서 가변 객체(list, dict 등)를 함수 내부에서 수정하면
+호출한 쪽에서도 그 변경이 보입니다.
+
+aliasing을 피하려면 명시적으로 복사해야 합니다.
+
+\begin{itemize}
+  \item \texttt{x.copy()} → 얕은 복사 (shallow copy)
+  \item \texttt{copy.deepcopy(x)} → 깊은 복사 (deep copy)
+\end{itemize}
+
+얕은 복사는 바깥 객체만 새로 만들고
+내부에 포함된 객체들은 공유합니다.
+깊은 복사는 내부 객체까지 모두 새로 생성합니다.
+다음의 예시를 참고해주세요.
+\begin{examplebox}
+\begin{lstlisting}
+import copy
+
+original = [[1, 2], [3, 4]]
+
+shallow = original.copy()          # shallow copy
+deep = copy.deepcopy(original)     # deep copy
+
+shallow[0].append(99)
+deep[1].append(100)
+
+print("original:", original)
+print("shallow :", shallow)
+print("deep    :", deep)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+original: [[1, 2, 99], [3, 4]]
+shallow : [[1, 2, 99], [3, 4]]
+deep    : [[1, 2], [3, 4, 100]]
+\end{verbatim}
+\end{examplebox}
+
+\begin{readernotebox}
+\textbf{Aliasing을 스스로 점검해 보세요.}
+
+\begin{itemize}
+  \item \texttt{a = b}는 값을 복사하는 것인가, 아니면 이름을 연결하는 것인가?
+  \item 두 변수가 같은 객체를 가리키는지 어떻게 확인할 수 있는가?
+  \item \texttt{==}와 \texttt{is}의 차이는 무엇인가?
+  \item 불변 객체에서는 왜 aliasing의 영향이 잘 드러나지 않는가?
+  \item 가변 객체에서는 왜 aliasing이 프로그램의 의미를 바꿀 수 있는가?
+  \item 함수에 리스트를 전달했을 때 원본이 바뀌는 이유는 무엇인가?
+  \item 클래스 변수에 리스트를 두면 어떤 일이 발생하는가?
+  \item aliasing을 피하고 싶다면 어떤 방법을 사용할 수 있는가?
+\end{itemize}
+\end{readernotebox}

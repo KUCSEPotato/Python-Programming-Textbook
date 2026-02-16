@@ -1,0 +1,277 @@
+% ---------------------------------------------------------
+\section{클래스 변수와 인스턴스 변수}
+
+지금까지 우리는 \texttt{self.name}, \texttt{self.balance}처럼
+인스턴스에 붙는 변수를 사용했습니다.
+이들은 모두 \textbf{인스턴스 변수(instance variable)}입니다.
+
+하지만 클래스 블록 안에서 직접 정의한 변수는
+\textbf{클래스 변수(class variable)}가 됩니다.
+
+\begin{conceptbox}
+\textbf{인스턴스 변수}는 각 객체마다 따로 존재하는 변수입니다.
+
+\textbf{클래스 변수}는 해당 클래스의 모든 인스턴스가 공유하는 변수입니다.
+\end{conceptbox}
+
+파이썬에서 변수의 소속은
+\textbf{어디에서 정의되었는지}에 따라 결정됩니다.
+
+\begin{itemize}
+\item \texttt{class} 블록 내부에서 직접 정의 → 클래스 변수
+\item \texttt{self.이름 = 값} 형태로 대입 → 인스턴스 변수
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsection{클래스 변수 예제}
+
+\begin{examplebox}
+\begin{lstlisting}
+class Dog:
+    kind = "canine"   # class variable
+
+    def __init__(self, name):
+        self.name = name  # instance variable
+
+d1 = Dog("Fido")
+d2 = Dog("Buddy")
+
+print(d1.kind)
+print(d2.kind)
+print(d1.name)
+print(d2.name)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+canine
+canine
+Fido
+Buddy
+\end{verbatim}
+\end{examplebox}
+
+위 코드의 실행 흐름을 살펴보면 다음과 같습니다.
+
+\begin{itemize}
+\item \texttt{kind}는 클래스 정의 시점에 생성되는 클래스 변수입니다.
+\item \texttt{name}은 객체가 생성될 때 \texttt{\_\_init\_\_}에서 만들어지는 인스턴스 변수입니다.
+\item \texttt{d1.kind}과 \texttt{d2.kind}는 같은 값을 참조합니다.
+\item \texttt{d1.name}과 \texttt{d2.name}은 각각 다른 값을 가집니다.
+\end{itemize}
+
+여기서 중요한 점은 다음과 같습니다.
+
+\begin{conceptbox}
+속성(attribute)을 조회할 때,
+파이썬은 먼저 인스턴스에서 찾고,
+없으면 클래스에서 찾습니다.
+\end{conceptbox}
+
+즉, \texttt{d1.kind}를 찾을 때 먼저 \texttt{d1} 객체 내부를 검색하고, 
+없으면 \texttt{Dog} 클래스에서 검색하는 순서로 동작합니다.
+이것을 \textbf{속성 탐색 순서(attribute lookup)}라고 합니다.
+
+% ---------------------------------------------------------
+\subsection{클래스 변수에 대입하면 어떻게 될까?}
+
+다음 코드를 살펴봅시다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Dog:
+    kind = "canine"
+
+d1 = Dog()
+d2 = Dog()
+
+d1.kind = "wolf"
+
+print(d1.kind)
+print(d2.kind)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+wolf
+canine
+\end{verbatim}
+\end{examplebox}
+
+왜 이런 결과가 나올까요?
+
+\begin{itemize}
+\item \texttt{d1.kind = "wolf"}는
+클래스 변수를 수정하는 것이 아닙니다.
+\item 대신 \texttt{d1} 객체에 새로운 인스턴스 변수를 만듭니다.
+\end{itemize}
+
+이제 \texttt{d1}은 자기만의 \texttt{kind}를 가지게 되고,
+\texttt{d2}는 여전히 클래스의 \texttt{kind}를 사용합니다.
+즉, 인스턴스에 같은 이름으로 대입하면 클래스 변수는 ``가려집니다'' (shadowing)
+
+% ---------------------------------------------------------
+\subsection{가변 객체를 클래스 변수로 두면 생기는 문제}
+
+클래스 변수에 리스트나 딕셔너리처럼
+\textbf{가변(mutable) 객체}를 두면,
+예상치 못한 결과가 발생할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Dog:
+    tricks = []  # shared list (problem)
+
+    def __init__(self, name):
+        self.name = name
+
+    def add_trick(self, trick):
+        self.tricks.append(trick)
+
+d1 = Dog("Fido")
+d2 = Dog("Buddy")
+
+d1.add_trick("roll over")
+d2.add_trick("play dead")
+
+print(d1.tricks)
+print(d2.tricks)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+['roll over', 'play dead']
+['roll over', 'play dead']
+\end{verbatim}
+\end{examplebox}
+
+왜 이런 일이 발생할까요?
+
+\begin{itemize}
+\item \texttt{tricks}는 클래스 변수입니다.
+\item 클래스 정의 시점에 리스트 객체가 하나 생성됩니다.
+\item 모든 인스턴스가 같은 리스트 객체를 참조합니다.
+\end{itemize}
+즉, \texttt{d1.tricks}와 \texttt{d2.tricks}가 같은 리스트 객체를 가리키고 있습니다.
+
+리스트는 가변 객체이므로, 한 인스턴스에서 수정하면 다른 인스턴스에서도 그 변경이 보이게 됩니다.
+이것이 클래스 변수에 가변 객체를 둘 때 발생하는 대표적인 실수입니다.
+
+% ---------------------------------------------------------
+\subsection{올바른 설계: 인스턴스 변수로 만들기}
+
+각 인스턴스마다 독립적인 데이터를 가져야 한다면,
+반드시 \texttt{\_\_init\_\_} 안에서 인스턴스 변수로 생성해야 합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Dog:
+    def __init__(self, name):
+        self.name = name
+        self.tricks = []  # separate list per instance
+
+    def add_trick(self, trick):
+        self.tricks.append(trick)
+
+d1 = Dog("Fido")
+d2 = Dog("Buddy")
+
+d1.add_trick("roll over")
+d2.add_trick("play dead")
+
+print(d1.tricks)
+print(d2.tricks)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+['roll over']
+['play dead']
+\end{verbatim}
+\end{examplebox}
+
+이제 각 객체가 독립적인 리스트를 가지며 서로 영향을 주지 않습니다.
+
+\begin{notebox}
+클래스 변수에는 보통
+\textbf{모든 인스턴스가 공유해도 되는 값}만 두는 것이 좋습니다.
+
+예:
+\begin{itemize}
+\item 상수(constant)
+\item 설정값(configuration)
+\item 공통 카운터
+\end{itemize}
+
+리스트나 딕셔너리처럼
+객체마다 달라야 하는 값은
+반드시 \texttt{\_\_init\_\_} 안에서 인스턴스 변수로 만드세요.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{메서드 호출은 실제로 어떻게 동작할까? (맛보기)}
+
+우리는 지금까지 이렇게 메서드를 호출했습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+obj.method()
+\end{lstlisting}
+\end{examplebox}
+
+그런데 실제로는 조금 다른 일이 일어납니다.
+
+\begin{conceptbox}
+\texttt{obj.method()} 호출은
+사실상 \texttt{ClassName.method(obj)}와 동일하게 동작합니다.
+즉, 인스턴스가 첫 번째 인자로 자동 전달됩니다.
+\end{conceptbox}
+
+다음 예제를 봅시다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class A:
+    def greet(self):
+        print("Hello")
+
+a = A()
+
+A.greet(a)   # direct function call
+a.greet()    # method call
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Hello
+Hello
+\end{verbatim}
+\end{examplebox}
+
+두 호출은 동일하게 동작합니다.
+
+\begin{itemize}
+  \item \texttt{A.greet}는 함수 객체입니다.
+  \item \texttt{a.greet}는 인스턴스와 결합된 메서드입니다.
+  \item 호출 시 인스턴스 \texttt{a}가 자동으로 첫 번째 인자로 전달됩니다.
+\end{itemize}
+
+\begin{notebox}
+지금 단계에서는
+``메서드를 호출하면 self에 인스턴스가 들어간다''
+정도로 이해하면 충분합니다.
+메서드 객체와 바인딩(binding)의 정확한 동작 원리는
+심화 장에서 더 자세히 다룹니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\begin{readernotebox}
+다음 질문을 생각해 보세요.
+\begin{itemize}
+  \item 클래스 변수와 인스턴스 변수의 차이는 무엇인가요?
+  \vspace{0.6cm}
+  \item 왜 가변 객체는 클래스 변수로 두는 것이 위험할 수 있나요?
+  \vspace{0.6cm}
+  \item \texttt{obj.method()} 호출 시 \texttt{self}에는 무엇이 들어가나요?
+\end{itemize}
+\end{readernotebox}

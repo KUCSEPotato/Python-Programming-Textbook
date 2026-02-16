@@ -1,0 +1,218 @@
+% ---------------------------------------------------------
+\section{상속(Inheritance)}
+
+상속은 ``이미 존재하는 클래스''를 기반으로
+새 클래스를 정의하는 기능입니다.
+
+\begin{conceptbox}
+파생 클래스(derived class)는 베이스 클래스(base class)의 기능을 물려받고,
+필요하면 일부를 재정의(override)하거나 확장할 수 있습니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{단일 상속 기본 문법}
+
+\begin{examplebox}
+\begin{lstlisting}
+class Base:
+    def greet(self):
+        print("Base")
+
+class Derived(Base):
+    def greet(self):
+        print("Derived")
+
+x = Derived()
+x.greet()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Derived
+\end{verbatim}
+\end{examplebox}
+
+파생 클래스는 베이스 클래스의 메서드를 재정의할 수 있습니다.
+파이썬에서는 메서드 호출이 특별한 보호를 받지 않으므로,
+베이스 클래스 내부에서 메서드를 호출하면
+파생 클래스에서 재정의한 메서드가 호출될 수도 있습니다.
+즉, C++ 관점에서 파이썬의 메서드는 사실상 \textbf{virtual}처럼 동작합니다.
+
+% ---------------------------------------------------------
+\subsection{베이스 클래스 메서드 호출}
+
+베이스 클래스의 메서드를 직접 호출해서
+확장 동작을 구현할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Base:
+    def greet(self):
+        print("Base")
+
+class Derived(Base):
+    def greet(self):
+        Base.greet(self)
+        print("Derived")
+
+x = Derived()
+x.greet()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Base
+Derived
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{isinstance}와 \texttt{issubclass}}
+
+\begin{examplebox}
+\begin{lstlisting}
+print(isinstance(True, int))
+print(issubclass(bool, int))
+print(issubclass(float, int))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+True
+True
+False
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsection{다중 상속과 MRO 개요}
+
+파이썬은 다중 상속을 지원합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class A:
+    def f(self):
+        print("A")
+
+class B:
+    def f(self):
+        print("B")
+
+class C(A, B):
+    pass
+
+x = C()
+x.f()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+A
+\end{verbatim}
+\end{examplebox}
+
+여기서 \texttt{C(A, B)}는
+검색 순서가 보통 ``왼쪽에서 오른쪽''이라는 점을 보여줍니다.
+다만 실제 규칙은 더 정교하며,
+여러 경로로 같은 베이스 클래스에 도달하는 상황(다이아몬드 구조)에서
+일관성을 유지하도록 설계되어 있습니다.
+이 검색 순서를 \textbf{MRO(Method Resolution Order)}라고 부릅니다.
+
+\begin{notebox}
+다중 상속의 정확한 검색 순서와 \texttt{super()}를 이용한 협력적 호출은
+큰 설계에서 매우 중요하지만,
+이 교재에서는 ``MRO가 존재하며, 단순한 왼쪽 우선 규칙보다 정교하다''
+정도로 이해해도 충분합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{비공개 변수 관례와 name mangling}
+
+파이썬은 강제적인 정보 은닉을 제공하지 않습니다.
+대신 관례(convention)로 API의 공개 여부를 표현합니다.
+
+% ---------------------------------------------------------
+\subsection{\texttt{\_name} 관례}
+
+\begin{conceptbox}
+밑줄 하나로 시작하는 이름(\texttt{\_name})은
+``외부에서 직접 사용하지 말자''는 신호입니다.
+강제 규칙이 아니라 관례입니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{\_\_name}과 name mangling}
+
+두 개의 밑줄로 시작하는 이름(\texttt{\_\_name})은
+클래스 이름을 섞는 방식(name mangling)으로 변환되어
+서브클래스에서의 이름 충돌을 줄입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Mapping:
+    def __init__(self, iterable):
+        self.items_list = []
+        self.__update(iterable)
+
+    def update(self, iterable):
+        for item in iterable:
+            self.items_list.append(item)
+
+    __update = update
+
+class MappingSubclass(Mapping):
+    def update(self, keys, values):
+        for item in zip(keys, values):
+            self.items_list.append(item)
+
+m = Mapping([1, 2, 3])
+print(m.items_list)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+[1, 2, 3]
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{MappingSubclass}가 \texttt{update}를 다른 서명으로 재정의했는데도
+\texttt{Mapping.__init__}이 정상 동작합니다.
+이는 \texttt{\_\_update}가 name mangling으로 인해
+클래스별로 다른 이름으로 취급되기 때문입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{dataclasses: 간단한 구조체가 필요할 때}
+
+때로는 ``동작''보다 ``데이터 묶음''이 더 중요한 경우가 있습니다.
+이럴 때는 \texttt{dataclasses}가 매우 편리합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+from dataclasses import dataclass
+
+@dataclass
+class Employee:
+    name: str
+    dept: str
+    salary: int
+
+john = Employee("john", "computer lab", 1000)
+print(john.dept)
+print(john.salary)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+computer lab
+1000
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+\texttt{@dataclass}는 \texttt{\_\_init\_\_}, \texttt{\_\_repr\_\_} 같은
+반복적인 코드를 자동으로 생성해 줄 수 있어
+단순 데이터 모델을 만들 때 특히 유용합니다.
+\end{notebox}

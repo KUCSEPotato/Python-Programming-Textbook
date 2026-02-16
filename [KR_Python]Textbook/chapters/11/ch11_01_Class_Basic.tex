@@ -1,0 +1,738 @@
+% ---------------------------------------------------------
+\section{클래스 기본 문법}
+
+클래스는 \textbf{데이터(상태)}와 \textbf{기능(행동)}을
+하나로 묶어 관리할 수 있게 해 줍니다.
+즉, 특정한 ``대상''을 표현하기 위한
+\textbf{새로운 자료형(type)}을 우리가 직접 만들 수 있는 문법입니다.
+
+\begin{conceptbox}
+클래스(Class)는 객체(Object)를 만들기 위한 설계도입니다.
+클래스로부터 만들어진 실제 객체를 \textbf{인스턴스(instance)}라고 합니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{클래스 정의 문법}
+
+클래스의 가장 기본적인 형태는 다음과 같습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Person:
+    pass
+
+p = Person()
+print(type(p))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+<class '__main__.Person'>
+\end{verbatim}
+\end{examplebox}
+
+위 코드에서 중요한 점은 다음과 같습니다.
+
+\begin{itemize}
+  \item \texttt{class Person:}은 \texttt{Person}이라는 새로운 형(type)을 정의합니다.
+  \item \texttt{pass}는 ``아직 내용이 없다''는 의미의 자리 채움 문장입니다.
+  \item \texttt{Person()}은 클래스를 ``호출''하는 문법이며, 새 인스턴스를 만듭니다.
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsection{클래스 블록 안의 이름: 변수와 함수}
+
+클래스 블록 안에 정의한 이름들은
+그 클래스에 \textbf{속한 구성요소}가 됩니다.
+특히, 클래스 안에 정의한 함수는 보통 \textbf{메서드(method)}라고 부릅니다.
+
+\begin{conceptbox}
+\textbf{메서드(method)}는 클래스(또는 객체)에 속한 함수입니다.
+\end{conceptbox}
+
+다음 예제를 봅시다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class MyClass:
+    x = 10
+
+    def show_x(self):
+        print(self.x)
+
+obj = MyClass()
+obj.show_x()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+10
+\end{verbatim}
+\end{examplebox}
+
+여기서
+
+\begin{itemize}
+  \item \texttt{x = 10}은 클래스 안에 정의된 변수입니다.
+  \item \texttt{show\_x}는 클래스 안에 정의된 함수(메서드)입니다.
+  \item \texttt{obj.show\_x()}처럼 객체를 통해 호출하면, 첫 번째 인자로 객체 자신이 자동 전달됩니다.
+\end{itemize}
+
+이때 메서드의 첫 번째 인자로 관례적으로 \texttt{self}를 사용합니다.
+
+\begin{notebox}
+\texttt{self}는 특별한 예약어가 아니라 \textbf{관례적인 이름}입니다.
+하지만 대부분의 파이썬 코드가 \texttt{self}를 사용하므로,
+교재에서도 이 관례를 따릅니다.
+\end{notebox}
+
+\begin{notebox}
+이로써 우리가 지금까지 사용해 온 \texttt{append()}, \texttt{pop()},
+\texttt{upper()}와 같은 함수들이 왜 ``메서드''라고 불리는지도 이해할 수 있습니다.
+예를 들어, \texttt{my}\_\texttt{list.append(3)}에서 \texttt{append}는 단순한 함수가 아니라 
+\texttt{list} 객체에 속한 메서드입니다.
+즉, 메서드는 특정 객체의 데이터에 작용하도록 설계된 함수이며, \texttt{객체.메서드()} 형태로 호출됩니다.
+우리는 이미 객체 지향 방식을 사용하고 있었던 셈입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{어트리뷰트(Attribute)와 점(\texttt{.}) 표기}
+
+파이썬에서는 \texttt{obj.name} 형태로
+어떤 객체에 \textbf{붙어 있는 값}에 접근합니다.
+이때 \texttt{name}를 \textbf{어트리뷰트(attribute)}라고 부릅니다.
+
+\begin{conceptbox}
+\textbf{어트리뷰트(attribute)}는 객체(또는 클래스)에 붙어 있는 이름입니다.
+점(\texttt{.}) 표기는 어트리뷰트에 접근하는 문법입니다.
+\end{conceptbox}
+
+클래스도 객체이므로, 클래스에도 어트리뷰트가 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class A:
+    v = 123
+
+print(A.v)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+123
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\section{생성자}
+
+클래스로 인스턴스를 만들면,
+대부분은 그 객체가 특정한 초기 상태를 가지도록 설정하고 싶습니다.
+이때 사용하는 것이 \textbf{생성자(constructor)} 역할을 하는
+특수 메서드 \texttt{\_\_init\_\_}입니다.
+
+\begin{conceptbox}
+\texttt{\_\_init\_\_}는 인스턴스가 생성된 직후 자동으로 호출되는 초기화 메서드입니다.
+\end{conceptbox}
+
+\begin{notebox}
+\texttt{\_\_init\_\_}의 \texttt{init}은 "초기화하다"라는 의미를 가진 영어 단어
+\textit{initialize}에서 온 표현입니다.
+객체가 생성될 때 초기 상태를 설정하는 역할을 하기 때문에 이 이름이 사용됩니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{\_\_init\_\_}의 기본 형태}
+
+\begin{examplebox}
+\begin{lstlisting}
+class Person:
+    def __init__(self, name):
+        self.name = name
+
+p = Person("Alice")
+print(p.name)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Alice
+\end{verbatim}
+\end{examplebox}
+
+위 코드의 흐름을 정확히 이해해야 합니다.
+
+\begin{enumerate}
+  \item \texttt{Person("Alice")}를 실행하면 인스턴스가 먼저 만들어집니다.
+  \item 그 직후 \texttt{\_\_init\_\_}가 자동으로 호출됩니다.
+  \item \texttt{self}는 만들어진 인스턴스를 가리킵니다.
+  \item \texttt{self.name = name}은 인스턴스에 \texttt{name} 어트리뷰트를 추가합니다.
+\end{enumerate}
+
+\begin{notebox}
+\texttt{\_\_init\_\_}는 ``인스턴스를 만드는 함수''가 아닙니다.
+인스턴스는 \texttt{Person(...)} 호출로 이미 만들어졌고,
+\texttt{\_\_init\_\_}는 그 인스턴스를 \textbf{초기화}하는 역할을 합니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{여러 값을 초기화하기}
+
+\texttt{\_\_init\_\_} 메서드를 활용하여 한 번에 여러 개의 값을 초기화할 수 있습니다.
+다음의 예시를 살펴봅시다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Student:
+    def __init__(self, name, student_id):
+        self.name = name
+        self.student_id = student_id
+
+s = Student("Bob", 20250001)
+print(s.name)
+print(s.student_id)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Bob
+20250001
+\end{verbatim}
+\end{examplebox}
+
+이 코드에서 중요한 점은 다음과 같습니다.
+
+\begin{itemize}
+  \item \texttt{Student("Bob", 20250001)}가 호출되면
+  \item 먼저 새로운 \texttt{Student} 인스턴스가 생성되고
+  \item 이어서 그 인스턴스를 첫 번째 인자(\texttt{self})로 하여
+        \texttt{\_\_init\_\_} 메서드가 자동으로 호출됩니다.
+\end{itemize}
+
+즉, 실제로 내부에서는 다음과 같은 형태로 동작한다고 이해할 수 있습니다.
+
+\begin{center}
+\texttt{Student.\_\_init\_\_(새로운\_인스턴스, "Bob", 20250001)}
+\end{center}
+
+\texttt{\_\_init\_\_} 안에서 수행되는 일은
+전달받은 값들을 인스턴스에 저장하는 것입니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+self.name = name
+self.student_id = student_id
+\end{lstlisting}
+\end{examplebox}
+
+여기서 왼쪽의 \texttt{self.name}은 \textbf{인스턴스의 속성}
+오른쪽의 \texttt{name}은 \textbf{생성자에 전달된 매개변수} 를 의미합니다.
+
+따라서 객체 \texttt{s}는 다음과 같은 상태를 갖게 됩니다.
+
+\begin{itemize}
+  \item \texttt{s.name} → \texttt{"Bob"}
+  \item \texttt{s.student\_id} → \texttt{20250001}
+\end{itemize}
+
+\begin{notebox}
+\texttt{\_\_init\_\_} 메서드 안에서 \texttt{self.변수이름} 형태로 대입하지 않으면
+해당 값은 인스턴스에 저장되지 않습니다.
+즉, 단순히 \texttt{name = name}처럼 작성하면
+그 값은 지역 변수로만 존재하고,
+객체의 속성으로 남지 않습니다.
+\end{notebox}
+
+또한 이 구조 덕분에 같은 클래스에서 서로 다른 값을 가진 여러 객체를 쉽게 만들 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+s1 = Student("Alice", 20250002)
+s2 = Student("Charlie", 20250003)
+
+print(s1.name, s1.student_id)
+print(s2.name, s2.student_id)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Alice 20250002
+Charlie 20250003
+\end{verbatim}
+\end{examplebox}
+
+각 객체는 동일한 클래스 구조를 공유하지만,
+\textbf{각자 다른 상태(state)}를 가지게 됩니다.
+
+이것이 바로 클래스가 설계도(blueprint)라고 불리는 이유입니다.
+
+% ---------------------------------------------------------
+\subsection{기본값(default) 사용하기}
+
+초기화 인자에 기본값을 주면,
+객체 생성 시 일부 값을 생략할 수 있습니다.
+이 경우 생략된 값은 기본값으로 자동으로 초기화됩니다.
+기본값은 함수의 기본 인자(default parameter)와 동일한 방식으로 동작합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Account:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.balance = balance
+
+a1 = Account("Chris")
+a2 = Account("Dana", 500)
+
+print(a1.owner, a1.balance)
+print(a2.owner, a2.balance)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Chris 0
+Dana 500
+\end{verbatim}
+\end{examplebox}
+
+위 예제에서 \texttt{balance=0}은 기본값입니다.
+따라서 잔액을 따로 지정하지 않으면 0으로 초기화됩니다.
+하지만 객체 생성 시 명시적으로 값을 전달하면, 기본값 대신 전달한 값이 우선적으로 사용됩니다.
+
+\begin{notebox}
+기본값이 있는 매개변수는
+기본값이 없는 매개변수 뒤에 위치해야 합니다.
+
+예를 들어 다음과 같이 작성하면 오류가 발생합니다:
+
+\begin{lstlisting}
+def __init__(self, balance=0, owner):  # Error!
+    ...
+\end{lstlisting}
+
+기본값이 없는 인자가 뒤에 올 수 없기 때문입니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{인스턴스}
+
+클래스로부터 만들어진 객체를 \textbf{인스턴스(instance)}라고 합니다.
+클래스가 설계도라면, 인스턴스는 그 설계도를 바탕으로 실제로 만들어진 객체입니다.
+인스턴스는 자신만의 상태(데이터)를 저장할 수 있고 클래스에 정의된 메서드를 사용할 수 있습니다.
+즉, \textbf{클래스는 틀이고, 인스턴스는 실제 존재하는 객체}입니다.
+이때 인스턴스의 데이터는 보통 인스턴스 변수로 표현됩니다.
+
+\begin{conceptbox}
+\textbf{인스턴스 변수}는 \texttt{self.이름 = 값} 형태로
+각 인스턴스에 붙는 데이터입니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{인스턴스 변수는 ``대입되는 순간'' 만들어진다}
+
+파이썬에서는 인스턴스 변수를 미리 선언할 필요가 없습니다.
+\texttt{self.x = ...}처럼 처음 대입되는 순간 생성됩니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Box:
+    def __init__(self, value):
+        self.value = value
+
+b = Box(10)
+print(b.value)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+10
+\end{verbatim}
+\end{examplebox}
+
+위 코드의 실행 흐름을 단계별로 살펴보면 다음과 같습니다.
+
+\begin{enumerate}
+\item \texttt{Box(10)}이 실행되면 새로운 \texttt{Box} 인스턴스가 생성됩니다.
+\item 생성 직후 \texttt{\_\_init\_\_} 메서드가 자동으로 호출됩니다.
+\item 매개변수 \texttt{value}에는 10이 전달됩니다.
+\item \texttt{self.value = value}가 실행되면서,
+      이 인스턴스에 \texttt{value}라는 인스턴스 변수가 만들어지고
+      값 10이 저장됩니다.
+\item \texttt{print(b.value)}는 해당 인스턴스에 저장된 값을 출력합니다.
+\end{enumerate}
+
+중요한 점은,
+\textbf{인스턴스 변수는 클래스 정의 시점이 아니라,
+객체가 생성되고 대입되는 순간 만들어진다는 것}입니다.
+
+% ---------------------------------------------------------
+\subsection{인스턴스마다 값이 다르다}
+
+같은 클래스로 만들어도,
+각 인스턴스는 서로 다른 데이터를 가질 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Person:
+    def __init__(self, name):
+        self.name = name
+
+p1 = Person("Alice")
+p2 = Person("Bob")
+
+print(p1.name)
+print(p2.name)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Alice
+Bob
+\end{verbatim}
+\end{examplebox}
+
+실행 과정을 정리해 보면 다음과 같습니다.
+
+\begin{itemize}
+\item \texttt{Person("Alice")}가 실행되면서 첫 번째 인스턴스가 생성됩니다.
+      이 인스턴스의 \texttt{name}에는 "Alice"가 저장됩니다.
+\item \texttt{Person("Bob")}이 실행되면서 두 번째 인스턴스가 생성됩니다.
+      이 인스턴스의 \texttt{name}에는 "Bob"이 저장됩니다.
+\item 두 인스턴스는 같은 클래스에서 만들어졌지만,
+      각각 독립적인 데이터를 가지고 있습니다.
+\end{itemize}
+
+따라서 \texttt{p1.name}과 \texttt{p2.name}은 서로 다른 값을 출력합니다.
+
+\begin{notebox}
+각 인스턴스는 자신만의 데이터 공간을 가집니다.
+같은 클래스로 만들어졌다고 해서
+데이터까지 공유되는 것은 아닙니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{인스턴스 메서드: 객체가 할 수 있는 행동}
+
+인스턴스 메서드는 보통
+인스턴스 변수(상태)를 읽거나 수정하며,
+그 결과로 특정 동작을 수행합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Counter:
+    def __init__(self):
+        self.value = 0
+
+    def inc(self):
+        self.value += 1
+
+    def show(self):
+        print(self.value)
+
+c = Counter()
+c.show()
+c.inc()
+c.inc()
+c.show()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+0
+2
+\end{verbatim}
+\end{examplebox}
+
+이 코드의 흐름을 살펴봅시다.
+
+\begin{enumerate}
+\item \texttt{c = Counter()}에서 새로운 인스턴스가 생성됩니다.
+\item 생성자에서 \texttt{self.value = 0}이 실행되어
+      초기값이 0으로 설정됩니다.
+\item \texttt{c.show()}는 현재 \texttt{value} 값을 출력합니다.
+\item \texttt{c.inc()}는 \texttt{value}를 1 증가시킵니다.
+\item 두 번 증가 후, \texttt{value}는 2가 됩니다.
+\item 다시 \texttt{c.show()}를 호출하면 2가 출력됩니다.
+\end{enumerate}
+
+여기서 중요한 점은,
+\texttt{inc()}와 \texttt{show()}가 모두
+같은 인스턴스의 \texttt{value}를 사용한다는 것입니다.
+
+% ---------------------------------------------------------
+\subsection{\texttt{self}가 중요한 이유}
+
+메서드의 \texttt{self}는
+``어떤 인스턴스의 데이터인지''를 결정합니다.
+
+즉, 같은 메서드라도
+어떤 객체에서 호출하느냐에 따라
+사용되는 데이터가 달라집니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Person:
+    def __init__(self, name):
+        self.name = name
+
+    def greet(self):
+        print("Hello,", self.name)
+
+p1 = Person("Alice")
+p2 = Person("Bob")
+
+p1.greet()
+p2.greet()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Hello, Alice
+Hello, Bob
+\end{verbatim}
+\end{examplebox}
+
+실행 과정을 보면,
+
+\begin{itemize}
+\item \texttt{p1.greet()}는 내부적으로 \texttt{Person.greet(p1)}과 같습니다.
+\item \texttt{p2.greet()}는 내부적으로 \texttt{Person.greet(p2)}과 같습니다.
+\end{itemize}
+
+따라서 \texttt{self}는
+``메서드를 호출한 인스턴스''를 가리키게 됩니다.
+
+\begin{notebox}
+이 장에서는 \texttt{self}를
+``메서드를 호출한 인스턴스''라고 이해하면 충분합니다.
+\texttt{self}가 정확히 어떤 규칙으로 전달되는지
+(메서드 객체, 바인딩 등)는
+심화 장에서 다룹니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{객체 생성과 사용}
+
+이제 클래스를 실제 프로그램에서 어떻게 사용하는지 조금 더 현실적인 예제로 정리해 봅시다.
+
+% ---------------------------------------------------------
+\subsection{예제: 간단한 은행 계좌}
+
+\begin{examplebox}
+\begin{lstlisting}
+class BankAccount:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.balance = balance
+
+    def deposit(self, amount):
+        self.balance += amount
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            print("Insufficient balance")
+            return
+        self.balance -= amount
+
+    def show(self):
+        print(self.owner, self.balance)
+
+acc = BankAccount("Alice", 100)
+acc.show()
+
+acc.deposit(50)
+acc.show()
+
+acc.withdraw(120)
+acc.show()
+
+acc.withdraw(1000)
+acc.show()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Alice 100
+Alice 150
+Alice 30
+Insufficient balance
+Alice 30
+\end{verbatim}
+\end{examplebox}
+
+이 예제에서 중요한 점은 다음과 같습니다.
+
+\begin{itemize}
+  \item 계좌의 상태는 \texttt{owner}, \texttt{balance}로 표현됩니다.
+  \item 상태를 변경하는 기능은 \texttt{deposit}, \texttt{withdraw}로 정의됩니다.
+  \item 즉, 데이터와 기능이 한 단위로 묶여 \textbf{하나의 객체}가 됩니다.
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsection{메서드가 하는 일: 상태를 읽고, 상태를 바꾼다}
+
+인스턴스 메서드는 일반적으로
+다음 두 가지 역할 중 하나(또는 둘 다)를 수행합니다.
+
+\begin{itemize}
+  \item 현재 상태를 읽어서 결과를 돌려주거나 출력한다
+  \item 상태를 변경하여 객체의 내부 값을 업데이트한다
+\end{itemize}
+
+위 계좌 예제에서
+
+\begin{itemize}
+  \item \texttt{show}는 상태를 읽어 출력합니다.
+  \item \texttt{deposit}, \texttt{withdraw}는 상태를 변경합니다.
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsection{객체 지향 스타일의 장점}
+
+클래스를 사용하면
+
+\begin{itemize}
+  \item 관련 있는 데이터와 기능이 같이 움직이므로 관리가 편해지고
+  \item 함수에 인자를 계속 전달하지 않아도 되며
+  \item 동일한 구조의 객체를 여러 개 만들어 재사용할 수 있습니다.
+\end{itemize}
+
+\begin{notebox}
+이 장에서는 클래스의 기본 사용법을 익히는 것이 목표입니다.
+상속, 다형성, 캡슐화(관례), 특수 메서드 등의 고급 개념은
+심화 장에서 다룹니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\begin{exercisebox}
+\textbf{Exercise 1. 가장 단순한 계산기 만들기}
+
+다음 요구사항을 만족하는 \texttt{Calculator} 클래스를 작성하세요.
+
+\begin{itemize}
+  \item \texttt{\_\_init\_\_}에서 현재 값(current)을 0으로 초기화한다.
+  \item \texttt{add(x)}: 현재 값에 \texttt{x}를 더한다.
+  \item \texttt{sub(x)}: 현재 값에서 \texttt{x}를 뺀다.
+  \item \texttt{mul(x)}: 현재 값에 \texttt{x}를 곱한다.
+  \item \texttt{div(x)}: 현재 값을 \texttt{x}로 나눈다.
+  \item \texttt{clear()} : 현재 값을 0으로 되돌린다.
+  \item \texttt{get()} : 현재 값을 반환한다.
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+c = Calculator()
+c.add(10)
+c.mul(3)
+c.sub(5)
+print(c.get())
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+25
+\end{verbatim}
+\end{examplebox}
+\end{exercisebox}
+
+% ---------------------------------------------------------
+\begin{exercisebox}
+\textbf{Exercise 2. 0으로 나누기 처리하기}
+
+Exercise 1의 \texttt{div(x)} 메서드를 수정하세요.
+
+\begin{itemize}
+  \item \texttt{x}가 0일 경우 계산을 수행하지 않는다.
+  \item 대신 \texttt{"Cannot divide by zero"}를 출력한다.
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+c = Calculator()
+c.add(10)
+c.div(0)
+print(c.get())
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+Cannot divide by zero
+\end{verbatim}
+\end{examplebox}
+\end{exercisebox}
+
+% ---------------------------------------------------------
+\begin{exercisebox}
+\textbf{Exercise 3. 계산 기록(history) 기능 추가하기}
+
+계산기의 동작 내역을 저장하는 기능을 추가하세요.
+
+\begin{itemize}
+  \item 인스턴스 변수 \texttt{history}를 리스트로 만든다.
+  \item 각 연산이 끝날 때마다 다음 형식의 문자열을 \texttt{history}에 추가한다.
+  \item \texttt{show\_history()} 메서드를 만들어 기록을 한 줄씩 출력한다.
+\end{itemize}
+
+기록 예시:
+\begin{itemize}
+  \item \texttt{"add 10 -> 10"}
+  \item \texttt{"mul 3 -> 30"}
+  \item \texttt{"sub 5 -> 25"}
+\end{itemize}
+
+\begin{examplebox}
+\begin{lstlisting}
+c = Calculator()
+c.add(10)
+c.mul(3)
+c.sub(5)
+c.show_history()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+add 10 -> 10
+mul 3 -> 30
+sub 5 -> 25
+\end{verbatim}
+\end{examplebox}
+
+\textbf{주의:} \texttt{history}는 반드시 인스턴스 변수여야 합니다.
+\end{exercisebox}
+
+% ---------------------------------------------------------
+\begin{exercisebox}
+\textbf{Exercise 4. 메서드 체이닝 (선택)}
+
+각 연산 메서드가 \texttt{self}를 반환하도록 수정해 보세요.
+그러면 다음과 같이 연속 호출이 가능합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+c = Calculator()
+result = c.add(10).mul(3).sub(5).get()
+print(result)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+25
+\end{verbatim}
+\end{examplebox}
+
+힌트: 각 메서드 마지막에 \texttt{return self}를 추가하세요.
+\end{exercisebox}
+
+% ---------------------------------------------------------
+\begin{readernotebox}
+다음 질문에 답해 보세요.
+\begin{itemize}
+  \item \texttt{\_\_init\_\_} 메서드는 언제 자동으로 호출되나요?
+  \vspace{0.6cm}
+  \item \texttt{self.x = 10}은 무엇을 의미하나요?
+  \vspace{0.6cm}
+  \item 같은 클래스에서 만든 두 인스턴스가 서로 다른 값을 가질 수 있는 이유는 무엇인가요?
+  \vspace{0.6cm}
+  \item \texttt{obj.method()} 형태의 호출에서 \texttt{self}는 어떤 값을 가리키나요?
+\end{itemize}
+\end{readernotebox}

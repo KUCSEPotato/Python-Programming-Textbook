@@ -1,0 +1,306 @@
+% ---------------------------------------------------------
+\section{스코프와 이름 공간: 파이썬이 이름을 찾는 규칙}
+
+클래스를 제대로 이해하려면
+파이썬의 이름 검색 규칙을 반드시 이해해야 합니다.
+클래스 정의는 \textbf{새로운 이름 공간(namespace)}을 만들며,
+그 안에서 정의한 것들이 클래스의 구성요소가 되기 때문입니다.
+또한, 메서드 내부에서 변수 이름이 어떻게 해석되는지를 이해하려면
+스코프 규칙을 정확히 알고 있어야 합니다.
+
+% ---------------------------------------------------------
+\subsection{이름 공간(namespace)의 정의}
+
+\begin{conceptbox}
+\textbf{이름 공간(namespace)}은
+\textbf{이름(name)에서 객체(object)로 가는 매핑(mapping)}입니다.
+대부분 내부적으로 딕셔너리처럼 동작합니다.
+\end{conceptbox}
+
+즉, 파이썬에서 어떤 이름을 정의한다는 것은
+그 이름을 특정 객체에 연결(binding)하는 것을 의미합니다.
+예를 들어,
+
+\begin{examplebox}
+\begin{lstlisting}
+x = 10
+\end{lstlisting}
+\end{examplebox}
+
+이 코드는 이름 \texttt{x}를 정수 객체 \texttt{10}에 연결합니다.
+이 연결은 현재 스코프의 이름 공간에 저장됩니다.
+
+이름 공간의 대표적인 예는 다음과 같습니다.
+
+\begin{itemize}
+  \item \textbf{내장 이름 공간(builtins)}  
+        \texttt{len}, \texttt{print}, \texttt{Exception} 등 인터프리터 시작 시 생성됩니다.
+  \item \textbf{모듈 이름 공간}  
+        모듈에 정의된 전역 변수와 함수들이 저장됩니다.
+  \item \textbf{함수의 지역 이름 공간}  
+        함수가 호출될 때 생성되고, 종료되면 사라집니다.
+  \item \textbf{객체의 어트리뷰트 집합}  
+        \texttt{obj.name} 형태로 접근되는 이름들도 하나의 이름 공간입니다.
+\end{itemize}
+
+\begin{notebox}
+서로 다른 이름 공간은 서로 영향을 주지 않습니다.
+예를 들어, 두 개의 모듈이 같은 이름의 함수를 정의해도
+충돌하지 않습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\subsection{스코프(scope)의 정의와 LEGB 규칙}
+
+\begin{conceptbox}
+\textbf{스코프(scope)}는
+이름을 정규화 없이(unqualified) 참조할 때
+파이썬이 그 이름을 검색하는 범위입니다.
+
+이때 \textbf{정규화 없이(unqualified) 참조한다는 것}은
+\texttt{obj.name}이나 \texttt{module.func}처럼
+앞에 소속(객체나 모듈)을 붙이지 않고,
+단순히 \texttt{name}이라고만 쓰는 경우를 의미합니다.
+반면 \texttt{obj.name}과 같은 형태는 스코프 검색이 아니라
+객체 내부의 어트리뷰트를 찾는 과정입니다.
+\end{conceptbox}
+
+스코프는 이름 공간 그 자체가 아니라,
+\textbf{어떤 이름 공간들을 어떤 순서로 검색할지에 대한 규칙}입니다.
+파이썬은 보통 다음 순서로 이름을 찾습니다(\textbf{LEGB 규칙}).
+
+\begin{itemize}
+  \item \textbf{L}ocal: 현재 함수의 지역 스코프
+  \item \textbf{E}nclosing: 바깥 함수(중첩 함수)의 스코프
+  \item \textbf{G}lobal: 현재 모듈의 전역 스코프
+  \item \textbf{B}uiltins: 내장 이름 공간
+\end{itemize}
+
+이 순서대로 이름을 찾다가 처음 발견되는 위치에서 검색을 멈춥니다.
+
+% ---------------------------------------------------------
+\subsection{LEGB 규칙 예시}
+
+\begin{examplebox}
+\begin{lstlisting}
+x = "global"
+
+def outer():
+    x = "enclosing"
+
+    def inner():
+        x = "local"
+        print(x)
+
+    inner()
+
+outer()
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+local
+\end{verbatim}
+\end{examplebox}
+
+\texttt{inner()} 내부의 \texttt{print(x)}는
+가장 가까운 Local 스코프에서 먼저 이름을 찾습니다.
+따라서 \textit{local}이 출력됩니다.
+만약 \texttt{inner()} 안에 \texttt{x}가 없다면,
+Enclosing → Global → Builtins 순서로 검색됩니다.
+
+% ---------------------------------------------------------
+\subsection{\texttt{global}과 \texttt{nonlocal}}
+
+대입은 기본적으로
+가장 안쪽(Local) 스코프에 새로운 이름을 생성합니다.
+
+하지만 이미 존재하는 바깥 스코프의 변수를
+\textbf{재바인딩(rebinding)}하고 싶을 때가 있습니다.
+
+\begin{itemize}
+  \item \texttt{global}: 모듈 전역 이름을 재연결
+  \item \texttt{nonlocal}: 가장 가까운 enclosing 스코프의 이름을 재연결
+\end{itemize}
+
+다음 예제를 살펴봅시다.
+
+\begin{examplebox}
+\begin{lstlisting}
+def scope_test():
+    def do_local():
+        spam = "local spam"
+
+    def do_nonlocal():
+        nonlocal spam
+        spam = "nonlocal spam"
+
+    def do_global():
+        global spam
+        spam = "global spam"
+
+    spam = "test spam"
+    do_local()
+    print("After local assignment:", spam)
+    do_nonlocal()
+    print("After nonlocal assignment:", spam)
+    do_global()
+    print("After global assignment:", spam)
+
+scope_test()
+print("In global scope:", spam)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+After local assignment: test spam
+After nonlocal assignment: nonlocal spam
+After global assignment: nonlocal spam
+In global scope: global spam
+\end{verbatim}
+\end{examplebox}
+
+이 예제를 단계별로 분석해 봅시다.
+
+\begin{itemize}
+\item \texttt{do}\_\texttt{local()}은 새로운 지역 변수 \texttt{spam}을 생성합니다.  
+      바깥 \texttt{spam}에는 영향을 주지 않습니다.
+\item \texttt{do}\_\texttt{nonlocal()}은 enclosing 스코프의 \texttt{spam}을 재연결합니다.
+\item \texttt{do}\_\texttt{global()}은 전역 스코프의 \texttt{spam}을 재연결합니다.
+\end{itemize}
+
+따라서 마지막 출력에서
+전역 스코프의 \texttt{spam}은 "global spam"이 됩니다.
+
+\begin{notebox}
+클래스 정의 역시 하나의 새로운 이름 공간을 만듭니다.
+클래스 블록 안에서 정의된 함수들은
+그 클래스 이름 공간에 저장됩니다.
+
+이 구조를 이해해야 왜 \texttt{self.x}처럼 명시적으로 접근해야 하는지 이해할 수 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{클래스 정의는 무엇을 하는가?}
+
+클래스는 단순한 ``문법 덩어리''가 아니라,
+실행 시점에 실제로 \textbf{클래스 객체(class object)}를 만들어냅니다.
+즉, \texttt{class} 문은 코드를 묶는 선언이 아니라,
+\textbf{실행되는 하나의 문(statement)}입니다.
+
+% ---------------------------------------------------------
+\subsection{클래스 정의는 실행되어야 효과가 생긴다}
+
+\texttt{def}와 마찬가지로,
+\texttt{class}도 실행되기 전까지는 아무 객체도 생성되지 않습니다.
+클래스 정의는 실행되는 순간
+새로운 클래스 객체를 만들고,
+그 이름을 현재 스코프에 바인딩합니다.
+
+따라서 클래스 정의를 조건문 안에 넣는 것도 가능합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+flag = True
+
+if flag:
+    class A:
+        pass
+else:
+    class A:
+        pass
+
+x = A()
+print(type(x))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+<class '__main__.A'>
+\end{verbatim}
+\end{examplebox}
+
+위 코드에서 중요한 점은 다음과 같습니다.
+
+\begin{itemize}
+  \item \texttt{class A:}는 실행될 때 클래스 객체를 만듭니다.
+  \item 그 클래스 객체가 이름 \texttt{A}에 연결됩니다.
+  \item 이후 \texttt{A()}는 그 클래스의 인스턴스를 생성합니다.
+\end{itemize}
+
+즉, 클래스 정의는 ``설계도 작성''이 아니라,
+\textbf{클래스 객체를 실제로 생성하는 실행 과정}입니다.
+
+% ---------------------------------------------------------
+\subsection{클래스 블록은 새 이름 공간을 만든다}
+
+클래스 블록에 진입하면
+\textbf{새로운 이름 공간}이 만들어집니다.
+
+그 안에서 정의된 모든 이름은
+이름 공간에 저장됩니다.
+
+블록이 끝나면,
+그 이름 공간을 감싸는 \textbf{클래스 객체}가 생성됩니다.
+
+이 과정을 단계별로 정리하면 다음과 같습니다.
+
+\begin{enumerate}
+  \item 클래스 블록용 새로운 이름 공간 생성
+  \item 블록 내부 코드 실행
+  \item 생성된 이름 공간을 바탕으로 클래스 객체 생성
+  \item 클래스 이름을 현재 스코프에 바인딩
+\end{enumerate}
+
+다음 예시를 살펴봅시다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class MyClass:
+    """A simple example class"""
+    i = 12345
+
+    def f(self):
+        return "hello world"
+
+print(MyClass.i)
+print(MyClass.f)
+print(MyClass.__doc__)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+12345
+<function MyClass.f at ...>
+A simple example class
+\end{verbatim}
+\end{examplebox}
+
+이 코드에서 일어난 일을 분석해 봅시다.
+
+\begin{itemize}
+  \item \texttt{i}는 클래스 이름 공간에 저장된 정수 객체입니다.
+  \item \texttt{f}는 클래스 이름 공간에 저장된 함수 객체입니다.
+  \item 독스트링은 \texttt{\_\_doc\_\_} 속성에 자동으로 저장됩니다.
+\end{itemize}
+
+즉, 클래스는 내부에 정의된 모든 것들을
+\textbf{속성(attribute)}으로 가지는 객체입니다.
+
+\begin{notebox}
+출력에서 함수 객체의 주소(\texttt{...}) 부분은 실행 환경에 따라 달라질 수 있습니다.
+핵심은 \texttt{MyClass.f}가 함수 객체라는 점입니다.
+\end{notebox}
+
+\begin{readernotebox}
+\textbf{이름 공간(namespace)과 LEGB 규칙을 점검해봅시다.}
+
+\begin{itemize}
+  \item 이름 공간은 정확히 무엇을 의미하는가?
+  \item 서로 다른 이름 공간에 같은 이름이 존재하면 어떻게 되는가?
+  \item 파이썬은 이름을 어떤 순서(LEGB)로 검색하는가?
+  \item 지역 변수와 전역 변수는 언제 충돌하는가?
+  \item \texttt{global}과 \texttt{nonlocal}은 LEGB 규칙에 어떤 영향을 주는가?
+\end{itemize}
+
+\end{readernotebox}

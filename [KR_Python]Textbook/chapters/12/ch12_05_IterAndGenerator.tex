@@ -1,0 +1,180 @@
+% ---------------------------------------------------------
+\section{이터레이터(Iterator)}
+
+파이썬에서 \texttt{for}문은 매우 다양한 객체에 적용됩니다.
+그 핵심은 \textbf{이터레이터 프로토콜}입니다.
+
+\begin{conceptbox}
+\texttt{for x in obj}는 내부적으로
+\texttt{iter(obj)}를 호출해 이터레이터를 얻고,
+그 이터레이터에 대해 \texttt{next()}를 반복 호출합니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{iter}와 \texttt{next}의 동작}
+
+\begin{examplebox}
+\begin{lstlisting}
+s = "abc"
+it = iter(s)
+
+print(next(it))
+print(next(it))
+print(next(it))
+
+try:
+    print(next(it))
+except StopIteration:
+    print("StopIteration")
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+a
+b
+c
+StopIteration
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\subsection{클래스로 이터레이터 구현하기}
+
+클래스에 \texttt{\_\_iter\_\_}와 \texttt{\_\_next\_\_}를 구현하면
+그 객체는 이터레이터처럼 동작할 수 있습니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+class Reverse:
+    def __init__(self, data):
+        self.data = data
+        self.index = len(data)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index == 0:
+            raise StopIteration
+        self.index -= 1
+        return self.data[self.index]
+
+rev = Reverse("spam")
+for ch in rev:
+    print(ch)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+m
+a
+p
+s
+\end{verbatim}
+\end{examplebox}
+
+% ---------------------------------------------------------
+\section{제너레이터(Generator)}
+
+이터레이터는 강력하지만, 클래스 구현은 다소 장황할 수 있습니다.
+제너레이터는 이터레이터를 만드는 더 간단한 방법입니다.
+
+\begin{conceptbox}
+\textbf{제너레이터(generator)}는
+\texttt{yield}를 사용해 값을 하나씩 생성하며,
+자동으로 이터레이터 프로토콜을 만족합니다.
+\end{conceptbox}
+
+% ---------------------------------------------------------
+\subsection{\texttt{yield}로 만드는 이터레이터}
+
+\begin{examplebox}
+\begin{lstlisting}
+def reverse(data):
+    for i in range(len(data)-1, -1, -1):
+        yield data[i]
+
+for ch in reverse("golf"):
+    print(ch)
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+f
+l
+o
+g
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+제너레이터는 호출 사이의 실행 상태와 지역 변수를 자동으로 보관합니다.
+또한 값이 더 이상 없을 때 자동으로 \texttt{StopIteration}을 발생시킵니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\section{제너레이터 표현식(Generator Expression)}
+
+간단한 제너레이터는 표현식으로도 만들 수 있습니다.
+리스트 컴프리헨션과 형태는 비슷하지만,
+대괄호 대신 괄호를 사용합니다.
+
+\begin{examplebox}
+\begin{lstlisting}
+print(sum(i*i for i in range(10)))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+285
+\end{verbatim}
+\end{examplebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+xvec = [10, 20, 30]
+yvec = [7, 5, 3]
+print(sum(x*y for x, y in zip(xvec, yvec)))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+260
+\end{verbatim}
+\end{examplebox}
+
+\begin{examplebox}
+\begin{lstlisting}
+data = "golf"
+print(list(data[i] for i in range(len(data)-1, -1, -1)))
+\end{lstlisting}
+
+출력 결과(예시):
+\begin{verbatim}
+['f', 'l', 'o', 'g']
+\end{verbatim}
+\end{examplebox}
+
+\begin{notebox}
+제너레이터 표현식은 보통
+필요한 순간에만 값을 생성하므로
+리스트를 한 번에 만드는 것보다 메모리를 덜 쓰는 경향이 있습니다.
+\end{notebox}
+
+% ---------------------------------------------------------
+\begin{readernotebox}
+심화 내용을 점검해 보세요.
+\begin{itemize}
+  \item \texttt{y = x}가 ``복사''가 아니라 ``연결''이라는 것은 무슨 의미인가요?
+  \vspace{0.6cm}
+  \item LEGB 규칙에서 \texttt{nonlocal}과 \texttt{global}은 각각 어떤 스코프를 변경하나요?
+  \vspace{0.6cm}
+  \item \texttt{x.f()}가 사실상 \texttt{C.f(x)}와 같다는 말의 의미는 무엇인가요?
+  \vspace{0.6cm}
+  \item 다중 상속에서 어트리뷰트 검색 순서(MRO)가 필요한 이유는 무엇인가요?
+  \vspace{0.6cm}
+  \item 이터레이터 프로토콜을 만족하려면 어떤 메서드들이 필요하며, 각각의 역할은 무엇인가요?
+  \vspace{0.6cm}
+  \item 제너레이터가 클래스 기반 이터레이터보다 간단한 이유는 무엇인가요?
+\end{itemize}
+\end{readernotebox}
